@@ -10,7 +10,7 @@ Michael Borisov <br />
 Group Id: G
 
 Link to the repository: https://github.com/SecTedd/PSEMolDyn_GroupG <br />
-Branch: assignment2 <br />
+Branch: origin/assignment2 <br />
 Commit Id: # <br />
 
 
