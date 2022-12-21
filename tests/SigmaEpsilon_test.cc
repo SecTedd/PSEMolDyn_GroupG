@@ -38,12 +38,11 @@ TEST(SigmaEpsilon, MixedSigmaAndEpsilonForce)
 
     LennardJonesForce forceCalc = LennardJonesForce();
     
-    double reflectingDistance = 0.5;
     double cutoff = 3;
     std::array<double, 3> domain = {9,9,9};
     BoundaryCondition out = BoundaryCondition::Outflow;
     std::array<BoundaryCondition, 6> boundaries = {out, out, out, out, out, out};
-    LinkedCellParticleContainer pc = LinkedCellParticleContainer(reflectingDistance, cutoff, domain, boundaries);
+    LinkedCellParticleContainer pc = LinkedCellParticleContainer(cutoff, domain, boundaries);
     
     //DirectSumParticleContainer pc = DirectSumParticleContainer();
     std::array<double, 3> x1 = {1, 0, 0};

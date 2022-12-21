@@ -65,7 +65,7 @@ private:
     std::array<double,3> mirroredPosition(Particle &p, int boundary_idx);
 
 public:
-    LinkedCellParticleContainer(double sigma, double cutoff, std::array<double, 3> &domain, std::array<BoundaryCondition, 6> &boundaries);
+    LinkedCellParticleContainer(double cutoff, std::array<double, 3> &domain, std::array<BoundaryCondition, 6> &boundaries);
 
     ~LinkedCellParticleContainer() override;
 

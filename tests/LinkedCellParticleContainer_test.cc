@@ -9,13 +9,11 @@
  */
 TEST(LinkedCellParticleContainer, Initialization)
 {
-
-    double reflectingDistance = 0.5;
     double cutoff = 3;
     std::array<double, 3> domain = {9, 9, 9};
     BoundaryCondition out = BoundaryCondition::Outflow;
     std::array<BoundaryCondition, 6> boundaries = {BoundaryCondition::Reflecting, out, BoundaryCondition::Reflecting, out, out, out};
-    LinkedCellParticleContainer pc = LinkedCellParticleContainer(reflectingDistance, cutoff, domain, boundaries);
+    LinkedCellParticleContainer pc = LinkedCellParticleContainer(cutoff, domain, boundaries);
 
     // 3 cells in each dimension, the 3 cells on the left/bottom should have a reflecting boundary on the left/bottom
     std::vector<ParticleCell> &cells = pc.getCells();
@@ -67,12 +65,11 @@ TEST(LinkedCellParticleContainer, Initialization)
  */
 TEST(LinkedCellParticleContainer, IterateParticles)
 {
-    double reflectingDistance = 0.5;
     double cutoff = 3;
     std::array<double, 3> domain = {9, 9, 9};
     BoundaryCondition out = BoundaryCondition::Outflow;
     std::array<BoundaryCondition, 6> boundaries = {BoundaryCondition::Reflecting, out, BoundaryCondition::Reflecting, out, out, out};
-    LinkedCellParticleContainer pc = LinkedCellParticleContainer(reflectingDistance, cutoff, domain, boundaries);
+    LinkedCellParticleContainer pc = LinkedCellParticleContainer(cutoff, domain, boundaries);
 
     std::array<double, 3> x1 = {0, 0, 0};   // this should stay in the same cell
     std::array<double, 3> x2 = {2.5, 0, 0}; // this should cross to its adjacent cell
@@ -104,12 +101,11 @@ TEST(LinkedCellParticleContainer, IterateParticles)
  */
 TEST(LinkedCellParticleContainer, IterateParticleInteractions)
 {
-    double reflectingDistance = 0.5;
     double cutoff = 3;
     std::array<double, 3> domain = {9, 9, 9};
     BoundaryCondition out = BoundaryCondition::Outflow;
     std::array<BoundaryCondition, 6> boundaries = {BoundaryCondition::Reflecting, out, out, out, out, out};
-    LinkedCellParticleContainer pc = LinkedCellParticleContainer(reflectingDistance, cutoff, domain, boundaries);
+    LinkedCellParticleContainer pc = LinkedCellParticleContainer(cutoff, domain, boundaries);
 
     std::array<double, 3> x1 = {0.5, 0, 0}; // only interaction with border
     std::array<double, 3> x2 = {4, 2.5, 0}; // only interactinon with x3
@@ -165,12 +161,11 @@ TEST(LinkedCellParticleContainer, IterateParticleInteractions)
  */
 TEST(LinkedCellParticleContainer, ReflectingBoundaryCondition)
 {
-    double reflectingDistance = 0.5;
     double cutoff = 3;
     std::array<double, 3> domain = {9, 9, 9};
     BoundaryCondition out = BoundaryCondition::Outflow;
     std::array<BoundaryCondition, 6> boundaries = {BoundaryCondition::Reflecting, out, BoundaryCondition::Reflecting, out, out, out};
-    LinkedCellParticleContainer pc = LinkedCellParticleContainer(reflectingDistance, cutoff, domain, boundaries);
+    LinkedCellParticleContainer pc = LinkedCellParticleContainer(cutoff, domain, boundaries);
 
     // force calculation function
     std::function<void(Particle &, Particle &)> forceCalculationIteration = [](Particle &p1, Particle &p2)
@@ -230,12 +225,11 @@ TEST(LinkedCellParticleContainer, ReflectingBoundaryCondition)
  */
 TEST(LinkedCellParticleContainer, OutflowBoundaryCondition)
 {
-    double reflectingDistance = 0.5;
     double cutoff = 3;
     std::array<double, 3> domain = {9, 9, 9};
     BoundaryCondition out = BoundaryCondition::Outflow;
     std::array<BoundaryCondition, 6> boundaries = {out, out, out, out, out, out};
-    LinkedCellParticleContainer pc = LinkedCellParticleContainer(reflectingDistance, cutoff, domain, boundaries);
+    LinkedCellParticleContainer pc = LinkedCellParticleContainer(cutoff, domain, boundaries);
 
     std::array<double, 3> x1 = {0, 0, 0}; // particle should cross to halo
     std::array<double, 3> v1 = {-1, 0, 0};
@@ -278,12 +272,11 @@ TEST(LinkedCellParticleContainer, OutflowBoundaryCondition)
  * Test correct force application over opposite domain boundaries against hand-calculated values
 */
 TEST(PeriodicBoundaryCondition, ForceApplication) {
-    double reflectingDistance = 0.5;
     double cutoff = 3;
     std::array<double, 3> domain = {9,9,9};
     BoundaryCondition out = BoundaryCondition::Outflow;
     std::array<BoundaryCondition, 6> boundaries = {BoundaryCondition::Periodic, BoundaryCondition::Periodic, out, out, out, out};
-    LinkedCellParticleContainer pc = LinkedCellParticleContainer(reflectingDistance, cutoff, domain, boundaries);
+    LinkedCellParticleContainer pc = LinkedCellParticleContainer(cutoff, domain, boundaries);
 
     std::array<double, 3> x1 = {0.5, 0.5, 0};
     std::array<double, 3> x2 = {8.5, 0.5, 0};
@@ -330,12 +323,11 @@ TEST(PeriodicBoundaryCondition, ForceApplication) {
  * Test correct reappearance of particle on other domain side
 */
 TEST(PeriodicBoundaryCondition, CrossSides) {
-    double reflectingDistance = 0.5;
     double cutoff = 3;
     std::array<double, 3> domain = {9,9,9};
     BoundaryCondition out = BoundaryCondition::Outflow;
     std::array<BoundaryCondition, 6> boundaries = {BoundaryCondition::Periodic, BoundaryCondition::Periodic, out, out, out, out};
-    LinkedCellParticleContainer pc = LinkedCellParticleContainer(reflectingDistance, cutoff, domain, boundaries);
+    LinkedCellParticleContainer pc = LinkedCellParticleContainer(cutoff, domain, boundaries);
 
     std::array<double, 3> x = {0.5, 0.5, 0};
     std::array<double, 3> v = {-1, 0, 0};

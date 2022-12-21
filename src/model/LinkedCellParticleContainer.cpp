@@ -12,7 +12,7 @@
 #include <iostream>
 #include <string>
 
-LinkedCellParticleContainer::LinkedCellParticleContainer(double sigma, double cutoff, std::array<double, 3> &domain, std::array<BoundaryCondition, 6> &domainBoundaries)
+LinkedCellParticleContainer::LinkedCellParticleContainer(double cutoff, std::array<double, 3> &domain, std::array<BoundaryCondition, 6> &domainBoundaries)
 {
     _memoryLogger = spdlog::get("memory_logger");
     _memoryLogger->info("LinkedCellParticleContainer generated!");
