@@ -1,6 +1,4 @@
 cmake_minimum_required(VERSION 3.14) #3.14 needed for GoogleTest
-find_package(PkgConfig REQUIRED)
-pkg_check_modules(XERCESC REQUIRED IMPORTED_TARGET xerces-c)
 
 # define project name, version
 project(PSEMolDyn_GroupG)
@@ -37,6 +35,9 @@ target_include_directories(MolSim
         PRIVATE
             ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
+
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(XERCESC REQUIRED IMPORTED_TARGET xerces-c)
 
 target_link_libraries(MolSim
         # stuff that is used in headers and source files
