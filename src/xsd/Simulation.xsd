@@ -5,7 +5,6 @@
         <xs:sequence>
             <xs:element name="end_time" type="xs:double" maxOccurs="1" minOccurs="1"/>
             <xs:element name="delta_t" type="xs:double" maxOccurs="1" minOccurs="1"/>
-            <xs:element name="sigma" type="xs:double" maxOccurs="1" minOccurs="1"/>
             <xs:element name="cutoff" type="xs:double" maxOccurs="1" minOccurs="1"/>
             <xs:element name="domain" maxOccurs="1" minOccurs="1">
                 <xs:complexType >

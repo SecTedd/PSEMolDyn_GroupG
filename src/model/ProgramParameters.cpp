@@ -21,10 +21,9 @@ ProgramParameters::ProgramParameters()
     boundaries = {o, o, o, o, o, o};
     end_time = 100;
     delta_t = 10;
-    sigma = 1;
     cutoff = 3;
     writeFrequency = 10;
-    particleContainer.reset(new LinkedCellParticleContainer(sigma, cutoff, domain, boundaries));
+    particleContainer.reset(new LinkedCellParticleContainer(cutoff, domain, boundaries));
     baseName = "outputVTK";
     temp_init = 40;
     brownianMotion = true;
@@ -52,20 +51,12 @@ const void ProgramParameters::resetParameters()
 const void ProgramParameters::setEndTime(double end_time) { this->end_time = end_time; }
 const void ProgramParameters::setDeltaT(double delta_t) { this->delta_t = delta_t; }
 const void ProgramParameters::setBenchmarkIterations(int iterations) { this->benchmark_iterations = iterations; }
-const void ProgramParameters::setSigma(double sigma)
-{
-    this->sigma = sigma;
-    if (typeid(*particleContainer) == typeid(LinkedCellParticleContainer))
-    {
-        particleContainer.reset(new LinkedCellParticleContainer(sigma, cutoff, domain, boundaries));
-    }
-}
 const void ProgramParameters::setCutoff(double cutoff)
 {
     this->cutoff = cutoff;
     if (typeid(*particleContainer) == typeid(LinkedCellParticleContainer))
     {
-        particleContainer.reset(new LinkedCellParticleContainer(sigma, cutoff, domain, boundaries));
+        particleContainer.reset(new LinkedCellParticleContainer(cutoff, domain, boundaries));
     }
 }
 const void ProgramParameters::setDomain(std::array<double, 3> domain)
@@ -73,7 +64,7 @@ const void ProgramParameters::setDomain(std::array<double, 3> domain)
     this->domain = domain;
     if (typeid(*particleContainer) == typeid(LinkedCellParticleContainer))
     {
-        particleContainer.reset(new LinkedCellParticleContainer(sigma, cutoff, domain, boundaries));
+        particleContainer.reset(new LinkedCellParticleContainer(cutoff, domain, boundaries));
     }
 }
 const void ProgramParameters::setBoundaries(std::array<BoundaryCondition, 6> boundaries)
@@ -97,7 +88,7 @@ const void ProgramParameters::setBoundaries(std::array<BoundaryCondition, 6> bou
 
     if (typeid(*particleContainer) == typeid(LinkedCellParticleContainer))
     {
-        particleContainer.reset(new LinkedCellParticleContainer(sigma, cutoff, domain, boundaries));
+        particleContainer.reset(new LinkedCellParticleContainer(cutoff, domain, boundaries));
     }
 }
 const void ProgramParameters::setWriteFrequency(int writeFrequency) { this->writeFrequency = writeFrequency; }
@@ -114,7 +105,6 @@ const int ProgramParameters::getBenchmarkIterations() const { return benchmark_i
 std::shared_ptr<ParticleContainer> ProgramParameters::getParticleContainer() { return particleContainer; }
 const double ProgramParameters::getEndTime() const { return end_time; }
 const double ProgramParameters::getDeltaT() const { return delta_t; }
-const double ProgramParameters::getSigma() const { return sigma; }
 const double ProgramParameters::getCutoff() const { return cutoff; }
 const std::array<double, 3> ProgramParameters::getDomain() const { return domain; }
 const std::array<BoundaryCondition, 6> ProgramParameters::getBoundaries() const { return boundaries; }

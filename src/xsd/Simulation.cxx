@@ -79,24 +79,6 @@ delta_t (const delta_t_type& x)
   this->delta_t_.set (x);
 }
 
-const simulation_t::sigma_type& simulation_t::
-sigma () const
-{
-  return this->sigma_.get ();
-}
-
-simulation_t::sigma_type& simulation_t::
-sigma ()
-{
-  return this->sigma_.get ();
-}
-
-void simulation_t::
-sigma (const sigma_type& x)
-{
-  this->sigma_.set (x);
-}
-
 const simulation_t::cutoff_type& simulation_t::
 cutoff () const
 {
@@ -1200,7 +1182,6 @@ z (const z_type& x)
 simulation_t::
 simulation_t (const end_time_type& end_time,
               const delta_t_type& delta_t,
-              const sigma_type& sigma,
               const cutoff_type& cutoff,
               const domain_type& domain,
               const boundaries_type& boundaries,
@@ -1209,7 +1190,6 @@ simulation_t (const end_time_type& end_time,
 : ::xml_schema::type (),
   end_time_ (end_time, this),
   delta_t_ (delta_t, this),
-  sigma_ (sigma, this),
   cutoff_ (cutoff, this),
   domain_ (domain, this),
   boundaries_ (boundaries, this),
@@ -1231,7 +1211,6 @@ simulation_t (const end_time_type& end_time,
 simulation_t::
 simulation_t (const end_time_type& end_time,
               const delta_t_type& delta_t,
-              const sigma_type& sigma,
               const cutoff_type& cutoff,
               ::std::unique_ptr< domain_type > domain,
               ::std::unique_ptr< boundaries_type > boundaries,
@@ -1240,7 +1219,6 @@ simulation_t (const end_time_type& end_time,
 : ::xml_schema::type (),
   end_time_ (end_time, this),
   delta_t_ (delta_t, this),
-  sigma_ (sigma, this),
   cutoff_ (cutoff, this),
   domain_ (std::move (domain), this),
   boundaries_ (std::move (boundaries), this),
@@ -1266,7 +1244,6 @@ simulation_t (const simulation_t& x,
 : ::xml_schema::type (x, f, c),
   end_time_ (x.end_time_, f, this),
   delta_t_ (x.delta_t_, f, this),
-  sigma_ (x.sigma_, f, this),
   cutoff_ (x.cutoff_, f, this),
   domain_ (x.domain_, f, this),
   boundaries_ (x.boundaries_, f, this),
@@ -1292,7 +1269,6 @@ simulation_t (const ::xercesc::DOMElement& e,
 : ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
   end_time_ (this),
   delta_t_ (this),
-  sigma_ (this),
   cutoff_ (this),
   domain_ (this),
   boundaries_ (this),
@@ -1344,17 +1320,6 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       if (!delta_t_.present ())
       {
         this->delta_t_.set (delta_t_traits::create (i, f, this));
-        continue;
-      }
-    }
-
-    // sigma
-    //
-    if (n.name () == "sigma" && n.namespace_ ().empty ())
-    {
-      if (!sigma_.present ())
-      {
-        this->sigma_.set (sigma_traits::create (i, f, this));
         continue;
       }
     }
@@ -1550,13 +1515,6 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       "");
   }
 
-  if (!sigma_.present ())
-  {
-    throw ::xsd::cxx::tree::expected_element< char > (
-      "sigma",
-      "");
-  }
-
   if (!cutoff_.present ())
   {
     throw ::xsd::cxx::tree::expected_element< char > (
@@ -1608,7 +1566,6 @@ operator= (const simulation_t& x)
     static_cast< ::xml_schema::type& > (*this) = x;
     this->end_time_ = x.end_time_;
     this->delta_t_ = x.delta_t_;
-    this->sigma_ = x.sigma_;
     this->cutoff_ = x.cutoff_;
     this->domain_ = x.domain_;
     this->boundaries_ = x.boundaries_;

@@ -26,7 +26,6 @@ private:
     std::shared_ptr<ParticleContainer> particleContainer; /// container for all the particles
     double end_time;                                      /// end_time of the simulation
     double delta_t;                                       /// increase in step size for the time
-    double sigma;                                         /// sigma parameter for Lennard-Jones potential
     double cutoff;                                        /// cutoff for the linked cell algorith
     std::array<double, 3> domain;                         /// the size of the domain
     std::array<BoundaryCondition, 6> boundaries;          /// the boundaries for the simulation
@@ -69,8 +68,6 @@ public:
 
     const void setBenchmarkIterations(int iterations);
 
-    const void setSigma(double sigma);
-
     const void setCutoff(double cuttoff);
 
     const void setDomain(std::array<double, 3> domain);
@@ -104,8 +101,6 @@ public:
     const double getDeltaT() const;
 
     const int getBenchmarkIterations() const;
-
-    const double getSigma() const;
 
     const double getCutoff() const;
 

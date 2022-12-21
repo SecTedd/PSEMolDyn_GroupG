@@ -690,53 +690,6 @@ class simulation_t: public ::xml_schema::type
   //@}
 
   /**
-   * @name sigma
-   *
-   * @brief Accessor and modifier functions for the %sigma
-   * required element.
-   */
-  //@{
-
-  /**
-   * @brief Element type.
-   */
-  typedef ::xml_schema::double_ sigma_type;
-
-  /**
-   * @brief Element traits type.
-   */
-  typedef ::xsd::cxx::tree::traits< sigma_type, char, ::xsd::cxx::tree::schema_type::double_ > sigma_traits;
-
-  /**
-   * @brief Return a read-only (constant) reference to the element.
-   *
-   * @return A constant reference to the element.
-   */
-  const sigma_type&
-  sigma () const;
-
-  /**
-   * @brief Return a read-write reference to the element.
-   *
-   * @return A reference to the element.
-   */
-  sigma_type&
-  sigma ();
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x A new value to set.
-   *
-   * This function makes a copy of its argument and sets it as
-   * the new value of the element.
-   */
-  void
-  sigma (const sigma_type& x);
-
-  //@}
-
-  /**
    * @name cutoff
    *
    * @brief Accessor and modifier functions for the %cutoff
@@ -1662,7 +1615,6 @@ class simulation_t: public ::xml_schema::type
    */
   simulation_t (const end_time_type&,
                 const delta_t_type&,
-                const sigma_type&,
                 const cutoff_type&,
                 const domain_type&,
                 const boundaries_type&,
@@ -1679,7 +1631,6 @@ class simulation_t: public ::xml_schema::type
    */
   simulation_t (const end_time_type&,
                 const delta_t_type&,
-                const sigma_type&,
                 const cutoff_type&,
                 ::std::unique_ptr< domain_type >,
                 ::std::unique_ptr< boundaries_type >,
@@ -1758,7 +1709,6 @@ class simulation_t: public ::xml_schema::type
   protected:
   ::xsd::cxx::tree::one< end_time_type > end_time_;
   ::xsd::cxx::tree::one< delta_t_type > delta_t_;
-  ::xsd::cxx::tree::one< sigma_type > sigma_;
   ::xsd::cxx::tree::one< cutoff_type > cutoff_;
   ::xsd::cxx::tree::one< domain_type > domain_;
   ::xsd::cxx::tree::one< boundaries_type > boundaries_;

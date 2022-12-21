@@ -94,7 +94,6 @@ void XMLInputReader::readInput(ProgramParameters &programParameters, const char 
 
         programParameters.setEndTime(xml->end_time());
         programParameters.setDeltaT(xml->delta_t());
-        programParameters.setSigma(xml->sigma());
         programParameters.setCutoff(xml->cutoff());
         programParameters.setTempInit(xml->temp_init());
         programParameters.setBrownianMotion(xml->brownianMotion());
