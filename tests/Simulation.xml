@@ -3,7 +3,6 @@
        xsi:noNamespaceSchemaLocation="../src/xsd/Simulation.xsd">
     <end_time>10</end_time>
     <delta_t>0.00005</delta_t>
-    <sigma>1</sigma> 
     <cutoff>3.0</cutoff>
     <domain>
         <x>120</x>
