@@ -301,6 +301,6 @@ namespace PContainer
         else if (new_cell_3D[2] - prev_cell_3D[2] == 1)
             return 5;
         else 
-            throw std::invalid_argument("Cells not adjacent, cannot compute crossed boundary");
+            throw std::invalid_argument("Cells not adjacent, cannot compute crossed boundary between " + std::to_string(prev_cell) + " and " + std::to_string(new_cell));
     }
 }

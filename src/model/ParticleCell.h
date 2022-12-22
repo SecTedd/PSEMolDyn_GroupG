@@ -56,6 +56,7 @@ private:
     std::array<BoundaryCondition, 6> _boundaries;
 
     std::shared_ptr<spdlog::logger> _memoryLogger; // a speedlog logger which logs construction and destruction of particles
+    std::shared_ptr<spdlog::logger> _simulationLogger;
 
 public:
     /**
