@@ -17,13 +17,13 @@
 class Thermostat {
 private:
     // desired temperature in wich the system wants to be
-    float targetTemperature;
+    double targetTemperature;
 
     // maximum absolute temperature change allowed for one application of the thermostat
-    float temperatureDelta;
+    double temperatureDelta;
 
     // init temperature of the system
-    float initTemperature;
+    double initTemperature;
 
     // particles of the observed system
     std::shared_ptr<ParticleContainer> particleContainer;
@@ -42,24 +42,24 @@ public:
      * @param particleContainer particles of the observed system
      * @param initTemperature init temperature of the system the thermostat is watching
      */
-    Thermostat(std::shared_ptr<ParticleContainer> particleContainer, float initTemperature);
+    Thermostat(std::shared_ptr<ParticleContainer> particleContainer, double initTemperature);
 
     ~Thermostat();
     
     /**
      * @brief calculates the current Temperature of the system (using the kinetic energy)
      * 
-     * @return float the current temperature of the system
+     * @return double the current temperature of the system
      */
-    float calculateCurrentTemperature();
+    double calculateCurrentTemperature();
 
     /**
      * @brief calculates the new temperature of a system, according to targetTemperature and temperatureDelta
      * 
      * @param currentTemperature current temperature in the system
-     * @return float the new temperature the system should have after the thermostat is applied
+     * @return double the new temperature the system should have after the thermostat is applied
      */
-    float calculateNewTemperature(float currentTemperature);
+    double calculateNewTemperature(double currentTemperature);
 
     /**
      * @brief changes the temperature of the system towards the targetTemperature
@@ -73,15 +73,15 @@ public:
 
     // Getters
 
-    const float getTargetTemperature();
+    const double getTargetTemperature();
 
-    const float getTemperatureDelta();
+    const double getTemperatureDelta();
 
-    const float getInitTemperature();
+    const double getInitTemperature();
 
     // Setters
 
-    const void setTargetTemperature(float targetTemperature);
+    const void setTargetTemperature(double targetTemperature);
 
-    const void setTemperatureDelta(float temperatureDelta);
+    const void setTemperatureDelta(double temperatureDelta);
 };
