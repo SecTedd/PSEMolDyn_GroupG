@@ -51,7 +51,6 @@ public:
     /**
      * @brief Constructs a new Output Facade object and creates folders which are needed for output
      * @param programParameters program parameters
-     * @param baseName the path relative to the build folder where the files should be created
      */
     OutputFacade(ProgramParameters* programParameters);
 

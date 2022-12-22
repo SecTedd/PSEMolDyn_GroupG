@@ -55,9 +55,8 @@ public:
      * @param h The distance of the particles (mesh width of the grid)
      * @param m The mass of one particle
      * @param v The initial velocity of the particles
-     * @param meanV The average velocity of the brownian motion
      * @param sigma The sigma value of the particles
-     * @param type The type of the particles in the cuboid
+     * @param epsilon The epsilon value of the particles in the cuboid
      * @param type The type of the particles in the cuboid
      */
     Cuboid(std::array<double, 3> x, std::array<int, 3> n, double h, double m, std::array<double, 3> v, double epsilon, double sigma, int type);
