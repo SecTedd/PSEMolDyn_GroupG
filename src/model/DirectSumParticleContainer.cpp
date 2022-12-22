@@ -18,7 +18,7 @@ DirectSumParticleContainer::~DirectSumParticleContainer()
     _memoryLogger->info("DirectSumParticleContainer destructed!");
 }
 
-const void DirectSumParticleContainer::iterateParticles(std::function<void(Particle &)> f)
+const void DirectSumParticleContainer::iterateParticles(std::function<void(Particle &)> f, bool calcX)
 {
     for (Particle &p : particles)
     {

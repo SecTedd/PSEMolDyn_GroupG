@@ -79,7 +79,7 @@ public:
      * @brief applies given function to every particle, checks if they cross cell borders
      * @param f function which is applied to the particles
      */
-    const void iterateParticles(std::function<void(Particle &)> f) override;
+    const void iterateParticles(std::function<void(Particle &)> f, bool calcX) override;
 
     /**
      * @brief adds particle to base vector and its pointer to the cell it belongs to

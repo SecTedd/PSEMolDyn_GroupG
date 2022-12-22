@@ -37,7 +37,7 @@ public:
      * @brief Iterates over all particles and applies the function f
      * @param f A lambda function applied for every particle
      */
-    const void iterateParticles(std::function<void(Particle &)> f) override;
+    const void iterateParticles(std::function<void(Particle &)> f, bool calcX) override;
 
     /**
      * @brief Iterates over all pairs of particles and applies the function f

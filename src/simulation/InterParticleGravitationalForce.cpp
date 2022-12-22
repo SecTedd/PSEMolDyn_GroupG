@@ -20,7 +20,7 @@ void InterParticleGravitationalForce::calculateForce(ParticleContainer &particle
         p1.setF({0.0, 0.0, 0.0});
     };
 
-    particleContainer.iterateParticles(forceInitializationIteration);
+    particleContainer.iterateParticles(forceInitializationIteration, false);
 
     // in the second step we calculate the forces between pairs of particles according to the formula
     std::function<void(Particle &, Particle &)> forceCalculationIteration = [](Particle &p1, Particle &p2)

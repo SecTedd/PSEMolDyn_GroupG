@@ -20,5 +20,5 @@ void SingleParticleGravitationalForce::calculateForce(ParticleContainer &particl
         p1.addF({0,force,0});
     };
 
-    particleContainer.iterateParticles(forceCalculation);
+    particleContainer.iterateParticles(forceCalculation, false);
 }

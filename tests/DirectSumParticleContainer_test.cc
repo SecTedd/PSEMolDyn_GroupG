@@ -30,7 +30,7 @@ TEST(DirectSumParticleContainer, IterateParticles)
     std::array<double, 3> testF = {1, 2, 3};
 
     pc.iterateParticles([testF](Particle &p) -> void
-                        { p.setF(testF); });
+                        { p.setF(testF); }, false);
 
     std::vector<Particle> &particles = pc.getActiveParticles();
 

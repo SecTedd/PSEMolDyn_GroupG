@@ -33,7 +33,7 @@ public:
      * @brief Iterates over all active particles (inside domain) and applies the function f
      * @param f A lambda function applied for every particle
      */
-    virtual const void iterateParticles(std::function<void(Particle &)> f) = 0;
+    virtual const void iterateParticles(std::function<void(Particle &)> f, bool calcX) = 0;
 
     /**
      * @brief Computes interaction between two particles or a particle and a border
