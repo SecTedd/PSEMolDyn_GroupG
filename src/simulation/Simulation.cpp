@@ -80,7 +80,7 @@ const void Simulation::simulate()
             t.apply();
         }
 
-        if (iteration % _programParameters->getWriteFrequency() == 0 && _programParameters->getBenchmarkIterations() == 0)
+        if ((iteration % _programParameters->getWriteFrequency() == 0 || iteration == 3897) && _programParameters->getBenchmarkIterations() == 0)
         {
             outputFacade.outputVTK(iteration);
         }
@@ -99,9 +99,13 @@ void Simulation::calculateX()
     std::shared_ptr<ParticleContainer> particleContainer = _programParameters->getParticleContainer();
 
     // creating lambda to calculate new position based on the Velocity-Störmer-Verlet algortihm
-    std::function<void(Particle &)> f = [delta_t = _programParameters->getDeltaT()](Particle &p1)
+    std::function<void(Particle &)> f = [delta_t = _programParameters->getDeltaT(), logicLogger= _logicLogger](Particle &p1)
     {
         std::array<double, 3> x_new = p1.getX() + delta_t * p1.getV() + (delta_t * delta_t / (2 * p1.getM())) * p1.getF();
+        if (p1.getF()[0] >= 10e9 || p1.getF()[0]  <= -10e9) {
+            logicLogger->warn("High force: " + p1.toString());
+            logicLogger->warn("New X: " + std::to_string(x_new[0]) + ", " + std::to_string(x_new[1]) + ", " + std::to_string(x_new[2]));
+        }
         p1.setX(x_new);
     };
 

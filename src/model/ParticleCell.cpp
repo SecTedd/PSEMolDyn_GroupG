@@ -17,6 +17,7 @@ ParticleCell::ParticleCell(CellType type, std::array<BoundaryCondition, 6> bound
 
     _memoryLogger = spdlog::get("memory_logger");
     _memoryLogger->info("ParticleCell generated!");
+    _simulationLogger = spdlog::get("simulation_logger");
 }
 
 ParticleCell::~ParticleCell()
@@ -38,7 +39,9 @@ const void ParticleCell::iterateParticlePairs(std::function<void(Particle &, Par
         if (!_particles->at(i)->getInvalid() && !_particles->at(i)->getHalo())
         {
             for (long unsigned int j = i + 1; j < _particles->size(); j++)
-            {
+            {   if (_particles->at(i)->getX()[0] == _particles->at(j)->getX()[0] && _particles->at(i)->getX()[1] == _particles->at(j)->getX()[1] && _particles->at(i)->getX()[2] == _particles->at(j)->getX()[2]) {
+                    _simulationLogger->warn("Particles at same position: " + _particles->at(i)->toString() + _particles->at(j)->toString());
+                }
                 if (!_particles->at(j)->getInvalid() && !_particles->at(j)->getHalo() && ArrayUtils::L2Norm(_particles->at(i)->getX() - _particles->at(j)->getX()) <= cutoff)
                 {
                     f(*_particles->at(i), *_particles->at(j));
@@ -47,18 +50,6 @@ const void ParticleCell::iterateParticlePairs(std::function<void(Particle &, Par
         }
     }
 }
-
-// const void ParticleCell::updateInvalidCounter()
-// {
-//     _invalidCount = 0;
-//     for (auto p : _particles)
-//     {
-//         if (p->getInvalid() || p->getHalo())
-//         {
-//             _invalidCount++;
-//         }
-//     }
-// }
 
 const void ParticleCell::clearCell() { _particles->clear(); }
 
