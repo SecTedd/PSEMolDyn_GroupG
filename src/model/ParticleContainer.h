@@ -46,6 +46,8 @@ public:
      * @param x The position array of the particle
      * @param v The velocity array of the particle
      * @param m The mass of the particle
+     * @param epsilon The epsilon of the particle
+     * @param sigma The sigma of the particle
      */
     virtual const void addParticle(std::array<double, 3> &x, std::array<double, 3> &v, double &m, double &epsilon, double &sigma) = 0;
 

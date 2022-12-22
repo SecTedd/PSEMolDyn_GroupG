@@ -284,6 +284,13 @@ namespace PContainer
         return index[0] + (index[1] * numCells[0]) + (index[2] * numCells[0] * numCells[1]);
     }
 
+    /**
+     * @brief calculates which border of the cell the boundary crossed
+     * 
+     * @param prev_cell the cell where the particle was 
+     * @param new_cell the cell where the particle currently is 
+     * @param numCells the number of cells for the linked cell
+    */
     inline int crossedBoundary(int prev_cell, int new_cell, std::array<int, 3> &numCells) {
         std::array<int, 3> prev_cell_3D = convert1DTo3D(prev_cell, numCells);
         std::array<int, 3> new_cell_3D = convert1DTo3D(new_cell, numCells);
