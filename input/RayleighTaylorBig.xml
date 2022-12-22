@@ -18,7 +18,7 @@
         <zBack>Outflow</zBack>
     </boundaries>
     <temp_init>40</temp_init>
-    <brownianMotion>false</brownianMotion>
+    <brownianMotion>true</brownianMotion>
     <n_thermostat>1000</n_thermostat>
     <temp_target>40</temp_target>
     <g_grav>-12.44</g_grav>

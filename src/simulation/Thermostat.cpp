@@ -12,7 +12,7 @@
 
 // Constructors
 
-Thermostat::Thermostat(std::shared_ptr<ParticleContainer> particleContainer, float initTemperature) {
+Thermostat::Thermostat(std::shared_ptr<ParticleContainer> particleContainer, double initTemperature) {
     // Spdlog
     _logicLogger = spdlog::get("simulation_logger");
     _memoryLogger = spdlog::get("memory_logger");
@@ -37,15 +37,15 @@ Thermostat::~Thermostat() {
 }
 
 void Thermostat::apply() {
-    float currentTemperature = calculateCurrentTemperature();
-    float newTemperature = calculateNewTemperature(currentTemperature);
+    double currentTemperature = calculateCurrentTemperature();
+    double newTemperature = calculateNewTemperature(currentTemperature);
 
     if (currentTemperature == 0) {
         return;
     }
 
     // calculate beta
-    float beta = sqrt(newTemperature / currentTemperature);
+    double beta = sqrt(newTemperature / currentTemperature);
 
     for (auto &p: particleContainer->getActiveParticles()) {
         p.setV(beta * p.getV());
@@ -59,38 +59,38 @@ void Thermostat::initializeBrownianMotion() {
     int dimensions = 2;
 
     for (auto &p: particleContainer->getActiveParticles()) {
-        float meanV = sqrt(this->initTemperature / p.getM());
+        double meanV = sqrt(this->initTemperature / p.getM());
         p.setV(p.getV() + maxwellBoltzmannDistributedVelocity(meanV, dimensions));
     }
 
     _logicLogger->info("Initialized brownian motion with initial temperature: {}", this->initTemperature);
 }
 
-float Thermostat::calculateCurrentTemperature() {
+double Thermostat::calculateCurrentTemperature() {
     // dimensions
     int dimensions = 2;
 
     // calculate the kinetic energie
-    float kineticE = 0;
+    double kineticE = 0;
 
     if (particleContainer->size() == 0) {
         return 0;
     }
 
     for (auto &p: particleContainer->getActiveParticles()) {
-        float dotProduct = pow(ArrayUtils::L2Norm(p.getV()), 2);
+        double dotProduct = pow(ArrayUtils::L2Norm(p.getV()), 2);
         kineticE += (p.getM() * dotProduct) / 2;
     }
 
     // calculate temperature from kinetic energie
-    float temperature = (2 * kineticE) / (dimensions * particleContainer->size());
+    double temperature = (2 * kineticE) / (dimensions * particleContainer->size());
 
     _logicLogger->debug("Current temperature: {}", temperature);
 
     return temperature;
 }
 
-float Thermostat::calculateNewTemperature(float currentTemperature) {
+double Thermostat::calculateNewTemperature(double currentTemperature) {
     // no deltaTemperature set
     if (temperatureDelta == -1) {
         return targetTemperature;
@@ -117,21 +117,21 @@ float Thermostat::calculateNewTemperature(float currentTemperature) {
 
 // Getters
 
-const float Thermostat::getTargetTemperature() {
+const double Thermostat::getTargetTemperature() {
     return this->targetTemperature;
 }
 
-const float Thermostat::getTemperatureDelta() {
+const double Thermostat::getTemperatureDelta() {
     return this->temperatureDelta;
 }
 
-const float Thermostat::getInitTemperature() {
+const double Thermostat::getInitTemperature() {
     return this->initTemperature;
 }
 
 // Setters
 
-const void Thermostat::setTargetTemperature(float targetTemperature) {
+const void Thermostat::setTargetTemperature(double targetTemperature) {
     if (targetTemperature < 0) {
         _logicLogger->info("Thermostat: Target temperature must be positive or zero!");
         _logicLogger->info("Thermostat: Using the absolute value of the provided target temperature!");
@@ -140,7 +140,7 @@ const void Thermostat::setTargetTemperature(float targetTemperature) {
     this->targetTemperature = targetTemperature;
 }
 
-const void Thermostat::setTemperatureDelta(float temperatureDelta) {
+const void Thermostat::setTemperatureDelta(double temperatureDelta) {
     if (temperatureDelta < 0) {
         _logicLogger->info("Thermostat: Delta temperature must be positive or zero!");
         _logicLogger->info("Thermostat: Using the absolute value of the provided delta temperature!");
