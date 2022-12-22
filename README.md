@@ -18,7 +18,7 @@ Video: <br />
    RTBig.avi is the simulation of the big Rayleigh-Taylor instability <br />
    For details regarding the parameters please checkout the slides <br />
    Additionally the initialization with brownian motion is on <br />
-   <br />
+
 2. Video <br />
    FallingDrop1.avi shows the equilibration phase of the falling drop simulation <br />
 
