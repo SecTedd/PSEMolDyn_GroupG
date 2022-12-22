@@ -26,7 +26,7 @@ ProgramParameters::ProgramParameters()
     particleContainer.reset(new LinkedCellParticleContainer(cutoff, domain, boundaries));
     baseName = "outputVTK";
     temp_init = 40;
-    brownianMotion = true;
+    brownianMotion = false;
     n_thermostats = 1000;
     temp_target = -1;
     delta_temp = -1;
