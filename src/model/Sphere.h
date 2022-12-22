@@ -55,7 +55,6 @@ public:
      * @param h The distance between the particles (mesh width of the grid)
      * @param m The mass of one particle
      * @param v The initial velocity of the particles
-     * @param meanV The average velocity of the brownian motion
      * @param epsilon The epsilon value of the particles
      * @param sigma The sigma value of the particles
      * @param type The type of the particles in the cuboid

@@ -29,6 +29,7 @@ public:
      * @brief calculates the force acting on a single particle
      *
      * @param particleContainer container for the particles for which the force will be calculated
+     * @param external_force the force acting on a single particle from the outside
      */
     virtual void calculateForce(ParticleContainer &particleContainer, double external_force) = 0;
 };

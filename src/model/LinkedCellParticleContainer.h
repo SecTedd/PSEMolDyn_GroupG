@@ -86,6 +86,8 @@ public:
      * @param x The position array of the particle
      * @param v The velocity array of the particle
      * @param m The mass of the particle
+     * @param epsilon The epsilon of the particle
+     * @param sigma The sigma of the particle
      */
     const void addParticle(std::array<double, 3> &x, std::array<double, 3> &v, double &m, double &epsilon, double &sigma) override;
 
@@ -124,7 +126,7 @@ public:
     /**
      * @brief emplaces ghost particles of boundary particles at periodic boundaries in halo 
      * @param particles particles inside cell the periodic boundary condition belongs to
-     * @param boundar_idx position of periodic boundary
+     * @param boundary_idx position of periodic boundary
     */
     const void initGhostParticles(std::vector<Particle *> &particles, int boundary_idx);
 
