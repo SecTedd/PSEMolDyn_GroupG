@@ -86,14 +86,14 @@ TEST(Thermostat, Heating)
     pc->addParticle(x2, v, m, epsilon, sigma);
 
     Thermostat t = Thermostat(pc, 1.0);
-    t.setTargetTemperature(100.0);
+    t.setTargetTemperature(1000.0);
     t.setTemperatureDelta(0.5);
 
     for (int i = 0; i < 1000; i++) {
-        float oldTemp = t.calculateCurrentTemperature();
+        double oldTemp = t.calculateCurrentTemperature();
         t.apply();
-        float newTemp = t.calculateCurrentTemperature();
-        EXPECT_TRUE(oldTemp <= newTemp);
+        double newTemp = t.calculateCurrentTemperature();
+        EXPECT_TRUE(oldTemp <= newTemp) << "Old temp: " << oldTemp << " New temp: " << newTemp;
     }
 }
 
@@ -117,14 +117,14 @@ TEST(Thermostat, Cooling)
     pc->addParticle(x1, v, m, epsilon, sigma);
     pc->addParticle(x2, v, m, epsilon, sigma);
 
-    Thermostat t = Thermostat(pc, 100.0);
+    Thermostat t = Thermostat(pc, 1000.0);
     t.setTargetTemperature(0.0);
     t.setTemperatureDelta(0.5);
 
     for (int i = 0; i < 1000; i++) {
-        float oldTemp = t.calculateCurrentTemperature();
+        double oldTemp = t.calculateCurrentTemperature();
         t.apply();
-        float newTemp = t.calculateCurrentTemperature();
+        double newTemp = t.calculateCurrentTemperature();
         EXPECT_TRUE(oldTemp >= newTemp);
     }
 }
@@ -155,9 +155,9 @@ TEST(Thermostat, HoldingTemperature)
     t.initializeBrownianMotion();
 
     for (int i = 0; i < 1000; i++) {
-        float oldTemp = t.calculateCurrentTemperature();
+        double oldTemp = t.calculateCurrentTemperature();
         t.apply();
-        float newTemp = t.calculateCurrentTemperature();
+        double newTemp = t.calculateCurrentTemperature();
         EXPECT_TRUE(std::abs(newTemp - oldTemp) < 1.0);
     }
 }
