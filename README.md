@@ -9,19 +9,21 @@ Michael Borisov <br />
 Group Id: G
 
 Link to the repository: https://github.com/SecTedd/PSEMolDyn_GroupG <br />
-Branch: assignment3 <br />
+Branch: origin/assignment4 <br />
 Commit Id: # <br />
 
 Video: <br />
 
 1. Video <br />
-   CuboidCollide.avi is almost the same video as for last week, but with more particles and the use of the new Linked Cell Algorithm. <br />
-   The Linked Cell Algorithm makes it possible to have many more particles and still a reasonable runtime. <br />
-   For Details about performance and the implementation please review the slides. <br />
+   RTBig.avi is the simulation of the big Rayleigh-Taylor instability <br />
+   For details regarding the parameters please checkout the slides <br />
+   Additionally the initialization with brownian motion is on <br />
    <br />
 2. Video <br />
-   FallingDrop.avi shows our falling drop simulation. Here you can see how a sphere, representing our water drop, falls onto an invisible boundary and splashes around. <br />
-   Gravity is not implemented yet, thats why the water drop goes back up in the end of the video. <br />
+   FallingDrop1.avi shows the equilibration phase of the falling drop simulation <br />
+
+3. Video <br />
+   FallingDrop2.avi shows the actual falling drop simulation where the drop falls into a basin filled with liquid <br />
 
 ## Build and run
 
@@ -43,7 +45,7 @@ After building the project you can run the executable
 
 1. Familiarize yourself with the provided .xml file located in the /input/ folder and the .xsd file located in the /xsd/ folder. <br />
    XML-Files are used to specify different parameters. <br />
-2. Create a new XML-File or use the provided one and specify all the input parameters that are needed. <br />
+2. Create a new XML-File or use one of the provided ones and specify all the input parameters that are needed. <br />
 3. Navigate into the build folder: `cd build`
 4. The application can be run from the console. Run `./MolSim -h` to print the help text. <br />
    The -f option automatically distinguishes between different input files, such as xml, cuboid, sphere etc. <br />
@@ -65,10 +67,6 @@ The logs are written to files which can be found in the **/logs/** folder or to 
 Logic logs are used to log events in the program flow. Within the logic logs, there is the distinction between input, output and simulation. <br />
 Memory logs on the other hand document the construction and destruction of objects and therefore help to detect and prevent memory leaks. <br />
 
-## Plots
-![SecPerIt](./plots/Sec-per-it.png "Seconds per iteration")
-![MUPS](./plots/MUPS.png "MUPS")
-
 ## Structure: 
 ```
 ./
@@ -82,18 +80,17 @@ Memory logs on the other hand document the construction and destruction of objec
 │       ├── googletest.cmake
 │       └── spdlog.cmake
 ├── input
+│   ├── Benchmark.xml
+│   ├── Benchmark2.xml
+│   ├── FallingDrop1.xml
+│   ├── FallingDrop2.xml
+│   ├── RayleighTaylorBig.xml
+│   ├── RayleighTaylorSmall.xml
 │   ├── Simulation.xml
-│   ├── eingabe-cuboid1.txt
-│   ├── eingabe-cuboid2.txt
-│   ├── eingabe-cuboid3.txt
-│   ├── eingabe-cuboid4.txt
+│   ├── SimulationState.xml
+│   ├── eingabe-cuboid.txt
 │   ├── eingabe-sonne.txt
-│   ├── eingabe-sphere.txt
-│   ├── falling-drop.txt
-│   ├── rectangle-1000.txt
-│   ├── rectangle-2000.txt
-│   ├── rectangle-4000.txt
-│   └── rectangle-8000.txt
+│   └── eingabe-sphere.txt
 ├── libs
 ├── plots
 ├── src
@@ -130,6 +127,8 @@ Memory logs on the other hand document the construction and destruction of objec
 │   │   ├── Sphere.cpp
 │   │   └── Sphere.h
 │   ├── outputWriter
+│   │   ├── CheckpointWriter.cpp
+│   │   ├── CheckpointWriter.h
 │   │   ├── OutputFacade.cpp
 │   │   ├── OutputFacade.h
 │   │   ├── VTKWriter.cpp
@@ -140,16 +139,23 @@ Memory logs on the other hand document the construction and destruction of objec
 │   │   ├── vtk-unstructured.h
 │   │   └── vtk-unstructured.xsd
 │   ├── simulation
-│   │   ├── ForceCalculation.cpp
-│   │   ├── ForceCalculation.h
-│   │   ├── GravitationalForce.cpp
-│   │   ├── GravitationalForce.h
+│   │   ├── InterParticleForce.cpp
+│   │   ├── InterParticleForce.h
+│   │   ├── InterParticleGravitationalForce.cpp
+│   │   ├── InterParticleGravitationalForce.h
 │   │   ├── LennardJonesForce.cpp
 │   │   ├── LennardJonesForce.h
 │   │   ├── Simulation.cpp
-│   │   └── Simulation.h
+│   │   ├── Simulation.h
+│   │   ├── SingleParticleForce.cpp
+│   │   ├── SingleParticleForce.h
+│   │   ├── SingleParticleGravitationalForce.cpp
+│   │   ├── SingleParticleGravitationalForce.h
+│   │   ├── Thermostat.cpp
+│   │   └── Thermostat.h
 │   ├── utils
 │   │   ├── ArrayUtils.h
+│   │   ├── File.h
 │   │   ├── Input.h
 │   │   ├── Logger.h
 │   │   ├── MaxwellBoltzmannDistribution.h
@@ -158,16 +164,24 @@ Memory logs on the other hand document the construction and destruction of objec
 │   └── xsd
 │       ├── Simulation.cxx
 │       ├── Simulation.hxx
-│       └── Simulation.xsd
+│       ├── Simulation.xsd
+│       ├── SimulationState.cxx
+│       ├── SimulationState.hxx
+│       └── SimulationState.xsd
 └── tests
+    ├── Checkpoints_test.cc
     ├── CuboidInputReader_test.cc
     ├── DirectSumParticleContainer_test.cc
     ├── GetNeighbours_test.cc
     ├── LennardJonesForce_test.cc
     ├── LinkedCellParticleContainer_test.cc
     ├── ParticleCell_test.cc
+    ├── SigmaEpsilon_test.cc
     ├── Simulation.xml
+    ├── SimulationState.xml
+    ├── SingleParticleGravitationalForce_test.cc
     ├── SphereInputReader_test.cc
+    ├── Thermostat_test.cc
     ├── XMLInputReader_test.cc
     ├── eingabe-cuboid.txt
     ├── eingabe-sphere.txt
