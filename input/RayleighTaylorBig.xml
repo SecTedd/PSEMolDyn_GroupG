@@ -18,11 +18,11 @@
         <zBack>Outflow</zBack>
     </boundaries>
     <temp_init>40</temp_init>
-    <brownianMotion>true</brownianMotion>
+    <brownianMotion>false</brownianMotion>
     <n_thermostat>1000</n_thermostat>
     <temp_target>40</temp_target>
     <g_grav>-12.44</g_grav>
-    <writeFrequency>50</writeFrequency>
+    <writeFrequency>100</writeFrequency>
     <baseName>outputVTK</baseName>
     <cuboid>
         <mass>1.0</mass>

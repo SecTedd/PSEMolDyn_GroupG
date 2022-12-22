@@ -230,11 +230,35 @@ const void LinkedCellParticleContainer::iterateParticles(std::function<void(Part
     {
         f(p);
         int new_cell_idx = computeCellIdx(p);
-        if (new_cell_idx != p.getCellIdx())
+
+        std::array<int, 3> idx3D = PContainer::convert1DTo3D(new_cell_idx, _numCells);
+        bool outOfBounds = idx3D[0] < 0 || idx3D[0] >= _numCells[0] || idx3D[1] < 0 || idx3D[1] >= _numCells[1] || idx3D[2] < 0 || idx3D[2] >= _numCells[2];
+
+        //particle out of bounds (not in domain or halo cell layer)
+        if (outOfBounds) {
+            p.setHalo(true);
+            p.setInvalid(true);
+            restructureAll = true;
+            _simulationLogger->debug("Particle way out of bounds (" + std::to_string(new_cell_idx) + "): " + p.toString());
+        }
+
+        else if (new_cell_idx != p.getCellIdx())
         {
             //particle left to halo
             if (_cellVector[new_cell_idx].getType() == CellType::HaloCell) {
-                int crossedBoundary = PContainer::crossedBoundary(p.getCellIdx(), new_cell_idx, _numCells);
+                int crossedBoundary; 
+                try {
+                    crossedBoundary = PContainer::crossedBoundary(p.getCellIdx(), new_cell_idx, _numCells);
+                }
+                catch(const std::invalid_argument &e) {
+                    _simulationLogger->debug("Particle crossed too many cells: " + std::to_string(p.getCellIdx()) +  " to " + std::to_string(new_cell_idx));
+                    p.setHalo(true);
+                    p.setInvalid(true);
+                    restructureAll = true;
+                    continue;
+                }
+                
+                
                 //particle crossed periodic boundary, reappears on other side of domain
                 if (_cellVector[p.getCellIdx()].getBoundaries()[crossedBoundary] == BoundaryCondition::Periodic) {
                     p.setX(mirroredPosition(p, crossedBoundary));
@@ -374,6 +398,9 @@ const void LinkedCellParticleContainer::initGhostParticles(std::vector<Particle 
         Particle &ghostParticle = _haloParticleVector.back();
         ghostParticle.setX(newX);
         int idx = computeCellIdx(ghostParticle);
+        if (_cellVector[idx].getType() == CellType::InnerCell) {
+            _simulationLogger->debug("Ghostcell idx: " + std::to_string(idx));
+        }
         ghostParticle.setCellIdx(idx);
         _cellVector[idx].insertParticle(&ghostParticle);
     }
