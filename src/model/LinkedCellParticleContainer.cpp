@@ -239,7 +239,7 @@ const void LinkedCellParticleContainer::iterateParticles(std::function<void(Part
             p.setHalo(true);
             p.setInvalid(true);
             restructureAll = true;
-            _simulationLogger->warn("Particle way out of bounds (" + std::to_string(new_cell_idx) + "): " + p.toString());
+            _simulationLogger->debug("Particle way out of bounds (" + std::to_string(new_cell_idx) + "): " + p.toString());
         }
 
         else if (new_cell_idx != p.getCellIdx())
@@ -251,7 +251,7 @@ const void LinkedCellParticleContainer::iterateParticles(std::function<void(Part
                     crossedBoundary = PContainer::crossedBoundary(p.getCellIdx(), new_cell_idx, _numCells);
                 }
                 catch(const std::invalid_argument &e) {
-                    _simulationLogger->warn("Particle crossed too many cells: " + std::to_string(p.getCellIdx()) +  " to " + std::to_string(new_cell_idx));
+                    _simulationLogger->debug("Particle crossed too many cells: " + std::to_string(p.getCellIdx()) +  " to " + std::to_string(new_cell_idx));
                     p.setHalo(true);
                     p.setInvalid(true);
                     restructureAll = true;
@@ -399,7 +399,7 @@ const void LinkedCellParticleContainer::initGhostParticles(std::vector<Particle 
         ghostParticle.setX(newX);
         int idx = computeCellIdx(ghostParticle);
         if (_cellVector[idx].getType() == CellType::InnerCell) {
-            _simulationLogger->warn("Ghostcell idx: " + std::to_string(idx));
+            _simulationLogger->debug("Ghostcell idx: " + std::to_string(idx));
         }
         ghostParticle.setCellIdx(idx);
         _cellVector[idx].insertParticle(&ghostParticle);

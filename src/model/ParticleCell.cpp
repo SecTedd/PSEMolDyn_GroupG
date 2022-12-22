@@ -40,7 +40,7 @@ const void ParticleCell::iterateParticlePairs(std::function<void(Particle &, Par
         {
             for (long unsigned int j = i + 1; j < _particles->size(); j++)
             {   if (_particles->at(i)->getX()[0] == _particles->at(j)->getX()[0] && _particles->at(i)->getX()[1] == _particles->at(j)->getX()[1] && _particles->at(i)->getX()[2] == _particles->at(j)->getX()[2]) {
-                    _simulationLogger->warn("Particles at same position: " + _particles->at(i)->toString() + _particles->at(j)->toString());
+                    _simulationLogger->debug("Particles at same position: " + _particles->at(i)->toString() + _particles->at(j)->toString());
                 }
                 if (!_particles->at(j)->getInvalid() && !_particles->at(j)->getHalo() && ArrayUtils::L2Norm(_particles->at(i)->getX() - _particles->at(j)->getX()) <= cutoff)
                 {
