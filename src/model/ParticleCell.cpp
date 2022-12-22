@@ -63,11 +63,22 @@ std::vector<Particle *> *ParticleCell::getCellParticles()
     return _particles.get();
 }
 
-const void ParticleCell::removeInvalid()
-{ 
-    _particles->erase(std::remove_if(_particles->begin(), _particles->end(), [](Particle *p)
-                                    { return p->getInvalid() || p->getHalo(); }),
-                        _particles->end());  
+const void ParticleCell::removeInvalid(){
+    long unsigned int first = 0; 
+    long unsigned int size = _particles->size();
+    long unsigned int last = _particles->size() - 1; 
+    while(first < last){
+        while((last >= 0 && _particles->at(last)->getInvalid()) || (last >= 0 && _particles->at(last)->getHalo())){
+            _particles->pop_back(); 
+            last--; 
+        }
+        while(first < size &&  !_particles->at(first)->getInvalid() && !_particles->at(first)->getHalo())
+            first++; 
+        if(first > last)
+            break; 
+        std::swap(_particles->at(first), _particles->at(last)); 
+        _particles->pop_back();
+    }
 }
 
 const CellType ParticleCell::getType() { return _type; }
