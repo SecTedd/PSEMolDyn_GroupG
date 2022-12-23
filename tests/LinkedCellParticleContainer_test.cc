@@ -86,7 +86,7 @@ TEST(LinkedCellParticleContainer, IterateParticles)
     pc.addParticle(x3, v, m, epsilon, sigma);
 
     pc.iterateParticles([addX](Particle &p)
-                        { p.setX(p.getX() + addX); });
+                        { p.setX(p.getX() + addX); }, true);
 
     EXPECT_EQ(pc.getActiveParticles().size(), 2);
     EXPECT_EQ(pc.getHaloParticles().size(), 1);
@@ -262,7 +262,7 @@ TEST(LinkedCellParticleContainer, OutflowBoundaryCondition)
 
     EXPECT_EQ(pc.getActiveParticles().size(), 4);
 
-    pc.iterateParticles(f);
+    pc.iterateParticles(f, true);
 
     EXPECT_EQ(pc.getActiveParticles().size(), 1);
     EXPECT_EQ(pc.getHaloParticles().size(), 3);
@@ -344,7 +344,7 @@ TEST(PeriodicBoundaryCondition, CrossSides) {
 
     pc.reserveMemoryForParticles(1);
     pc.addParticle(x, v, m, sigma, epsilon);
-    pc.iterateParticles(f);
+    pc.iterateParticles(f, true);
     std::vector<Particle> &particles = pc.getActiveParticles();
 
     EXPECT_THAT(particles[0].getX(), testing::ElementsAre(8.5, 0.5, 0));

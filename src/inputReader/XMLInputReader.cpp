@@ -95,8 +95,10 @@ void XMLInputReader::readInput(ProgramParameters &programParameters, const char 
         programParameters.setEndTime(xml->end_time());
         programParameters.setDeltaT(xml->delta_t());
         programParameters.setCutoff(xml->cutoff());
-        programParameters.setTempInit(xml->temp_init());
-        programParameters.setBrownianMotion(xml->brownianMotion());
+        if (xml->temp_init().present())
+            programParameters.setTempInit(xml->temp_init().get());
+        if (xml->brownianMotion().present())
+            programParameters.setBrownianMotion(xml->brownianMotion().get());
 
         std::array<double, 3> domain;
         simulation_t::domain_type d = xml->domain();
@@ -121,10 +123,7 @@ void XMLInputReader::readInput(ProgramParameters &programParameters, const char 
         boundaries[5] = getBoundaryCondition(boundary);
         programParameters.setBoundaries(boundaries);
 
-        if (xml->n_thermostat().present())
-        {
-            programParameters.setNThermostats(xml->n_thermostat().get());
-        }
+        programParameters.setNThermostats(xml->n_thermostat());
 
         if (xml->temp_target().present())
         {
@@ -153,7 +152,7 @@ void XMLInputReader::readInput(ProgramParameters &programParameters, const char 
 
         if (xml->createCheckpoint().present())
         {
-            programParameters.setCreateCheckpoint(xml->createCheckpoint().get()); 
+            programParameters.setCreateCheckpoint(xml->createCheckpoint().get());
         }
 
         for (simulation_t::file_name_const_iterator i(xml->file_name().begin()); i != xml->file_name().end(); i++)

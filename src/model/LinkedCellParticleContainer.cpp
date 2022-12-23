@@ -221,7 +221,7 @@ const void LinkedCellParticleContainer::addParticle(std::array<double, 3> &x, st
     }
 }
 
-const void LinkedCellParticleContainer::iterateParticles(std::function<void(Particle &)> f)
+const void LinkedCellParticleContainer::iterateParticles(std::function<void(Particle &)> f, bool calcX)
 {
     bool restructure = false;
     bool restructureAll = false;
@@ -229,6 +229,8 @@ const void LinkedCellParticleContainer::iterateParticles(std::function<void(Part
     for (auto &p : _activeParticleVector)
     {
         f(p);
+        if (!calcX)
+            continue;
         int new_cell_idx = computeCellIdx(p);
 
         std::array<int, 3> idx3D = PContainer::convert1DTo3D(new_cell_idx, _numCells);
@@ -340,7 +342,9 @@ const void LinkedCellParticleContainer::iterateParticleInteractions(std::functio
         curr_cell.iterateParticlePairs(f, _cutoff);
         
         std::vector<int> allNeighbors{curr_cell.getNeighbours()};
-        allNeighbors.insert(allNeighbors.end(), curr_cell.getHaloNeighbours().begin(), curr_cell.getHaloNeighbours().end());
+        
+        if (curr_cell.getType() == CellType::BoundaryCell)
+            allNeighbors.insert(allNeighbors.end(), curr_cell.getHaloNeighbours().begin(), curr_cell.getHaloNeighbours().end());
 
         // interaction with neighboring cells (with higher index) and halo cells
         for (int j : allNeighbors)

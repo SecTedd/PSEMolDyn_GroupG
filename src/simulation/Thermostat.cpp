@@ -78,7 +78,10 @@ double Thermostat::calculateCurrentTemperature() {
     }
 
     for (auto &p: particleContainer->getActiveParticles()) {
-        double dotProduct = pow(ArrayUtils::L2Norm(p.getV()), 2);
+        double dotProduct = 0;
+        for (long unsigned int i = 0; i < p.getV().size(); i++) {
+            dotProduct += p.getV()[i] * p.getV()[i];
+        }
         kineticE += (p.getM() * dotProduct) / 2;
     }
 

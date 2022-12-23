@@ -109,7 +109,7 @@ void Simulation::calculateX()
         p1.setX(x_new);
     };
 
-    particleContainer->iterateParticles(f);
+    particleContainer->iterateParticles(f, true);
 }
 
 void Simulation::calculateV()
@@ -123,7 +123,7 @@ void Simulation::calculateV()
         p1.setV(v_new);
     };
 
-    particleContainer->iterateParticles(f);
+    particleContainer->iterateParticles(f, false);
 }
 
 const std::shared_ptr<spdlog::logger> Simulation::getLogicLogger() const { return _logicLogger; }

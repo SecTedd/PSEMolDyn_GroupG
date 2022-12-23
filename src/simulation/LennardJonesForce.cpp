@@ -26,7 +26,7 @@ void LennardJonesForce::calculateForce(ParticleContainer &particleContainer)
         p1.setF({0.0, 0.0, 0.0});
     };
 
-    particleContainer.iterateParticles(forceInitializationIteration);
+    particleContainer.iterateParticles(forceInitializationIteration, false);
 
 
     // in the second step we calculate the forces between pairs of particles according to the Lennard-Jones formula
@@ -34,7 +34,11 @@ void LennardJonesForce::calculateForce(ParticleContainer &particleContainer)
     {
         double distance = ArrayUtils::L2Norm(p1.getX() - p2.getX());
         double sigma = (p1.getSigma() + p2.getSigma()) / 2;
-        double epsilon = sqrt(p1.getEpsilon() * p2.getEpsilon());       
+        double epsilon;  
+        if(p1.getEpsilon() == p2.getEpsilon())
+            epsilon = p1.getEpsilon(); 
+        else   
+            epsilon = sqrt(p1.getEpsilon() * p2.getEpsilon()); 
 
         // Reduce number of operation by reusing previous results
         double pow1 = sigma / distance;
