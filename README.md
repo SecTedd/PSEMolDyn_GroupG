@@ -67,6 +67,12 @@ The logs are written to files which can be found in the **/logs/** folder or to 
 Logic logs are used to log events in the program flow. Within the logic logs, there is the distinction between input, output and simulation. <br />
 Memory logs on the other hand document the construction and destruction of objects and therefore help to detect and prevent memory leaks. <br />
 
+## Contest 1 (Sequential)
+To reproduce our results run the simulation in benchmark mode with 1 run <br />
+We used gcc 11.2.0 and -O2 compiler optimization. <br />
+Runtime: 14.8329 sec <br /> 
+Mups: 674176 <br />
+
 ## Structure: 
 ```
 ./
