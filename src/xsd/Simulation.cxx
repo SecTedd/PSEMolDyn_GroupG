@@ -145,16 +145,16 @@ boundaries (::std::unique_ptr< boundaries_type > x)
   this->boundaries_.set (std::move (x));
 }
 
-const simulation_t::temp_init_type& simulation_t::
+const simulation_t::temp_init_optional& simulation_t::
 temp_init () const
 {
-  return this->temp_init_.get ();
+  return this->temp_init_;
 }
 
-simulation_t::temp_init_type& simulation_t::
+simulation_t::temp_init_optional& simulation_t::
 temp_init ()
 {
-  return this->temp_init_.get ();
+  return this->temp_init_;
 }
 
 void simulation_t::
@@ -163,16 +163,22 @@ temp_init (const temp_init_type& x)
   this->temp_init_.set (x);
 }
 
-const simulation_t::brownianMotion_type& simulation_t::
-brownianMotion () const
+void simulation_t::
+temp_init (const temp_init_optional& x)
 {
-  return this->brownianMotion_.get ();
+  this->temp_init_ = x;
 }
 
-simulation_t::brownianMotion_type& simulation_t::
+const simulation_t::brownianMotion_optional& simulation_t::
+brownianMotion () const
+{
+  return this->brownianMotion_;
+}
+
+simulation_t::brownianMotion_optional& simulation_t::
 brownianMotion ()
 {
-  return this->brownianMotion_.get ();
+  return this->brownianMotion_;
 }
 
 void simulation_t::
@@ -181,28 +187,28 @@ brownianMotion (const brownianMotion_type& x)
   this->brownianMotion_.set (x);
 }
 
-const simulation_t::n_thermostat_optional& simulation_t::
-n_thermostat () const
+void simulation_t::
+brownianMotion (const brownianMotion_optional& x)
 {
-  return this->n_thermostat_;
+  this->brownianMotion_ = x;
 }
 
-simulation_t::n_thermostat_optional& simulation_t::
+const simulation_t::n_thermostat_type& simulation_t::
+n_thermostat () const
+{
+  return this->n_thermostat_.get ();
+}
+
+simulation_t::n_thermostat_type& simulation_t::
 n_thermostat ()
 {
-  return this->n_thermostat_;
+  return this->n_thermostat_.get ();
 }
 
 void simulation_t::
 n_thermostat (const n_thermostat_type& x)
 {
   this->n_thermostat_.set (x);
-}
-
-void simulation_t::
-n_thermostat (const n_thermostat_optional& x)
-{
-  this->n_thermostat_ = x;
 }
 
 const simulation_t::temp_target_optional& simulation_t::
@@ -1185,17 +1191,16 @@ simulation_t (const end_time_type& end_time,
               const cutoff_type& cutoff,
               const domain_type& domain,
               const boundaries_type& boundaries,
-              const temp_init_type& temp_init,
-              const brownianMotion_type& brownianMotion)
+              const n_thermostat_type& n_thermostat)
 : ::xml_schema::type (),
   end_time_ (end_time, this),
   delta_t_ (delta_t, this),
   cutoff_ (cutoff, this),
   domain_ (domain, this),
   boundaries_ (boundaries, this),
-  temp_init_ (temp_init, this),
-  brownianMotion_ (brownianMotion, this),
-  n_thermostat_ (this),
+  temp_init_ (this),
+  brownianMotion_ (this),
+  n_thermostat_ (n_thermostat, this),
   temp_target_ (this),
   delta_temp_ (this),
   g_grav_ (this),
@@ -1214,17 +1219,16 @@ simulation_t (const end_time_type& end_time,
               const cutoff_type& cutoff,
               ::std::unique_ptr< domain_type > domain,
               ::std::unique_ptr< boundaries_type > boundaries,
-              const temp_init_type& temp_init,
-              const brownianMotion_type& brownianMotion)
+              const n_thermostat_type& n_thermostat)
 : ::xml_schema::type (),
   end_time_ (end_time, this),
   delta_t_ (delta_t, this),
   cutoff_ (cutoff, this),
   domain_ (std::move (domain), this),
   boundaries_ (std::move (boundaries), this),
-  temp_init_ (temp_init, this),
-  brownianMotion_ (brownianMotion, this),
-  n_thermostat_ (this),
+  temp_init_ (this),
+  brownianMotion_ (this),
+  n_thermostat_ (n_thermostat, this),
   temp_target_ (this),
   delta_temp_ (this),
   g_grav_ (this),
@@ -1367,7 +1371,7 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     //
     if (n.name () == "temp_init" && n.namespace_ ().empty ())
     {
-      if (!temp_init_.present ())
+      if (!this->temp_init_)
       {
         this->temp_init_.set (temp_init_traits::create (i, f, this));
         continue;
@@ -1378,7 +1382,7 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     //
     if (n.name () == "brownianMotion" && n.namespace_ ().empty ())
     {
-      if (!brownianMotion_.present ())
+      if (!this->brownianMotion_)
       {
         this->brownianMotion_.set (brownianMotion_traits::create (i, f, this));
         continue;
@@ -1389,7 +1393,7 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     //
     if (n.name () == "n_thermostat" && n.namespace_ ().empty ())
     {
-      if (!this->n_thermostat_)
+      if (!n_thermostat_.present ())
       {
         this->n_thermostat_.set (n_thermostat_traits::create (i, f, this));
         continue;
@@ -1536,17 +1540,10 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       "");
   }
 
-  if (!temp_init_.present ())
+  if (!n_thermostat_.present ())
   {
     throw ::xsd::cxx::tree::expected_element< char > (
-      "temp_init",
-      "");
-  }
-
-  if (!brownianMotion_.present ())
-  {
-    throw ::xsd::cxx::tree::expected_element< char > (
-      "brownianMotion",
+      "n_thermostat",
       "");
   }
 }

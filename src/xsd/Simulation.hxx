@@ -856,7 +856,7 @@ class simulation_t: public ::xml_schema::type
    * @name temp_init
    *
    * @brief Accessor and modifier functions for the %temp_init
-   * required element.
+   * optional element.
    */
   //@{
 
@@ -866,24 +866,30 @@ class simulation_t: public ::xml_schema::type
   typedef ::xml_schema::double_ temp_init_type;
 
   /**
+   * @brief Element optional container type.
+   */
+  typedef ::xsd::cxx::tree::optional< temp_init_type > temp_init_optional;
+
+  /**
    * @brief Element traits type.
    */
   typedef ::xsd::cxx::tree::traits< temp_init_type, char, ::xsd::cxx::tree::schema_type::double_ > temp_init_traits;
 
   /**
-   * @brief Return a read-only (constant) reference to the element.
+   * @brief Return a read-only (constant) reference to the element
+   * container.
    *
-   * @return A constant reference to the element.
+   * @return A constant reference to the optional container.
    */
-  const temp_init_type&
+  const temp_init_optional&
   temp_init () const;
 
   /**
-   * @brief Return a read-write reference to the element.
+   * @brief Return a read-write reference to the element container.
    *
-   * @return A reference to the element.
+   * @return A reference to the optional container.
    */
-  temp_init_type&
+  temp_init_optional&
   temp_init ();
 
   /**
@@ -897,13 +903,25 @@ class simulation_t: public ::xml_schema::type
   void
   temp_init (const temp_init_type& x);
 
+  /**
+   * @brief Set the element value.
+   *
+   * @param x An optional container with the new value to set.
+   *
+   * If the value is present in @a x then this function makes a copy 
+   * of this value and sets it as the new value of the element.
+   * Otherwise the element container is set the 'not present' state.
+   */
+  void
+  temp_init (const temp_init_optional& x);
+
   //@}
 
   /**
    * @name brownianMotion
    *
    * @brief Accessor and modifier functions for the %brownianMotion
-   * required element.
+   * optional element.
    */
   //@{
 
@@ -913,24 +931,30 @@ class simulation_t: public ::xml_schema::type
   typedef ::xml_schema::boolean brownianMotion_type;
 
   /**
+   * @brief Element optional container type.
+   */
+  typedef ::xsd::cxx::tree::optional< brownianMotion_type > brownianMotion_optional;
+
+  /**
    * @brief Element traits type.
    */
   typedef ::xsd::cxx::tree::traits< brownianMotion_type, char > brownianMotion_traits;
 
   /**
-   * @brief Return a read-only (constant) reference to the element.
+   * @brief Return a read-only (constant) reference to the element
+   * container.
    *
-   * @return A constant reference to the element.
+   * @return A constant reference to the optional container.
    */
-  const brownianMotion_type&
+  const brownianMotion_optional&
   brownianMotion () const;
 
   /**
-   * @brief Return a read-write reference to the element.
+   * @brief Return a read-write reference to the element container.
    *
-   * @return A reference to the element.
+   * @return A reference to the optional container.
    */
-  brownianMotion_type&
+  brownianMotion_optional&
   brownianMotion ();
 
   /**
@@ -944,13 +968,25 @@ class simulation_t: public ::xml_schema::type
   void
   brownianMotion (const brownianMotion_type& x);
 
+  /**
+   * @brief Set the element value.
+   *
+   * @param x An optional container with the new value to set.
+   *
+   * If the value is present in @a x then this function makes a copy 
+   * of this value and sets it as the new value of the element.
+   * Otherwise the element container is set the 'not present' state.
+   */
+  void
+  brownianMotion (const brownianMotion_optional& x);
+
   //@}
 
   /**
    * @name n_thermostat
    *
    * @brief Accessor and modifier functions for the %n_thermostat
-   * optional element.
+   * required element.
    */
   //@{
 
@@ -960,30 +996,24 @@ class simulation_t: public ::xml_schema::type
   typedef ::xml_schema::int_ n_thermostat_type;
 
   /**
-   * @brief Element optional container type.
-   */
-  typedef ::xsd::cxx::tree::optional< n_thermostat_type > n_thermostat_optional;
-
-  /**
    * @brief Element traits type.
    */
   typedef ::xsd::cxx::tree::traits< n_thermostat_type, char > n_thermostat_traits;
 
   /**
-   * @brief Return a read-only (constant) reference to the element
-   * container.
+   * @brief Return a read-only (constant) reference to the element.
    *
-   * @return A constant reference to the optional container.
+   * @return A constant reference to the element.
    */
-  const n_thermostat_optional&
+  const n_thermostat_type&
   n_thermostat () const;
 
   /**
-   * @brief Return a read-write reference to the element container.
+   * @brief Return a read-write reference to the element.
    *
-   * @return A reference to the optional container.
+   * @return A reference to the element.
    */
-  n_thermostat_optional&
+  n_thermostat_type&
   n_thermostat ();
 
   /**
@@ -996,18 +1026,6 @@ class simulation_t: public ::xml_schema::type
    */
   void
   n_thermostat (const n_thermostat_type& x);
-
-  /**
-   * @brief Set the element value.
-   *
-   * @param x An optional container with the new value to set.
-   *
-   * If the value is present in @a x then this function makes a copy 
-   * of this value and sets it as the new value of the element.
-   * Otherwise the element container is set the 'not present' state.
-   */
-  void
-  n_thermostat (const n_thermostat_optional& x);
 
   //@}
 
@@ -1618,8 +1636,7 @@ class simulation_t: public ::xml_schema::type
                 const cutoff_type&,
                 const domain_type&,
                 const boundaries_type&,
-                const temp_init_type&,
-                const brownianMotion_type&);
+                const n_thermostat_type&);
 
   /**
    * @brief Create an instance from the ultimate base and
@@ -1634,8 +1651,7 @@ class simulation_t: public ::xml_schema::type
                 const cutoff_type&,
                 ::std::unique_ptr< domain_type >,
                 ::std::unique_ptr< boundaries_type >,
-                const temp_init_type&,
-                const brownianMotion_type&);
+                const n_thermostat_type&);
 
   /**
    * @brief Create an instance from a DOM element.
@@ -1712,9 +1728,9 @@ class simulation_t: public ::xml_schema::type
   ::xsd::cxx::tree::one< cutoff_type > cutoff_;
   ::xsd::cxx::tree::one< domain_type > domain_;
   ::xsd::cxx::tree::one< boundaries_type > boundaries_;
-  ::xsd::cxx::tree::one< temp_init_type > temp_init_;
-  ::xsd::cxx::tree::one< brownianMotion_type > brownianMotion_;
-  n_thermostat_optional n_thermostat_;
+  temp_init_optional temp_init_;
+  brownianMotion_optional brownianMotion_;
+  ::xsd::cxx::tree::one< n_thermostat_type > n_thermostat_;
   temp_target_optional temp_target_;
   delta_temp_optional delta_temp_;
   g_grav_optional g_grav_;
