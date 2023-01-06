@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <simulation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:noNamespaceSchemaLocation="../src/xsd/Simulation.xsd">
-    <end_time>5</end_time>
+    <end_time>10</end_time>
     <delta_t>0.0005</delta_t>
     <cutoff>3</cutoff>
     <domain>
-        <x>6</x>
-        <y>54</y>
+        <x>30</x>
+        <y>40</y>
         <z>1</z>
     </domain>
     <boundaries>
@@ -18,11 +18,12 @@
         <zBack>Outflow</zBack>
     </boundaries>
     <temp_init>40</temp_init>
+    <brownianMotion>false</brownianMotion>
     <n_thermostat>1000</n_thermostat>
     <temp_target>40</temp_target>
-    <g_grav>-12.44</g_grav>
+    <g_grav>12.44</g_grav>
     <writeFrequency>1</writeFrequency>
-    <baseName>outputVTKRayleighTaylorBigFive</baseName>
+    <baseName>outputVTKOneCuboid</baseName>
     <cuboid>
         <mass>1.0</mass>
         <h>1.2</h>
@@ -40,30 +41,8 @@
             <z>0</z>
         </velocity>
         <dimensions>
-            <x>250</x>
-            <y>20</y>
-            <z>1</z>
-        </dimensions>
-    </cuboid>
-    <cuboid>
-        <mass>2.0</mass>
-        <h>1.2</h>
-        <epsilon>1</epsilon>
-        <sigma>1.1</sigma>
-        <type>2</type>
-        <position>
-            <x>0.6</x>
-            <y>27</y>
-            <z>0</z>
-        </position>
-        <velocity>
-            <x>0</x>
-            <y>0</y>
-            <z>0</z>
-        </velocity>
-        <dimensions>
-            <x>5</x>
-            <y>20</y>
+            <x>25</x>
+            <y>30</y>
             <z>1</z>
         </dimensions>
     </cuboid>

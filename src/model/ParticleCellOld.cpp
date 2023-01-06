@@ -12,22 +12,22 @@
 ParticleCell::ParticleCell(CellType type, std::array<BoundaryCondition, 6> boundaries)
 {
     _type = type;
-    boundaries = boundaries;
-    particles.reset(new std::vector<int>);
+    _boundaries = boundaries;
+    _particles.reset(new std::vector<Particle *>);
 
-    memoryLogger = spdlog::get("memory_logger");
-    memoryLogger->info("ParticleCell generated!");
-    simulationLogger = spdlog::get("simulation_logger");
+    _memoryLogger = spdlog::get("memory_logger");
+    _memoryLogger->info("ParticleCell generated!");
+    _simulationLogger = spdlog::get("simulation_logger");
 }
 
 ParticleCell::~ParticleCell()
 {
-    memoryLogger->info("ParticleCell destructed!");
+    _memoryLogger->info("ParticleCell destructed!");
 }
 
-const void ParticleCell::insertParticle(int index)
+const void ParticleCell::insertParticle(Particle *p)
 {
-    particles->push_back(index);
+    _particles->push_back(p);
 }
 
 const void ParticleCell::iterateParticlePairs(std::function<void(Particle &, Particle &)> f, double cutoff)
@@ -78,7 +78,7 @@ const int ParticleCell::size() { return _particles->size(); }
 
 const std::vector<int> &ParticleCell::getNeighbours() { return _neighbours; }
 
-const void ParticleCell::setNeighbours(std::vector<int> &neighbours) { this->neighbours = neighbours; }
+const void ParticleCell::setNeighbours(std::vector<int> &neighbours) { _neighbours = neighbours; }
 
 const std::vector<int> &ParticleCell::getHaloNeighbours() { return _haloNeighbours; }
 

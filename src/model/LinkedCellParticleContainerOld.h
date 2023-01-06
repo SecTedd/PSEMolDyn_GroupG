@@ -21,21 +21,19 @@ class LinkedCellParticleContainer : public ParticleContainer
 {
 
 private:
-    std::vector<Particle> activeParticles; // base vector to store all particles inside the domain
+    std::vector<Particle> _activeParticleVector; // base vector to store all particles inside the domain
 
-    std::vector<Particle> haloParticles; // base vector to store all halo particles
+    std::vector<Particle> _haloParticleVector; // base vector to store all halo particles
 
-    std::vector<ParticleCell> cells; // stores all cells
+    std::vector<ParticleCell> _cellVector; // stores all cells
 
-
-
-    std::array<double, 3> domain; // domain size in each dimension
+    std::array<double, 3> _domain; // domain size in each dimension
 
     double _cutoff; // max. rdistance of particles where force calculation is applied
 
-    std::array<int, 3> numCells; // number of cells in each dimension
+    std::array<int, 3> _numCells; // number of cells in each dimension
 
-    std::array<double, 3> cellSize; // cell size in each dimension
+    std::array<double, 3> _cellSize; // cell size in each dimension
 
     /**
      * @brief compute index of cell the given particle belongs to

@@ -17,8 +17,8 @@
 enum class CellType
 {
     InnerCell,
-    HaloCell, 
-    PeriodicHaloCell
+    BoundaryCell, 
+    HaloCell
 };
 
 /**
@@ -28,7 +28,8 @@ enum class BoundaryCondition
 {
     Outflow,
     Reflecting,
-    Periodic
+    Periodic,
+    None // maybe not needed
 };
 
 /**
@@ -38,9 +39,11 @@ class ParticleCell
 {
 private:
     //std::vector<Particle *> _particles; // vector of pointers to particles currently in this cell
-    std::shared_ptr<std::vector<int>> particles; //reference to vector of pointers to particles currently in this cell
+    std::shared_ptr<std::vector<Particle *>> _particles; //reference to vector of pointers to particles currently in this cell
 
-    std::vector<int> neighbours; // structure to store index of neighboring cells with a higher index
+    std::vector<int> _neighbours; // structure to store index of neighboring cells with a higher index
+
+    std::vector<int> _haloNeighbours; //structure to store index of neighboring halo cells
 
     CellType _type; // type of cell (inner or boundary)
 
@@ -50,10 +53,10 @@ private:
      * middle two indices for y-direction (bottom, top)
      * last two indices for z-direction (front, back)
      */
-    std::array<BoundaryCondition, 6> boundaries;
+    std::array<BoundaryCondition, 6> _boundaries;
 
-    std::shared_ptr<spdlog::logger> memoryLogger; // a speedlog logger which logs construction and destruction of particles
-    std::shared_ptr<spdlog::logger> simulationLogger;
+    std::shared_ptr<spdlog::logger> _memoryLogger; // a speedlog logger which logs construction and destruction of particles
+    std::shared_ptr<spdlog::logger> _simulationLogger;
 
 public:
     /**
@@ -68,7 +71,7 @@ public:
      * @brief inserts pointer to particle at the end of particle vector
      * @param p pointer to new particle
      */
-    const void insertParticle(int index);
+    const void insertParticle(Particle *p);
 
     /**
      * @brief computes given function for every particle pair inside the cell (making use of Newton's third law)

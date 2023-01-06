@@ -290,24 +290,30 @@ namespace PContainer
      * @param prev_cell the cell where the particle was 
      * @param new_cell the cell where the particle currently is 
      * @param numCells the number of cells for the linked cell
+     * @returns a vector with all boundaries that are crossed
     */
-    inline int crossedBoundary(int prev_cell, int new_cell, std::array<int, 3> &numCells) {
+    inline std::vector<int> crossedBoundary(int prev_cell, int new_cell, std::array<int, 3> &numCells) {
         std::array<int, 3> prev_cell_3D = convert1DTo3D(prev_cell, numCells);
         std::array<int, 3> new_cell_3D = convert1DTo3D(new_cell, numCells);
 
-        if (new_cell_3D[0] - prev_cell_3D[0] == -1) 
-            return 0;
-        else if (new_cell_3D[0] - prev_cell_3D[0] == 1)
-            return 1;
-        else if (new_cell_3D[1] - prev_cell_3D[1] == -1)
-            return 2;
-        else if (new_cell_3D[1] - prev_cell_3D[1] == 1)
-            return 3;
-        else if (new_cell_3D[2] - prev_cell_3D[2] == -1)
-            return 4;
-        else if (new_cell_3D[2] - prev_cell_3D[2] == 1)
-            return 5;
-        else 
+        std::vector<int> boundaries = {}; 
+
+        int boundary = 0; 
+        for(int i = 0; i < 3; i++){
+            if(new_cell_3D[i] - prev_cell_3D[i] == -1){
+                boundaries.push_back(boundary); 
+                boundary++; 
+            } else 
+                boundary++;
+            if(new_cell_3D[i] - prev_cell_3D[i] == 1){
+                boundaries.push_back(boundary); 
+                boundary++; 
+            } else 
+                boundary++;
+        }
+        if(boundaries.size() == 0) 
             throw std::invalid_argument("Cells not adjacent, cannot compute crossed boundary between " + std::to_string(prev_cell) + " and " + std::to_string(new_cell));
+
+        return boundaries; 
     }
 }
