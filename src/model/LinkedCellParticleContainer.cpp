@@ -42,9 +42,7 @@ const void LinkedCellParticleContainer::initializeCells(std::array<BoundaryCondi
 
     // cell size has to be at least 1, otherwise we get problems with division by 0
     if (sizeZ == 0)
-    {
         sizeZ = 1;
-    }
 
     cellSize = {sizeX, sizeY, sizeZ};
 
@@ -114,6 +112,18 @@ const void LinkedCellParticleContainer::initializeCells(std::array<BoundaryCondi
         auto neighbours = PContainer::getDomainNeighboursNewton(i, numCells);
         cells[i].setNeighbours(neighbours);
     }
+
+    for(long unsigned int i = 0; i < cells.size(); i++){
+        if(cells[i].getType() == CellType::BoundaryCell)
+                std::cout << "Cell: " << i << ", Type: Boundary" << std::endl; 
+        if(cells[i].getType() == CellType::InnerCell)
+                std::cout << "Cell: " << i << ", Type: Inner" << std::endl; 
+        if(cells[i].getType() == CellType::PeriodicHaloCell)
+                std::cout << "Cell: " << i << ", Type: Periodic" << std::endl; 
+        if(cells[i].getType() == CellType::HaloCell)
+                std::cout << "Cell: " << i << ", Type: Halo" << std::endl; 
+
+    }
 }
 
 const int LinkedCellParticleContainer::computeCellIdx(Particle &p)
@@ -125,10 +135,9 @@ const int LinkedCellParticleContainer::computeCellIdx(Particle &p)
 
     int cellIdx = cell_idx_z * numCells[1] * numCells[0] + cell_idx_y * numCells[0] + cell_idx_x;
 
-    if (cellIdx < 0)
-    {
-        std::cout << p.getX()[0] << " " << p.getX()[1] << " " << p.getX()[2] << std::endl;
-    }
+
+        std::cout << "CellIndex calculation: " << cellIdx << " x: " << p.getX()[0] << " " << p.getX()[1] << " " << p.getX()[2] << std::endl;
+
 
     return cellIdx;
 }
@@ -163,6 +172,8 @@ const void LinkedCellParticleContainer::rebuildCells()
     activeParticles.erase(std::remove_if(activeParticles.begin(), activeParticles.end(), [](Particle p)
                                          { return p.getHalo(); }),
                           activeParticles.end());
+
+
 
     // then rebuild the cells
     for (long unsigned int i = 0; i < activeParticles.size(); i++)
@@ -270,7 +281,7 @@ const void LinkedCellParticleContainer::iterateParticles(std::function<void(Part
         if (cellIndex != particle.getCellIdx())
         {
             // particle can either be in a regular halo cell which means outflow, a periodic halo which means it needs to be mirrored or in an inner cell which means the index has to be changed
-            if (cells[cellIndex].getType() == CellType::InnerCell)
+            if (cells[cellIndex].getType() == CellType::InnerCell || cells[cellIndex].getType() == CellType::BoundaryCell)
             {
                 // only change in cell index and then a rebuild required
                 particle.setCellIdx(cellIndex);
@@ -279,6 +290,7 @@ const void LinkedCellParticleContainer::iterateParticles(std::function<void(Part
             }
             else if (cells[cellIndex].getType() == CellType::HaloCell)
             {
+                std::cout << "HaloCell" << std::endl; 
                 particle.setCellIdx(cellIndex);
                 particle.setHalo(true);
                 cellRebuild = true;
