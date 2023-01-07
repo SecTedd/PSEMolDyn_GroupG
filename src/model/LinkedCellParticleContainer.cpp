@@ -66,44 +66,45 @@ const void LinkedCellParticleContainer::initializeCells(std::array<BoundaryCondi
         {
             ct = CellType::HaloCell;
         }
-
-        // cell at left boundary
-        if (index[0] == 1)
+        else
         {
-            boundaries[0] = domainBoundaries[0];
-            ct = CellType::BoundaryCell;
+            // cell at left boundary
+            if (index[0] == 1)
+            {
+                boundaries[0] = domainBoundaries[0];
+                ct = CellType::BoundaryCell;
+            }
+            // cell at right boundary
+            if (index[0] == numCells[0] - 2)
+            {
+                boundaries[1] = domainBoundaries[1];
+                ct = CellType::BoundaryCell;
+            }
+            // cell at bottom boundary
+            if (index[1] == 1)
+            {
+                boundaries[2] = domainBoundaries[2];
+                ct = CellType::BoundaryCell;
+            }
+            // cell at top boundary
+            if (index[1] == numCells[1] - 2)
+            {
+                boundaries[3] = domainBoundaries[3];
+                ct = CellType::BoundaryCell;
+            }
+            // cell at front boundary
+            if (index[2] == 1)
+            {
+                boundaries[4] = domainBoundaries[4];
+                ct = CellType::BoundaryCell;
+            }
+            // cell at back boundary
+            if (index[2] == numCells[2] - 2)
+            {
+                boundaries[5] = domainBoundaries[5];
+                ct = CellType::BoundaryCell;
+            }
         }
-        // cell at right boundary
-        if (index[0] == numCells[0] - 2)
-        {
-            boundaries[1] = domainBoundaries[1];
-            ct = CellType::BoundaryCell;
-        }
-        // cell at bottom boundary
-        if (index[1] == 1)
-        {
-            boundaries[2] = domainBoundaries[2];
-            ct = CellType::BoundaryCell;
-        }
-        // cell at top boundary
-        if (index[1] == numCells[1] - 2)
-        {
-            boundaries[3] = domainBoundaries[3];
-            ct = CellType::BoundaryCell;
-        }
-        // cell at front boundary
-        if (index[2] == 1)
-        {
-            boundaries[4] = domainBoundaries[4];
-            ct = CellType::BoundaryCell;
-        }
-        // cell at back boundary
-        if (index[2] == numCells[2] - 2)
-        {
-            boundaries[5] = domainBoundaries[5];
-            ct = CellType::BoundaryCell;
-        }
-
         cells.emplace_back(ct, boundaries);
     }
 
@@ -111,18 +112,6 @@ const void LinkedCellParticleContainer::initializeCells(std::array<BoundaryCondi
     {
         auto neighbours = PContainer::getDomainNeighboursNewton(i, numCells);
         cells[i].setNeighbours(neighbours);
-    }
-
-    for(long unsigned int i = 0; i < cells.size(); i++){
-        if(cells[i].getType() == CellType::BoundaryCell)
-                std::cout << "Cell: " << i << ", Type: Boundary" << std::endl; 
-        if(cells[i].getType() == CellType::InnerCell)
-                std::cout << "Cell: " << i << ", Type: Inner" << std::endl; 
-        if(cells[i].getType() == CellType::PeriodicHaloCell)
-                std::cout << "Cell: " << i << ", Type: Periodic" << std::endl; 
-        if(cells[i].getType() == CellType::HaloCell)
-                std::cout << "Cell: " << i << ", Type: Halo" << std::endl; 
-
     }
 }
 
@@ -134,10 +123,6 @@ const int LinkedCellParticleContainer::computeCellIdx(Particle &p)
     int cell_idx_z = static_cast<int>(std::floor(p.getX()[2] / cellSize[2])) + 1;
 
     int cellIdx = cell_idx_z * numCells[1] * numCells[0] + cell_idx_y * numCells[0] + cell_idx_x;
-
-
-        std::cout << "CellIndex calculation: " << cellIdx << " x: " << p.getX()[0] << " " << p.getX()[1] << " " << p.getX()[2] << std::endl;
-
 
     return cellIdx;
 }
@@ -172,8 +157,6 @@ const void LinkedCellParticleContainer::rebuildCells()
     activeParticles.erase(std::remove_if(activeParticles.begin(), activeParticles.end(), [](Particle p)
                                          { return p.getHalo(); }),
                           activeParticles.end());
-
-
 
     // then rebuild the cells
     for (long unsigned int i = 0; i < activeParticles.size(); i++)
@@ -290,7 +273,6 @@ const void LinkedCellParticleContainer::iterateParticles(std::function<void(Part
             }
             else if (cells[cellIndex].getType() == CellType::HaloCell)
             {
-                std::cout << "HaloCell" << std::endl; 
                 particle.setCellIdx(cellIndex);
                 particle.setHalo(true);
                 cellRebuild = true;
