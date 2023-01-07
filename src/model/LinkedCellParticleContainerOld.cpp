@@ -12,7 +12,7 @@
 #include <iostream>
 #include <string>
 
-LinkedCellParticleContainer::LinkedCellParticleContainer(double cutoff, std::array<double, 3> &domain, std::array<BoundaryCondition, 6> &domainBoundaries)
+LinkedCellParticleContainerOld::LinkedCellParticleContainerOld(double cutoff, std::array<double, 3> &domain, std::array<BoundaryCondition, 6> &domainBoundaries)
 {
     _memoryLogger = spdlog::get("memory_logger");
     _memoryLogger->info("LinkedCellParticleContainer generated!");
@@ -23,12 +23,12 @@ LinkedCellParticleContainer::LinkedCellParticleContainer(double cutoff, std::arr
 
     initializeCells(domainBoundaries);
 }
-LinkedCellParticleContainer::~LinkedCellParticleContainer()
+LinkedCellParticleContainerOld::~LinkedCellParticleContainerOld()
 {
     _memoryLogger->info("LinkedCellParticleContainer destructed!");
 }
 
-const void LinkedCellParticleContainer::initializeCells(std::array<BoundaryCondition, 6> &domainBoundaries)
+const void LinkedCellParticleContainerOld::initializeCells(std::array<BoundaryCondition, 6> &domainBoundaries)
 {
     int cellsX = static_cast<int>(std::floor(_domain[0] / _cutoff));
     int cellsY = static_cast<int>(std::floor(_domain[1] / _cutoff));
@@ -125,7 +125,7 @@ const void LinkedCellParticleContainer::initializeCells(std::array<BoundaryCondi
     }
 }
 
-const int LinkedCellParticleContainer::computeCellIdx(Particle &p)
+const int LinkedCellParticleContainerOld::computeCellIdx(Particle &p)
 {
     //+1 because of halo cells
     int cell_idx_x = static_cast<int>(std::floor(p.getX()[0] / _cellSize[0])) + 1;
@@ -135,7 +135,7 @@ const int LinkedCellParticleContainer::computeCellIdx(Particle &p)
     return cell_idx_z * _numCells[1] * _numCells[0] + cell_idx_y * _numCells[0] + cell_idx_x;
 }
 
-const void LinkedCellParticleContainer::updateCells()
+const void LinkedCellParticleContainerOld::updateCells()
 {
     for (auto &c : _cellVector)
     {
@@ -152,7 +152,7 @@ const void LinkedCellParticleContainer::updateCells()
     }
 }
 
-const void LinkedCellParticleContainer::rebuildCells()
+const void LinkedCellParticleContainerOld::rebuildCells()
 {
     for (auto &c : _cellVector)
     {
@@ -169,7 +169,7 @@ const void LinkedCellParticleContainer::rebuildCells()
     }
 }
 
-const void LinkedCellParticleContainer::addParticle(std::array<double, 3> &x, std::array<double, 3> &v, double &m, double &epsilon, double &sigma)
+const void LinkedCellParticleContainerOld::addParticle(std::array<double, 3> &x, std::array<double, 3> &v, double &m, double &epsilon, double &sigma)
 {
     if (x[0] >= 0 && x[0] < _domain[0] && x[1] >= 0 && x[1] < _domain[1] && x[2] >= 0 && x[2] < _domain[2])
     {
@@ -189,7 +189,7 @@ const void LinkedCellParticleContainer::addParticle(std::array<double, 3> &x, st
     }
 }
 
-const void LinkedCellParticleContainer::addParticle(std::array<double, 3> &x, std::array<double, 3> &v, double &m, double &epsilon, double &sigma, int &type)
+const void LinkedCellParticleContainerOld::addParticle(std::array<double, 3> &x, std::array<double, 3> &v, double &m, double &epsilon, double &sigma, int &type)
 {
     if (x[0] >= 0 && x[0] < _domain[0] && x[1] >= 0 && x[1] < _domain[1] && x[2] >= 0 && x[2] < _domain[2])
     {
@@ -209,7 +209,7 @@ const void LinkedCellParticleContainer::addParticle(std::array<double, 3> &x, st
     }
 }
 
-const void LinkedCellParticleContainer::addParticle(std::array<double, 3> &x, std::array<double, 3> &v, std::array<double, 3> &f, std::array<double, 3> &old_f, double &m, double &epsilon, double &sigma, int &type)
+const void LinkedCellParticleContainerOld::addParticle(std::array<double, 3> &x, std::array<double, 3> &v, std::array<double, 3> &f, std::array<double, 3> &old_f, double &m, double &epsilon, double &sigma, int &type)
 {
     if (x[0] >= 0 && x[0] < _domain[0] && x[1] >= 0 && x[1] < _domain[1] && x[2] >= 0 && x[2] < _domain[2])
     {
@@ -221,7 +221,7 @@ const void LinkedCellParticleContainer::addParticle(std::array<double, 3> &x, st
     }
 }
 
-const void LinkedCellParticleContainer::iterateParticles(std::function<void(Particle &)> f, bool calcX)
+const void LinkedCellParticleContainerOld::iterateParticles(std::function<void(Particle &)> f, bool calcX)
 {
     bool restructure = false;
     bool restructureAll = false;
@@ -316,7 +316,7 @@ const void LinkedCellParticleContainer::iterateParticles(std::function<void(Part
     }
 }
 
-const void LinkedCellParticleContainer::iterateParticleInteractions(std::function<void(Particle &, Particle &)> f)
+const void LinkedCellParticleContainerOld::iterateParticleInteractions(std::function<void(Particle &, Particle &)> f)
 {
     // boundary conditions
     clearHalo();
@@ -341,7 +341,7 @@ const void LinkedCellParticleContainer::iterateParticleInteractions(std::functio
     // to implement Newton's 3rd law only calculate force interaction with neighboring cells with a higher index in 1D cell vector
     for (long unsigned int i = 0; i < _cellVector.size(); i++)
     {
-        ParticleCell &curr_cell = _cellVector[i];
+        ParticleCellOld &curr_cell = _cellVector[i];
 
         // Halo Cells should not compute interactions in themselves
         // Interactions with boundary cells are handled when they are called
@@ -373,7 +373,7 @@ const void LinkedCellParticleContainer::iterateParticleInteractions(std::functio
     }
 }
 
-std::array<double, 3> LinkedCellParticleContainer::mirroredPosition(Particle &p, std::vector<int> boundaries)
+std::array<double, 3> LinkedCellParticleContainerOld::mirroredPosition(Particle &p, std::vector<int> boundaries)
 {
     std::array<double, 3> newX = {p.getX()[0], p.getX()[1], p.getX()[2]};
     for (int boundary_idx : boundaries)
@@ -409,7 +409,7 @@ std::array<double, 3> LinkedCellParticleContainer::mirroredPosition(Particle &p,
     return newX;
 }
 
-const void LinkedCellParticleContainer::initGhostParticles(std::vector<Particle *> &particles, std::vector<int> boundaries)
+const void LinkedCellParticleContainerOld::initGhostParticles(std::vector<Particle *> &particles, std::vector<int> boundaries)
 {
     for (auto p : particles)
     {
@@ -427,7 +427,7 @@ const void LinkedCellParticleContainer::initGhostParticles(std::vector<Particle 
     }
 }
 
-const void LinkedCellParticleContainer::reflectingBoundary(std::vector<Particle *> &particles, int boundary_idx, std::function<void(Particle &, Particle &)> f)
+const void LinkedCellParticleContainerOld::reflectingBoundary(std::vector<Particle *> &particles, int boundary_idx, std::function<void(Particle &, Particle &)> f)
 {
 
     // check distance of particle to reflecting boundary, if it is close enough apply reflecting force
@@ -499,7 +499,7 @@ const void LinkedCellParticleContainer::reflectingBoundary(std::vector<Particle 
     }
 }
 
-const void LinkedCellParticleContainer::reserveMemoryForParticles(int numberOfParticles)
+const void LinkedCellParticleContainerOld::reserveMemoryForParticles(int numberOfParticles)
 {
     // reserving extra space before new particles are added. Push_back can then be executed without resizing
     int newLength = numberOfParticles + _activeParticleVector.size();
@@ -525,7 +525,7 @@ const void LinkedCellParticleContainer::reserveMemoryForParticles(int numberOfPa
     }
 }
 
-const void LinkedCellParticleContainer::resetParticles()
+const void LinkedCellParticleContainerOld::resetParticles()
 {
     _activeParticleVector.clear();
     _haloParticleVector.clear();
@@ -535,7 +535,7 @@ const void LinkedCellParticleContainer::resetParticles()
     }
 }
 
-std::vector<Particle> *LinkedCellParticleContainer::getBoundaryParticles()
+std::vector<Particle> *LinkedCellParticleContainerOld::getBoundaryParticles()
 {
 
     auto boundaryParticles = std::make_shared<std::vector<Particle>>();
@@ -553,7 +553,7 @@ std::vector<Particle> *LinkedCellParticleContainer::getBoundaryParticles()
     return boundaryParticles.get();
 }
 
-const void LinkedCellParticleContainer::clearHalo()
+const void LinkedCellParticleContainerOld::clearHalo()
 {
     _haloParticleVector.clear();
     for (auto &cell : _cellVector)
@@ -565,10 +565,10 @@ const void LinkedCellParticleContainer::clearHalo()
     }
 }
 
-const int LinkedCellParticleContainer::size() const { return _activeParticleVector.size(); }
+const int LinkedCellParticleContainerOld::size() const { return _activeParticleVector.size(); }
 
-std::vector<ParticleCell> &LinkedCellParticleContainer::getCells() { return _cellVector; }
+std::vector<ParticleCellOld> &LinkedCellParticleContainerOld::getCells() { return _cellVector; }
 
-std::vector<Particle> &LinkedCellParticleContainer::getHaloParticles() { return _haloParticleVector; }
+std::vector<Particle> &LinkedCellParticleContainerOld::getHaloParticles() { return _haloParticleVector; }
 
-std::vector<Particle> &LinkedCellParticleContainer::getActiveParticles() { return _activeParticleVector; }
+std::vector<Particle> &LinkedCellParticleContainerOld::getActiveParticles() { return _activeParticleVector; }

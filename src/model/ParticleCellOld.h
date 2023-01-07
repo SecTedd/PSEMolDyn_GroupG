@@ -35,7 +35,7 @@ enum class BoundaryCondition
 /**
  * @brief class for cells used in the linked cell algorithm
  */
-class ParticleCell
+class ParticleCellOld
 {
 private:
     //std::vector<Particle *> _particles; // vector of pointers to particles currently in this cell
@@ -64,8 +64,8 @@ public:
      * @param type type of cell (inner, boundary)
      * @param boundaries boundary condition on each border of the cell
      */
-    ParticleCell(CellType type, std::array<BoundaryCondition, 6> boundaries);
-    ~ParticleCell();
+    ParticleCellOld(CellType type, std::array<BoundaryCondition, 6> boundaries);
+    ~ParticleCellOld();
 
     /**
      * @brief inserts pointer to particle at the end of particle vector

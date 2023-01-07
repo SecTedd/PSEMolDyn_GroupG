@@ -44,6 +44,7 @@ target_link_libraries(MolSim
         PUBLIC
             PkgConfig::XERCESC
 )
+add_compile_options(-g)
 
 # activate all compiler warnings. Clean up your code :P
 # depending on the compiler different flags are used

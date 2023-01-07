@@ -27,15 +27,18 @@ private:
 
     std::vector<ParticleCell> cells; // stores all cells
 
-
-
     std::array<double, 3> domain; // domain size in each dimension
 
-    double _cutoff; // max. rdistance of particles where force calculation is applied
+    double cutoff; // max. rdistance of particles where force calculation is applied
 
     std::array<int, 3> numCells; // number of cells in each dimension
 
     std::array<double, 3> cellSize; // cell size in each dimension
+
+    /**
+     * @brief computes number of cells and their size in each dimension, initializes them according to domain boundary conditions
+     */
+    const void initializeCells(std::array<BoundaryCondition, 6> &domainBoundaries);
 
     /**
      * @brief compute index of cell the given particle belongs to
@@ -54,17 +57,13 @@ private:
      */
     const void rebuildCells();
 
-    /**
-     * @brief computes number of cells and their size in each dimension, initializes them according to domain boundary conditions
-     */
-    const void initializeCells(std::array<BoundaryCondition, 6> &domainBoundaries);
-
+    const void addParticlesFromHaloCell(); 
     /**
      * @brief computes position of ghost particle in halo 
      * @param p particle which has to be mirrored
      * @param boundaries position of periodic boundary 
     */
-    std::array<double,3> mirroredPosition(Particle &p, std::vector<int> boundaries);
+    std::array<double,3> mirroredPosition(std::array<double, 3> position);
 
 public:
     LinkedCellParticleContainer(double cutoff, std::array<double, 3> &domain, std::array<BoundaryCondition, 6> &boundaries);
@@ -123,14 +122,14 @@ public:
      * @param boundary_idx position of reflecting boundary
      * @param f force calculation function which has to be applied at the reflecting boundary
      */
-    const void reflectingBoundary(std::vector<Particle *> &particles, int boundary_idx, std::function<void(Particle &, Particle &)> f);
+    const void reflectingBoundary(int cellIndex, std::function<void(Particle &, Particle &)> f);
 
     /**
      * @brief emplaces ghost particles of boundary particles at periodic boundaries in halo 
      * @param particles particles inside cell the periodic boundary condition belongs to
      * @param boundaries position of periodic boundary
     */
-    const void initGhostParticles(std::vector<Particle *> &particles, std::vector<int> boundaries);
+    const void periodicBoundary(int cellIndex);
 
     /**
      * @brief removes halo particles from base vector and clears halo cells, updates particle references in cells

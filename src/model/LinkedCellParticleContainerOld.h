@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "ParticleCell.h"
+#include "ParticleCellOld.h"
 #include "ParticleContainer.h"
 
 #include <vector>
@@ -17,7 +17,9 @@
 /**
  * @brief Particle Container that implements the linked cell algorithm. The plots below show how the algorithm can improve the performance of the simulation
  */
-class LinkedCellParticleContainer : public ParticleContainer
+
+
+class LinkedCellParticleContainerOld : public ParticleContainer
 {
 
 private:
@@ -25,7 +27,7 @@ private:
 
     std::vector<Particle> _haloParticleVector; // base vector to store all halo particles
 
-    std::vector<ParticleCell> _cellVector; // stores all cells
+    std::vector<ParticleCellOld> _cellVector; // stores all cells
 
     std::array<double, 3> _domain; // domain size in each dimension
 
@@ -65,9 +67,9 @@ private:
     std::array<double,3> mirroredPosition(Particle &p, std::vector<int> boundaries);
 
 public:
-    LinkedCellParticleContainer(double cutoff, std::array<double, 3> &domain, std::array<BoundaryCondition, 6> &boundaries);
+    LinkedCellParticleContainerOld(double cutoff, std::array<double, 3> &domain, std::array<BoundaryCondition, 6> &boundaries);
 
-    ~LinkedCellParticleContainer() override;
+    ~LinkedCellParticleContainerOld() override;
 
     /**
      * @brief applies given function to particle pairs within the cutoff radius considering each cell and its neighbors, also handles boundary conditions
@@ -158,7 +160,7 @@ public:
      */
     std::vector<Particle> *getBoundaryParticles();
 
-    std::vector<ParticleCell> &getCells();
+    std::vector<ParticleCellOld> &getCells();
 
     std::vector<Particle> &getHaloParticles();
 

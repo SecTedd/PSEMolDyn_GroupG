@@ -17,6 +17,7 @@
 enum class CellType
 {
     InnerCell,
+    BoundaryCell,
     HaloCell, 
     PeriodicHaloCell
 };
@@ -37,12 +38,11 @@ enum class BoundaryCondition
 class ParticleCell
 {
 private:
-    //std::vector<Particle *> _particles; // vector of pointers to particles currently in this cell
-    std::shared_ptr<std::vector<int>> particles; //reference to vector of pointers to particles currently in this cell
+    std::shared_ptr<std::vector<int>> particleIndices; //reference to vector of pointers to particles currently in this cell
 
     std::vector<int> neighbours; // structure to store index of neighboring cells with a higher index
 
-    CellType _type; // type of cell (inner or boundary)
+    CellType type; // type of cell (inner or boundary)
 
     /**
      * array to store boundary conditions for each cell
@@ -68,14 +68,7 @@ public:
      * @brief inserts pointer to particle at the end of particle vector
      * @param p pointer to new particle
      */
-    const void insertParticle(int index);
-
-    /**
-     * @brief computes given function for every particle pair inside the cell (making use of Newton's third law)
-     * @param f function to be applied to particle pairs
-     * @param cutoff is used to check if particle pairs are close enough to iterate
-     */
-    const void iterateParticlePairs(std::function<void(Particle &, Particle &)> f, double cutoff);
+    const void insertParticleIndex(int index);
 
     /**
      * @brief removes all particles from cell
@@ -91,13 +84,13 @@ public:
     /**
      * @brief removes particle pointers of invalid particles
     */
-    const void removeInvalid();
+    const void removeInvalid(std::vector<Particle> *particles);
 
     /**
      * @brief returns particles of this cell
      * @return pointer to particle vector of this cell
      */
-    std::vector<Particle *> *getCellParticles();
+    std::vector<int> *getCellParticleIndices();
 
     const std::array<BoundaryCondition, 6> &getBoundaries();
 
@@ -109,11 +102,5 @@ public:
 
     const std::vector<int> &getNeighbours();
 
-    const void setNeighbours(std::vector<int> &neighbours);
-
-    const std::vector<int> &getHaloNeighbours();
-
-    const void setHaloNeighbours(std::vector<int> &haloNeighbours);
-
-
+    void setNeighbours(std::vector<int> &neighbours);
 };

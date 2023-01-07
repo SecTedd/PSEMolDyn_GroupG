@@ -40,7 +40,6 @@ const void Simulation::simulate()
     int iteration = 0;
 
     OutputFacade outputFacade = OutputFacade(_programParameters);
-    outputFacade.outputVTK(iteration);
 
     // initialize Thermostat
     Thermostat t = Thermostat(_programParameters->getParticleContainer(), _programParameters->getTempInit());
@@ -59,17 +58,20 @@ const void Simulation::simulate()
 
     // calculating force once to initialize force
     _memoryLogger->info("Initial force calculation");
-    _interParticleForceCalculation->calculateForce(*_programParameters->getParticleContainer());
     _singleParticleForceCalculation->calculateForce(*_programParameters->getParticleContainer(), _programParameters->getGGrav()); 
+    _interParticleForceCalculation->calculateForce(*_programParameters->getParticleContainer());
+    outputFacade.outputVTK(iteration);
 
     // for this loop, we assume: current x, current f and current v are known
     while (current_time < _programParameters->getEndTime())
     {
         // calculate new x
         calculateX();
+
         // calculate new f
         _interParticleForceCalculation->calculateForce(*_programParameters->getParticleContainer());
         _singleParticleForceCalculation->calculateForce(*_programParameters->getParticleContainer(), _programParameters->getGGrav()); 
+
         // calculate new v
         calculateV();
 

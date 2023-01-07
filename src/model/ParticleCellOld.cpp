@@ -5,11 +5,11 @@
  * Author:  marquardt
  */
 
-#include "ParticleCell.h"
+#include "ParticleCellOld.h"
 #include "../utils/ArrayUtils.h"
 #include <iostream>
 
-ParticleCell::ParticleCell(CellType type, std::array<BoundaryCondition, 6> boundaries)
+ParticleCellOld::ParticleCellOld(CellType type, std::array<BoundaryCondition, 6> boundaries)
 {
     _type = type;
     _boundaries = boundaries;
@@ -20,17 +20,17 @@ ParticleCell::ParticleCell(CellType type, std::array<BoundaryCondition, 6> bound
     _simulationLogger = spdlog::get("simulation_logger");
 }
 
-ParticleCell::~ParticleCell()
+ParticleCellOld::~ParticleCellOld()
 {
     _memoryLogger->info("ParticleCell destructed!");
 }
 
-const void ParticleCell::insertParticle(Particle *p)
+const void ParticleCellOld::insertParticle(Particle *p)
 {
     _particles->push_back(p);
 }
 
-const void ParticleCell::iterateParticlePairs(std::function<void(Particle &, Particle &)> f, double cutoff)
+const void ParticleCellOld::iterateParticlePairs(std::function<void(Particle &, Particle &)> f, double cutoff)
 {
     // Since we use a vector we can directly access the particles through indexing
     // Because f_ij = -f_ji, we can save (n^2)/2 iterations by starting the inner loop at i+1
@@ -51,35 +51,35 @@ const void ParticleCell::iterateParticlePairs(std::function<void(Particle &, Par
     }
 }
 
-const void ParticleCell::clearCell() { _particles->clear(); }
+const void ParticleCellOld::clearCell() { _particles->clear(); }
 
-const void ParticleCell::reserveMemory(int meanParticles)
+const void ParticleCellOld::reserveMemory(int meanParticles)
 {
     _particles->reserve(_particles->size() + meanParticles);
 }
 
-std::vector<Particle *> *ParticleCell::getCellParticles()
+std::vector<Particle *> *ParticleCellOld::getCellParticles()
 {
     return _particles.get();
 }
 
-const void ParticleCell::removeInvalid()
+const void ParticleCellOld::removeInvalid()
 { 
     _particles->erase(std::remove_if(_particles->begin(), _particles->end(), [](Particle *p)
                                     { return p->getInvalid() || p->getHalo(); }),
                         _particles->end());  
 }
 
-const CellType ParticleCell::getType() { return _type; }
+const CellType ParticleCellOld::getType() { return _type; }
 
-const std::array<BoundaryCondition, 6> &ParticleCell::getBoundaries() { return _boundaries; }
+const std::array<BoundaryCondition, 6> &ParticleCellOld::getBoundaries() { return _boundaries; }
 
-const int ParticleCell::size() { return _particles->size(); }
+const int ParticleCellOld::size() { return _particles->size(); }
 
-const std::vector<int> &ParticleCell::getNeighbours() { return _neighbours; }
+const std::vector<int> &ParticleCellOld::getNeighbours() { return _neighbours; }
 
-const void ParticleCell::setNeighbours(std::vector<int> &neighbours) { _neighbours = neighbours; }
+const void ParticleCellOld::setNeighbours(std::vector<int> &neighbours) { _neighbours = neighbours; }
 
-const std::vector<int> &ParticleCell::getHaloNeighbours() { return _haloNeighbours; }
+const std::vector<int> &ParticleCellOld::getHaloNeighbours() { return _haloNeighbours; }
 
-const void ParticleCell::setHaloNeighbours(std::vector<int> &haloNeighbours) { _haloNeighbours = haloNeighbours; }
+const void ParticleCellOld::setHaloNeighbours(std::vector<int> &haloNeighbours) { _haloNeighbours = haloNeighbours; }

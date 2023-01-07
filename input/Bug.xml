@@ -10,10 +10,10 @@
         <z>1</z>
     </domain>
     <boundaries>
-        <xLeft>Periodic</xLeft>
-        <xRight>Periodic</xRight>
-        <yBottom>Reflecting</yBottom>
-        <yTop>Reflecting</yTop>
+        <xLeft>Outflow</xLeft>
+        <xRight>Outflow</xRight>
+        <yBottom>Outflow</yBottom>
+        <yTop>Outflow</yTop>
         <zFront>Outflow</zFront>
         <zBack>Outflow</zBack>
     </boundaries>
@@ -21,7 +21,7 @@
     <brownianMotion>false</brownianMotion>
     <n_thermostat>1000</n_thermostat>
     <temp_target>40</temp_target>
-    <g_grav>12.44</g_grav>
+    <g_grav>-12.44</g_grav>
     <writeFrequency>1</writeFrequency>
     <baseName>outputVTKOneCuboid</baseName>
     <cuboid>
@@ -42,7 +42,7 @@
         </velocity>
         <dimensions>
             <x>25</x>
-            <y>30</y>
+            <y>2</y>
             <z>1</z>
         </dimensions>
     </cuboid>

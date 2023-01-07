@@ -20,16 +20,13 @@
 
 BoundaryCondition getBoundaryCondition(std::string s)
 {
-    if (s == "Outflow")
-        return BoundaryCondition::Outflow;
-
     if (s == "Reflecting")
         return BoundaryCondition::Reflecting;
 
     if (s == "Periodic")
         return BoundaryCondition::Periodic;
 
-    return BoundaryCondition::None;
+    return BoundaryCondition::Outflow;
 }
 
 void XMLInputReader::readInput(ProgramParameters &programParameters, const char *filename)
@@ -102,7 +99,6 @@ void XMLInputReader::readInput(ProgramParameters &programParameters, const char 
 
         std::array<double, 3> domain;
         simulation_t::domain_type d = xml->domain();
-        std::cout << d.x() << std::endl;
         domain[0] = d.x();
         domain[1] = d.y();
         domain[2] = d.z();
