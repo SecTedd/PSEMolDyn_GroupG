@@ -154,7 +154,7 @@ const void LinkedCellParticleContainer::rebuildCells()
     }
 
     // first we need to remove all halo particles
-    activeParticles.erase(std::remove_if(activeParticles.begin(), activeParticles.end(), [](Particle p)
+    activeParticles.erase(std::remove_if(activeParticles.begin(), activeParticles.end(), [](Particle &p)
                                          { return p.getHalo(); }),
                           activeParticles.end());
 
@@ -201,9 +201,11 @@ const void LinkedCellParticleContainer::iterateParticleInteractions(std::functio
             {
                 for (long unsigned int j = i + 1; j < particleIndices->size(); j++)
                 {
-                    if (ArrayUtils::L2Norm(activeParticles[i].getX() - activeParticles[j].getX()) <= cutoff)
+                    Particle &p1 = activeParticles[particleIndices->at(i)];
+                    Particle &p2 = activeParticles[particleIndices->at(j)];
+                    if (ArrayUtils::L2Norm(p1.getX() - p2.getX()) <= cutoff)
                     {
-                        f(activeParticles[i], activeParticles[j]);
+                        f(p1, p2);
                     }
                 }
             }
@@ -333,7 +335,7 @@ const void LinkedCellParticleContainer::reflectingBoundary(int cellIndex, std::f
     {
         if (boundaries[b] == BoundaryCondition::Reflecting)
         {
-            std::cout << "reflecting boundary at: " << b << std::endl;
+            //std::cout << "reflecting boundary at: " << b << std::endl;
             for (auto particleIndex : *cells[cellIndex].getCellParticleIndices())
             {
                 double reflectingDistance = std::pow(2, 1.0 / 6) * activeParticles[particleIndex].getSigma() / 2;
@@ -421,9 +423,10 @@ const void LinkedCellParticleContainer::periodicBoundary(int cellIndex)
         {
             for (auto particleIndex : *cells[cellIndex].getCellParticleIndices())
             {
+                Particle &toMirror = activeParticles[particleIndex];
                 // std::array<double, 3> &x, std::array<double, 3> &v, double &m, double &epsilon, double &sigma
-                std::array<double, 3> newX = {activeParticles[particleIndex].getX()[0] + mirroringOffset[0], activeParticles[particleIndex].getX()[1] + mirroringOffset[1], activeParticles[particleIndex].getX()[2] + mirroringOffset[2]};
-                haloParticles.emplace_back(newX, activeParticles[particleIndex].getV(), activeParticles[particleIndex].getM(), activeParticles[particleIndex].getEpsilon(), activeParticles[particleIndex].getSigma());
+                std::array<double, 3> newX = toMirror.getX() + mirroringOffset; //{activeParticles[particleIndex].getX()[0] + mirroringOffset[0], activeParticles[particleIndex].getX()[1] + mirroringOffset[1], activeParticles[particleIndex].getX()[2] + mirroringOffset[2]};
+                haloParticles.emplace_back(newX, toMirror.getV(), toMirror.getM(), toMirror.getEpsilon(), toMirror.getSigma());
             }
         }
     }
