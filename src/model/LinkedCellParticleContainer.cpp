@@ -360,7 +360,7 @@ const void LinkedCellParticleContainer::addParticle(std::array<double, 3> &x, st
     if (x[0] >= 0 && x[0] < domain[0] && x[1] >= 0 && x[1] < domain[1] && x[2] >= 0 && x[2] < domain[2])
     {
 
-        activeParticles.emplace_back(x, v, m, epsilon, sigma);
+        activeParticles.emplace_back(x, v, m, epsilon, sigma, type);
         rebuildCells();
     }
 }
@@ -370,7 +370,7 @@ const void LinkedCellParticleContainer::addParticle(std::array<double, 3> &x, st
     if (x[0] >= 0 && x[0] < domain[0] && x[1] >= 0 && x[1] < domain[1] && x[2] >= 0 && x[2] < domain[2])
     {
 
-        activeParticles.emplace_back(x, v, m, epsilon, sigma);
+        activeParticles.emplace_back(x, v, f, old_f, m, epsilon, sigma, type);
         rebuildCells();
     }
 }
