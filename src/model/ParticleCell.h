@@ -40,7 +40,9 @@ class ParticleCell
 private:
     std::shared_ptr<std::vector<int>> particleIndices; //reference to vector of pointers to particles currently in this cell
 
-    std::vector<int> neighbours; // structure to store index of neighboring cells with a higher index
+    std::vector<int> domainNeighbours; // structure to store index of neighboring domain cells with a higher index
+
+    std::vector<int> haloNeighbours; //structure to store all neighbouring halo cells
 
     CellType type; // type of cell (inner or boundary)
 
@@ -100,7 +102,11 @@ public:
 
     const std::string toString();
 
-    const std::vector<int> &getNeighbours();
+    const std::vector<int> &getDomainNeighbours();
 
-    void setNeighbours(std::vector<int> &neighbours);
+    const std::vector<int> &getHaloNeighbours();
+
+    void setDomainNeighbours(std::vector<int> &neighbours);
+
+    void setHaloNeighbours(std::vector<int> &neighbours);
 };

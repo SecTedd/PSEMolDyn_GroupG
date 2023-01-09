@@ -55,6 +55,11 @@ const std::array<BoundaryCondition, 6> &ParticleCell::getBoundaries() { return b
 
 const int ParticleCell::size() { return particleIndices->size(); }
 
-const std::vector<int> &ParticleCell::getNeighbours() { return neighbours; }
+const std::vector<int> &ParticleCell::getDomainNeighbours() { return domainNeighbours; }
 
-void ParticleCell::setNeighbours(std::vector<int> &neighbours) { this->neighbours = neighbours; }
+const std::vector<int> &ParticleCell::getHaloNeighbours() { return haloNeighbours; }
+
+void ParticleCell::setDomainNeighbours(std::vector<int> &neighbours) { this->domainNeighbours = neighbours; }
+
+void ParticleCell::setHaloNeighbours(std::vector<int> &neighbours) { this->haloNeighbours = neighbours; }
+
