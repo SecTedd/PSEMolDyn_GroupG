@@ -42,7 +42,7 @@ private:
 
     std::vector<int> domainNeighbours; // structure to store index of neighboring domain cells with a higher index
 
-    std::vector<int> haloNeighbours; //structure to store all neighbouring halo cells
+    std::vector<int> periodicHaloNeighbours; //structure to store all neighbouring halo cells at a periodic boundary
 
     CellType type; // type of cell (inner or boundary)
 
@@ -104,9 +104,9 @@ public:
 
     const std::vector<int> &getDomainNeighbours();
 
-    const std::vector<int> &getHaloNeighbours();
+    const std::vector<int> &getPeriodicHaloNeighbours();
 
     void setDomainNeighbours(std::vector<int> &neighbours);
 
-    void setHaloNeighbours(std::vector<int> &neighbours);
+    void setPeriodicHaloNeighbours(std::vector<int> &neighbours);
 };

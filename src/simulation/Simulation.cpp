@@ -57,7 +57,6 @@ const void Simulation::simulate()
     }
 
     // calculating force once to initialize force
-    _memoryLogger->info("Initial force calculation");
     _singleParticleForceCalculation->calculateForce(*_programParameters->getParticleContainer(), _programParameters->getGGrav()); 
     _interParticleForceCalculation->calculateForce(*_programParameters->getParticleContainer());
     outputFacade.outputVTK(iteration);

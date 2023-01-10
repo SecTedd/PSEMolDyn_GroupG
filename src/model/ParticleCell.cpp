@@ -57,9 +57,9 @@ const int ParticleCell::size() { return particleIndices->size(); }
 
 const std::vector<int> &ParticleCell::getDomainNeighbours() { return domainNeighbours; }
 
-const std::vector<int> &ParticleCell::getHaloNeighbours() { return haloNeighbours; }
+const std::vector<int> &ParticleCell::getPeriodicHaloNeighbours() { return periodicHaloNeighbours; }
 
 void ParticleCell::setDomainNeighbours(std::vector<int> &neighbours) { this->domainNeighbours = neighbours; }
 
-void ParticleCell::setHaloNeighbours(std::vector<int> &neighbours) { this->haloNeighbours = neighbours; }
+void ParticleCell::setPeriodicHaloNeighbours(std::vector<int> &neighbours) { this->periodicHaloNeighbours = neighbours; }
 

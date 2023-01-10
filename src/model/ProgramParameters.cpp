@@ -16,20 +16,20 @@
 
 ProgramParameters::ProgramParameters()
 {
-    domain = {180, 90, 1};
+    domain = {3, 3, 1};
     BoundaryCondition o = BoundaryCondition::Outflow;
     boundaries = {o, o, o, o, o, o};
-    end_time = 100;
-    delta_t = 10;
+    end_time = 1;
+    delta_t = 0.0005;
     cutoff = 3;
-    writeFrequency = 10;
+    writeFrequency = 50;
     particleContainer.reset(new LinkedCellParticleContainer(cutoff, domain, boundaries));
     baseName = "outputVTK";
     temp_init = 40;
-    brownianMotion = false;
+    brownianMotion = true;
     n_thermostats = 1000;
-    temp_target = -1;
-    delta_temp = -1;
+    temp_target = 40;
+    delta_temp = 1;
     g_grav = -12.44;
     benchmark_iterations = 0;
     showMenu = false;

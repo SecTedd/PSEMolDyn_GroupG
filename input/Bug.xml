@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <simulation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:noNamespaceSchemaLocation="../src/xsd/Simulation.xsd">
-    <end_time>1</end_time>
+    <end_time>5</end_time>
     <delta_t>0.0005</delta_t>
     <cutoff>3</cutoff>
     <domain>
@@ -23,7 +23,7 @@
     <temp_target>40</temp_target>
     <g_grav>-12.44</g_grav>
     <writeFrequency>1</writeFrequency>
-    <baseName>outputBug</baseName>
+    <baseName>outputBugLogReflecting</baseName>
     <cuboid>
         <mass>1.0</mass>
         <h>1.2</h>

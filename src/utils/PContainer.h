@@ -17,8 +17,6 @@
 namespace PContainer
 {
     // Predeclarations
-    std::vector<int> getNeighboursNewton(int index, std::array<int, 3> &numCells);
-
     std::vector<int> getSurroundingZ(int index, std::array<int, 3> &numCells);
 
     std::vector<int> getHaloX(int index, std::array<int, 3> &numCells);
@@ -81,6 +79,65 @@ namespace PContainer
         }
         return result;
     }
+
+
+    /**
+     * @brief calculates indices of neighbouring halo cells at a periodic boundary
+     * @param index 1D index of cell
+     * @param numCells number of cells in each dimension
+     * @param pb positions of periodic boundaries
+     * @return 1D indices of halo cells neighbouring given cell at a periodic boundary
+    */
+    inline std::vector<int> getPeriodicHaloNeighbours(int index, std::array<int,3> &numCells, std::vector<int> &pb) {
+        std::array<int, 3> index3D = convert1DTo3D(index, numCells);
+        std::set<int> result;
+
+        //cell at front periodic boundary 
+        if (index3D[2] == 1 && std::find(pb.begin(), pb.end(), 4) != pb.end()) {
+            int tmp_index = convert3DTo1D({index3D[0], index3D[1], 0}, numCells);
+            std::vector<int> halo = getHaloZ(tmp_index, numCells);
+            std::copy(halo.begin(), halo.end(), std::inserter(result, result.end()));
+        }
+        // cell at back periodic boundary
+        if (index3D[2] == numCells[2] - 2 && std::find(pb.begin(), pb.end(), 5) != pb.end())
+        {
+            int tmp_index = convert3DTo1D({index3D[0], index3D[1], index3D[2] + 1}, numCells);
+            std::vector<int> halo = getHaloZ(tmp_index, numCells);
+            std::copy(halo.begin(), halo.end(), std::inserter(result, result.end()));
+        }
+        // cell at left periodic boundary
+        if (index3D[0] == 1 && std::find(pb.begin(), pb.end(), 0) != pb.end())
+        {
+            int tmp_index = convert3DTo1D({0, index3D[1], index3D[2]}, numCells);
+            std::vector<int> halo = getHaloX(tmp_index, numCells);
+            std::copy(halo.begin(), halo.end(), std::inserter(result, result.end()));
+        }
+        // cell at right periodic boundary
+        if (index3D[0] == numCells[0] - 2 && std::find(pb.begin(), pb.end(), 1) != pb.end())
+        {
+            int tmp_index = convert3DTo1D({index3D[0] + 1, index3D[1], index3D[2]}, numCells);
+            std::vector<int> halo = getHaloX(tmp_index, numCells);
+            std::copy(halo.begin(), halo.end(), std::inserter(result, result.end()));
+        }
+        // cell at bottom periodic boundary
+        if (index3D[1] == 1 && std::find(pb.begin(), pb.end(), 2) != pb.end())
+        {
+            int tmp_index = convert3DTo1D({index3D[0], 0, index3D[2]}, numCells);
+            std::vector<int> halo = getHaloY(tmp_index, numCells);
+            std::copy(halo.begin(), halo.end(), std::inserter(result, result.end()));
+        }
+        // cell at top periodic boundary
+        if (index3D[1] == numCells[1] - 2 && std::find(pb.begin(), pb.end(), 3) != pb.end())
+        {
+            int tmp_index = convert3DTo1D({index3D[0], index3D[1] + 1, index3D[2]}, numCells);
+            std::vector<int> halo = getHaloY(tmp_index, numCells);
+            std::copy(halo.begin(), halo.end(), std::inserter(result, result.end()));
+        }
+
+        std::vector<int> res(result.begin(), result.end());
+        return res;
+    }
+
 
     /**
      * @brief calculates indices of neighbouring halo cells of given cell

@@ -66,12 +66,12 @@ const void LinkedCellParticleContainer::initializeCells(std::array<BoundaryCondi
             || (index[2] == numCells[2] - 1 && domainBoundaries[5] == BoundaryCondition::Periodic))
         {
             ct = CellType::PeriodicHaloCell;
-            _memoryLogger->warn("Periodic Halo Cell at " + std::to_string(i));
+            _memoryLogger->debug("Periodic Halo Cell at " + std::to_string(i));
         }
         else if (index[0] == 0 || index[0] == numCells[0] - 1 || index[1] == 0 || index[1] == numCells[1] - 1 || index[2] == 0 || index[2] == numCells[2] - 1)
         {
             ct = CellType::HaloCell;
-            _memoryLogger->warn("Halo Cell at " + std::to_string(i));
+            _memoryLogger->debug("Halo Cell at " + std::to_string(i));
 
         }
         else
@@ -81,42 +81,42 @@ const void LinkedCellParticleContainer::initializeCells(std::array<BoundaryCondi
             {
                 boundaries[0] = domainBoundaries[0];
                 ct = CellType::BoundaryCell;
-                _memoryLogger->warn("Left Boundary Cell at " + std::to_string(i));
+                _memoryLogger->debug("Left Boundary Cell at " + std::to_string(i));
             }
             // cell at right boundary
             if (index[0] == numCells[0] - 2)
             {
                 boundaries[1] = domainBoundaries[1];
                 ct = CellType::BoundaryCell;
-                _memoryLogger->warn("Right Boundary Cell at " + std::to_string(i));
+                _memoryLogger->debug("Right Boundary Cell at " + std::to_string(i));
             }
             // cell at bottom boundary
             if (index[1] == 1)
             {
                 boundaries[2] = domainBoundaries[2];
                 ct = CellType::BoundaryCell;
-                _memoryLogger->warn("Lower Boundary Cell at " + std::to_string(i));
+                _memoryLogger->debug("Lower Boundary Cell at " + std::to_string(i));
             }
             // cell at top boundary
             if (index[1] == numCells[1] - 2)
             {
                 boundaries[3] = domainBoundaries[3];
                 ct = CellType::BoundaryCell;
-                _memoryLogger->warn("Upper Boundary Cell at " + std::to_string(i));
+                _memoryLogger->debug("Upper Boundary Cell at " + std::to_string(i));
             }
             // cell at front boundary
             if (index[2] == 1)
             {
                 boundaries[4] = domainBoundaries[4];
                 ct = CellType::BoundaryCell;
-                _memoryLogger->warn("Front Boundary Cell at " + std::to_string(i));
+                _memoryLogger->debug("Front Boundary Cell at " + std::to_string(i));
             }
             // cell at back boundary
             if (index[2] == numCells[2] - 2)
             {
                 boundaries[5] = domainBoundaries[5];
                 ct = CellType::BoundaryCell;
-                _memoryLogger->warn("Back Boundary Cell at " + std::to_string(i));
+                _memoryLogger->debug("Back Boundary Cell at " + std::to_string(i));
             }
         }
         cells.emplace_back(ct, boundaries);
@@ -127,31 +127,20 @@ const void LinkedCellParticleContainer::initializeCells(std::array<BoundaryCondi
         if (cells[i].getType() == CellType::BoundaryCell || cells[i].getType() == CellType::InnerCell) {
             auto domainNeighbours = PContainer::getDomainNeighboursNewton(i, numCells);
             cells[i].setDomainNeighbours(domainNeighbours);
-            std::stringstream ss;
-            for (auto it = domainNeighbours.begin(); it != domainNeighbours.end(); it++)    {
-                if (it != domainNeighbours.begin()) {
-                    ss << " ";
-                }
-                ss << *it;
-            }
-            _memoryLogger->warn("Domain Neighbours of cell " + std::to_string(i) + ": " + ss.str());
         }
         if (cells[i].getType() == CellType::BoundaryCell) {
-            auto haloNeighbours = PContainer::getHaloNeighbours(i, numCells);
-            cells[i].setHaloNeighbours(haloNeighbours);
-
-            std::stringstream ss;
-            for (auto it = haloNeighbours.begin(); it != haloNeighbours.end(); it++)    {
-                if (it != haloNeighbours.begin()) {
-                    ss << " ";
+            std::vector<int> periodicBoundaries;
+            for (int b = 0; b < 6; b++) {
+                if (cells[i].getBoundaries()[b] == BoundaryCondition::Periodic) {
+                    periodicBoundaries.push_back(b);
                 }
-                ss << *it;
             }
-            _memoryLogger->warn("Halo Neighbours of cell " + std::to_string(i) + ": " + ss.str());
+            auto haloNeighbours = PContainer::getPeriodicHaloNeighbours(i, numCells, periodicBoundaries);
+            cells[i].setPeriodicHaloNeighbours(haloNeighbours);
         }
     }
-    _memoryLogger->warn("Cell size: " + std::to_string(sizeX) + ", " + std::to_string(sizeY) + ", " + std::to_string(sizeZ));
-    _memoryLogger->warn("Num cells: " + std::to_string(numCells[0]) + ", " + std::to_string(numCells[1]) + ", " + std::to_string(numCells[2]));
+    _memoryLogger->debug("Cell size: " + std::to_string(sizeX) + ", " + std::to_string(sizeY) + ", " + std::to_string(sizeZ));
+    _memoryLogger->debug("Num cells: " + std::to_string(numCells[0]) + ", " + std::to_string(numCells[1]) + ", " + std::to_string(numCells[2]));
 }
 
 const int LinkedCellParticleContainer::computeCellIdx(Particle &p)
@@ -176,11 +165,12 @@ const void LinkedCellParticleContainer::updateCells()
 
     for (long unsigned int i = 0; i < activeParticles.size(); i++)
     {
-        if (activeParticles[i].getInvalid())
+        Particle &p = activeParticles[i];
+        if (p.getInvalid())
         {
-            int cellIndex = computeCellIdx(activeParticles[i]);
+            int cellIndex = computeCellIdx(p);
             cells[cellIndex].insertParticleIndex(i);
-            activeParticles[i].setInvalid(false);
+            p.setInvalid(false);
         }
     }
 }
@@ -200,9 +190,10 @@ const void LinkedCellParticleContainer::rebuildCells()
     // then rebuild the cells
     for (long unsigned int i = 0; i < activeParticles.size(); i++)
     {
-        int cellIndex = computeCellIdx(activeParticles[i]);
+        Particle &p = activeParticles[i];
+        int cellIndex = computeCellIdx(p);
         cells[cellIndex].insertParticleIndex(i);
-        activeParticles[i].setInvalid(false);
+        p.setInvalid(false);
     }
 }
 
@@ -231,12 +222,11 @@ const void LinkedCellParticleContainer::iterateParticleInteractions(std::functio
     // finally calculate interactions
     for (auto &cell : cells)
     {
-        _simulationLogger->warn("New cell interaction");
-        // inner forces don't need to be calculated for halo cells
+        // particle interactions don't need to be calculated for halo cells
         if (cell.getType() == CellType::InnerCell || cell.getType() == CellType::BoundaryCell)
         {
+            //particle interactions within cell
             std::vector<int> *particleIndices = cell.getCellParticleIndices();
-            // iterate within the cell first
             for (long unsigned int i = 0; i < particleIndices->size(); i++)
             {
                 for (long unsigned int j = i + 1; j < particleIndices->size(); j++)
@@ -250,42 +240,31 @@ const void LinkedCellParticleContainer::iterateParticleInteractions(std::functio
                 }
             }
         
-
             std::vector<int> neighbours = cell.getDomainNeighbours();
+            //Boundary cells 
             if (cell.getType() == CellType::BoundaryCell) {
-                neighbours.insert(neighbours.end(), cell.getHaloNeighbours().begin(), cell.getHaloNeighbours().end());
+                neighbours.insert(neighbours.end(), cell.getPeriodicHaloNeighbours().begin(), cell.getPeriodicHaloNeighbours().end());
             }
 
-            // then iterate interactions between particles from different cells
+            //particle interactions between different cells
             for (auto particleIndex : *cell.getCellParticleIndices())
             {
                 for (auto &neighbouringCellIndex : neighbours)
                 {
                     for (auto interactingParticleIndex : *cells[neighbouringCellIndex].getCellParticleIndices())
                     {
-                        // figure out if cells are halo or domain cells
-                        Particle *currentParticle;
-                        if (cell.getType() == CellType::HaloCell || cell.getType() == CellType::PeriodicHaloCell)
-                        {
-                            currentParticle = &haloParticles[particleIndex];
-                            _simulationLogger->warn("Current halo particle");
-                        }
-                        else
-                        {
-                            currentParticle = &activeParticles[particleIndex];
-                            _simulationLogger->warn("Current active particle");
-                        }
-
+                        // current particle is always within domain
+                        Particle *currentParticle = &activeParticles[particleIndex];
+                        
+                        //interacting particle can also be in halo
                         Particle *interactingParticle;
                         if (cells[neighbouringCellIndex].getType() == CellType::HaloCell || cells[neighbouringCellIndex].getType() == CellType::PeriodicHaloCell)
                         {
                             interactingParticle = &haloParticles[interactingParticleIndex];
-                            _simulationLogger->warn("Interacting halo particle");
                         }
                         else
                         {
                             interactingParticle = &activeParticles[interactingParticleIndex];
-                            _simulationLogger->warn("Interacting active particle");
                         }
                         if (ArrayUtils::L2Norm(currentParticle->getX() - interactingParticle->getX()) <= cutoff)
                         {
@@ -360,7 +339,7 @@ const void LinkedCellParticleContainer::addParticle(std::array<double, 3> &x, st
     if (x[0] >= 0 && x[0] < domain[0] && x[1] >= 0 && x[1] < domain[1] && x[2] >= 0 && x[2] < domain[2])
     {
 
-        activeParticles.emplace_back(x, v, m, epsilon, sigma);
+        activeParticles.emplace_back(x, v, m, epsilon, sigma, type);
         rebuildCells();
     }
 }
@@ -370,7 +349,7 @@ const void LinkedCellParticleContainer::addParticle(std::array<double, 3> &x, st
     if (x[0] >= 0 && x[0] < domain[0] && x[1] >= 0 && x[1] < domain[1] && x[2] >= 0 && x[2] < domain[2])
     {
 
-        activeParticles.emplace_back(x, v, m, epsilon, sigma);
+        activeParticles.emplace_back(x, v, f, old_f, m, epsilon, sigma, type);
         rebuildCells();
     }
 }
@@ -385,66 +364,66 @@ const void LinkedCellParticleContainer::reflectingBoundary(int cellIndex, std::f
     {
         if (boundaries[b] == BoundaryCondition::Reflecting)
         {
-            //std::cout << "reflecting boundary at: " << b << std::endl;
             for (auto particleIndex : *cells[cellIndex].getCellParticleIndices())
             {
-                double reflectingDistance = std::pow(2, 1.0 / 6) * activeParticles[particleIndex].getSigma() / 2;
-                counterParticle.setEpsilon(activeParticles[particleIndex].getEpsilon());
-                counterParticle.setSigma(activeParticles[particleIndex].getSigma());
+                Particle &p = activeParticles[particleIndex];
+                double reflectingDistance = std::pow(2, 1.0 / 6) * p.getSigma() / 2;
+                counterParticle.setEpsilon(p.getEpsilon());
+                counterParticle.setSigma(p.getSigma());
                 switch (b)
                 {
                 // left boundary, x-coordinate is 0
                 case 0:
-                    if (activeParticles[particleIndex].getX()[0] <= reflectingDistance)
+                    if (p.getX()[0] <= reflectingDistance)
                     {
-                        std::array<double, 3> counterX = {(-1) * activeParticles[particleIndex].getX()[0], activeParticles[particleIndex].getX()[1], activeParticles[particleIndex].getX()[2]};
+                        std::array<double, 3> counterX = {(-1) * p.getX()[0], p.getX()[1], p.getX()[2]};
                         counterParticle.setX(counterX);
-                        f(activeParticles[particleIndex], counterParticle);
+                        f(p, counterParticle);
                     }
                     break;
                 // right boundary, x-coordinate is domain size in x-direction
                 case 1:
-                    if (domain[0] - activeParticles[particleIndex].getX()[0] <= reflectingDistance)
+                    if (domain[0] - p.getX()[0] <= reflectingDistance)
                     {
-                        std::array<double, 3> counterX = {domain[0] + domain[0] - activeParticles[particleIndex].getX()[0], activeParticles[particleIndex].getX()[1], activeParticles[particleIndex].getX()[2]};
+                        std::array<double, 3> counterX = {domain[0] + domain[0] - p.getX()[0], p.getX()[1], p.getX()[2]};
                         counterParticle.setX(counterX);
-                        f(activeParticles[particleIndex], counterParticle);
+                        f(p, counterParticle);
                     }
                     break;
                 // lower boundary, y-coordinate is 0
                 case 2:
-                    if (activeParticles[particleIndex].getX()[1] <= reflectingDistance)
+                    if (p.getX()[1] <= reflectingDistance)
                     {
-                        std::array<double, 3> counterX = {activeParticles[particleIndex].getX()[0], (-1) * activeParticles[particleIndex].getX()[1], activeParticles[particleIndex].getX()[2]};
+                        std::array<double, 3> counterX = {p.getX()[0], (-1) * p.getX()[1], p.getX()[2]};
                         counterParticle.setX(counterX);
-                        f(activeParticles[particleIndex], counterParticle);
+                        f(p, counterParticle);
                     }
                     break;
                 // upper boundary, y-coordinate is domain size in y-direction
                 case 3:
-                    if (domain[1] - activeParticles[particleIndex].getX()[1] <= reflectingDistance)
+                    if (domain[1] - p.getX()[1] <= reflectingDistance)
                     {
-                        std::array<double, 3> counterX = {activeParticles[particleIndex].getX()[0], domain[1] + domain[1] - activeParticles[particleIndex].getX()[1], activeParticles[particleIndex].getX()[2]};
+                        std::array<double, 3> counterX = {p.getX()[0], domain[1] + domain[1] - p.getX()[1], p.getX()[2]};
                         counterParticle.setX(counterX);
-                        f(activeParticles[particleIndex], counterParticle);
+                        f(p, counterParticle);
                     }
                     break;
                 // front boundary, z-coordinate is 0
                 case 4:
-                    if (activeParticles[particleIndex].getX()[2] <= reflectingDistance)
+                    if (p.getX()[2] <= reflectingDistance)
                     {
-                        std::array<double, 3> counterX = {activeParticles[particleIndex].getX()[0], activeParticles[particleIndex].getX()[1], (-1) * activeParticles[particleIndex].getX()[2]};
+                        std::array<double, 3> counterX = {p.getX()[0], p.getX()[1], (-1) * p.getX()[2]};
                         counterParticle.setX(counterX);
-                        f(activeParticles[particleIndex], counterParticle);
+                        f(p, counterParticle);
                     }
                     break;
                 // back boundary, z-coordinate is domain size in z-direction
                 case 5:
-                    if (domain[2] - activeParticles[particleIndex].getX()[2] <= reflectingDistance)
+                    if (domain[2] - p.getX()[2] <= reflectingDistance)
                     {
-                        std::array<double, 3> counterX = {activeParticles[particleIndex].getX()[0], activeParticles[particleIndex].getX()[1], domain[2] + domain[2] - activeParticles[particleIndex].getX()[2]};
+                        std::array<double, 3> counterX = {p.getX()[0], p.getX()[1], domain[2] + domain[2] - p.getX()[2]};
                         counterParticle.setX(counterX);
-                        f(activeParticles[particleIndex], counterParticle);
+                        f(p, counterParticle);
                     }
                     break;
                 }
@@ -474,14 +453,13 @@ const void LinkedCellParticleContainer::periodicBoundary(int cellIndex)
             for (auto particleIndex : *cells[cellIndex].getCellParticleIndices())
             {
                 Particle &toMirror = activeParticles[particleIndex];
-                // std::array<double, 3> &x, std::array<double, 3> &v, double &m, double &epsilon, double &sigma
-                std::array<double, 3> newX = toMirror.getX() + mirroringOffset; //{activeParticles[particleIndex].getX()[0] + mirroringOffset[0], activeParticles[particleIndex].getX()[1] + mirroringOffset[1], activeParticles[particleIndex].getX()[2] + mirroringOffset[2]};
+                std::array<double, 3> newX = toMirror.getX() + mirroringOffset;
                 haloParticles.emplace_back(newX, toMirror.getV(), toMirror.getM(), toMirror.getEpsilon(), toMirror.getSigma());
                 Particle &mirrored = haloParticles.back();
                 int cellIdx = computeCellIdx(mirrored);
                 mirrored.setCellIdx(cellIdx);
                 cells[cellIdx].insertParticleIndex(haloParticles.size()-1);
-                _simulationLogger->warn("Mirrored particle at " + std::to_string(newX[0]) + ", " + std::to_string(newX[1]) + ", " + std::to_string(newX[2])); 
+                _simulationLogger->debug("Mirrored particle at " + std::to_string(newX[0]) + ", " + std::to_string(newX[1]) + ", " + std::to_string(newX[2])); 
             }
         }
     }
