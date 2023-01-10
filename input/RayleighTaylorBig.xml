@@ -5,7 +5,7 @@
     <delta_t>0.0005</delta_t>
     <cutoff>3</cutoff>
     <domain>
-        <x>6</x>
+        <x>300</x>
         <y>54</y>
         <z>1</z>
     </domain>
@@ -21,8 +21,8 @@
     <n_thermostat>1000</n_thermostat>
     <temp_target>40</temp_target>
     <g_grav>-12.44</g_grav>
-    <writeFrequency>1</writeFrequency>
-    <baseName>outputVTKRayleighTaylorBigFive</baseName>
+    <writeFrequency>50</writeFrequency>
+    <baseName>outputRTBig</baseName>
     <cuboid>
         <mass>1.0</mass>
         <h>1.2</h>
@@ -62,7 +62,7 @@
             <z>0</z>
         </velocity>
         <dimensions>
-            <x>5</x>
+            <x>250</x>
             <y>20</y>
             <z>1</z>
         </dimensions>
