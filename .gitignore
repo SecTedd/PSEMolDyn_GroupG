@@ -4,4 +4,3 @@ build/
 .vscode/
 doxys_documentation/
 logs/
-checkpoints/

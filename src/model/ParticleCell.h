@@ -17,8 +17,9 @@
 enum class CellType
 {
     InnerCell,
-    BoundaryCell, 
-    HaloCell
+    BoundaryCell,
+    HaloCell,
+    PeriodicHaloCell
 };
 
 /**
@@ -28,8 +29,7 @@ enum class BoundaryCondition
 {
     Outflow,
     Reflecting,
-    Periodic,
-    None // maybe not needed
+    Periodic
 };
 
 /**
@@ -38,14 +38,13 @@ enum class BoundaryCondition
 class ParticleCell
 {
 private:
-    //std::vector<Particle *> _particles; // vector of pointers to particles currently in this cell
-    std::shared_ptr<std::vector<Particle *>> _particles; //reference to vector of pointers to particles currently in this cell
+    std::shared_ptr<std::vector<int>> particleIndices; // reference to vector of pointers to particles currently in this cell
 
-    std::vector<int> _neighbours; // structure to store index of neighboring cells with a higher index
+    std::vector<int> domainNeighbours; // structure to store index of neighboring domain cells with a higher index
 
-    std::vector<int> _haloNeighbours; //structure to store index of neighboring halo cells
+    std::vector<int> periodicHaloNeighbours; // structure to store all neighbouring halo cells at a periodic boundary
 
-    CellType _type; // type of cell (inner or boundary)
+    CellType type; // type of cell (inner or boundary)
 
     /**
      * array to store boundary conditions for each cell
@@ -53,10 +52,10 @@ private:
      * middle two indices for y-direction (bottom, top)
      * last two indices for z-direction (front, back)
      */
-    std::array<BoundaryCondition, 6> _boundaries;
+    std::array<BoundaryCondition, 6> boundaries;
 
-    std::shared_ptr<spdlog::logger> _memoryLogger; // a speedlog logger which logs construction and destruction of particles
-    std::shared_ptr<spdlog::logger> _simulationLogger;
+    std::shared_ptr<spdlog::logger> memoryLogger; // a speedlog logger which logs construction and destruction of particles
+    std::shared_ptr<spdlog::logger> simulationLogger;
 
 public:
     /**
@@ -69,16 +68,9 @@ public:
 
     /**
      * @brief inserts pointer to particle at the end of particle vector
-     * @param p pointer to new particle
+     * @param index index of new particle in activeParticleVector
      */
-    const void insertParticle(Particle *p);
-
-    /**
-     * @brief computes given function for every particle pair inside the cell (making use of Newton's third law)
-     * @param f function to be applied to particle pairs
-     * @param cutoff is used to check if particle pairs are close enough to iterate
-     */
-    const void iterateParticlePairs(std::function<void(Particle &, Particle &)> f, double cutoff);
+    const void insertParticleIndex(int index);
 
     /**
      * @brief removes all particles from cell
@@ -93,14 +85,15 @@ public:
 
     /**
      * @brief removes particle pointers of invalid particles
-    */
-    const void removeInvalid();
+     * @param particles the particles which correspond to the indices
+     */
+    const void removeInvalid(std::vector<Particle> *particles);
 
     /**
      * @brief returns particles of this cell
      * @return pointer to particle vector of this cell
      */
-    std::vector<Particle *> *getCellParticles();
+    std::vector<int> *getCellParticleIndices();
 
     const std::array<BoundaryCondition, 6> &getBoundaries();
 
@@ -110,13 +103,11 @@ public:
 
     const std::string toString();
 
-    const std::vector<int> &getNeighbours();
+    const std::vector<int> &getDomainNeighbours();
 
-    const void setNeighbours(std::vector<int> &neighbours);
+    const std::vector<int> &getPeriodicHaloNeighbours();
 
-    const std::vector<int> &getHaloNeighbours();
+    void setDomainNeighbours(std::vector<int> &neighbours);
 
-    const void setHaloNeighbours(std::vector<int> &haloNeighbours);
-
-
+    void setPeriodicHaloNeighbours(std::vector<int> &neighbours);
 };

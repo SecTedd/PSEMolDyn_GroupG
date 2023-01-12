@@ -21,19 +21,25 @@ class LinkedCellParticleContainer : public ParticleContainer
 {
 
 private:
-    std::vector<Particle> _activeParticleVector; // base vector to store all particles inside the domain
+    std::vector<Particle> activeParticles; // base vector to store all particles inside the domain
 
-    std::vector<Particle> _haloParticleVector; // base vector to store all halo particles
+    std::vector<Particle> haloParticles; // base vector to store all halo particles
 
-    std::vector<ParticleCell> _cellVector; // stores all cells
+    std::vector<ParticleCell> cells; // stores all cells
 
-    std::array<double, 3> _domain; // domain size in each dimension
+    std::array<double, 3> domain; // domain size in each dimension
 
-    double _cutoff; // max. rdistance of particles where force calculation is applied
+    double cutoff; // max. rdistance of particles where force calculation is applied
 
-    std::array<int, 3> _numCells; // number of cells in each dimension
+    std::array<int, 3> numCells; // number of cells in each dimension
 
-    std::array<double, 3> _cellSize; // cell size in each dimension
+    std::array<double, 3> cellSize; // cell size in each dimension
+
+    /**
+     * @brief computes number of cells and their size in each dimension, initializes them according to domain boundary conditions
+     * @param domainBoundaries the boundaries of the domain
+     */
+    const void initializeCells(std::array<BoundaryCondition, 6> &domainBoundaries);
 
     /**
      * @brief compute index of cell the given particle belongs to
@@ -53,16 +59,10 @@ private:
     const void rebuildCells();
 
     /**
-     * @brief computes number of cells and their size in each dimension, initializes them according to domain boundary conditions
-     */
-    const void initializeCells(std::array<BoundaryCondition, 6> &domainBoundaries);
-
-    /**
-     * @brief computes position of ghost particle in halo 
+     * @brief computes position of ghost particle in halo
      * @param p particle which has to be mirrored
-     * @param boundary_idx position of periodic boundary 
-    */
-    std::array<double,3> mirroredPosition(Particle &p, int boundary_idx);
+     */
+    std::array<double, 3> mirroredPosition(std::array<double, 3> position);
 
 public:
     LinkedCellParticleContainer(double cutoff, std::array<double, 3> &domain, std::array<BoundaryCondition, 6> &boundaries);
@@ -78,6 +78,7 @@ public:
     /**
      * @brief applies given function to every particle, checks if they cross cell borders
      * @param f function which is applied to the particles
+     * @param calcX used to prevent some function calls
      */
     const void iterateParticles(std::function<void(Particle &)> f, bool calcX) override;
 
@@ -117,18 +118,16 @@ public:
 
     /**
      * @brief adds reflection force to particles near to the reflecting boundary
-     * @param particles particles inside the cell the reflecting boundary condition belongs to
-     * @param boundary_idx position of reflecting boundary
+     * @param cellIndex the index of the current cell
      * @param f force calculation function which has to be applied at the reflecting boundary
      */
-    const void reflectingBoundary(std::vector<Particle *> &particles, int boundary_idx, std::function<void(Particle &, Particle &)> f);
+    const void reflectingBoundary(int cellIndex, std::function<void(Particle &, Particle &)> f);
 
     /**
-     * @brief emplaces ghost particles of boundary particles at periodic boundaries in halo 
-     * @param particles particles inside cell the periodic boundary condition belongs to
-     * @param boundary_idx position of periodic boundary
-    */
-    const void initGhostParticles(std::vector<Particle *> &particles, int boundary_idx);
+     * @brief emplaces ghost particles of boundary particles at periodic boundaries in halo
+     * @param cellIndex the index of the current cell
+     */
+    const void periodicBoundary(int cellIndex);
 
     /**
      * @brief removes halo particles from base vector and clears halo cells, updates particle references in cells

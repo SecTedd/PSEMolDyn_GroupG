@@ -9,6 +9,7 @@ TEST(CuboidInputReader, ReadCuboid)
 {
 
     std::shared_ptr<ProgramParameters> pp = std::make_shared<ProgramParameters>();
+    pp->setDomain(std::array<double, 3>{50,50,1}); 
 
     std::unique_ptr<CuboidInputReader> cub = std::make_unique<CuboidInputReader>(CuboidInputReader());
 

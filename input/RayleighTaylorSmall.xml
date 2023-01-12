@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
 <simulation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:noNamespaceSchemaLocation="../src/xsd/Simulation.xsd">
-    <end_time>25</end_time>
+    <end_time>2.5</end_time>
     <delta_t>0.0005</delta_t>
     <cutoff>2.5</cutoff>
     <domain>
-        <x>63</x>
+        <x>60</x>
         <y>36</y>
         <z>1</z>
     </domain>
@@ -18,12 +18,12 @@
         <zBack>Outflow</zBack>
     </boundaries>
     <temp_init>40</temp_init>
-    <brownianMotion>true</brownianMotion>
+    <brownianMotion>false</brownianMotion>
     <n_thermostat>1000</n_thermostat>
     <temp_target>40</temp_target>
     <g_grav>-12.44</g_grav>
     <writeFrequency>50</writeFrequency>
-    <baseName>outputVTK</baseName>
+    <baseName>outputRTSmall</baseName>
     <cuboid>
         <mass>1.0</mass>
         <h>1.2</h>
