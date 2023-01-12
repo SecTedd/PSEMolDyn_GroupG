@@ -11,75 +11,54 @@
 
 ParticleCell::ParticleCell(CellType type, std::array<BoundaryCondition, 6> boundaries)
 {
-    _type = type;
-    _boundaries = boundaries;
-    _particles.reset(new std::vector<Particle *>);
+    this->type = type;
+    this->boundaries = boundaries;
+    particleIndices.reset(new std::vector<int>);
 
-    _memoryLogger = spdlog::get("memory_logger");
-    _memoryLogger->info("ParticleCell generated!");
-    _simulationLogger = spdlog::get("simulation_logger");
+    memoryLogger = spdlog::get("memory_logger");
+    memoryLogger->info("ParticleCell generated!");
+    simulationLogger = spdlog::get("simulation_logger");
 }
 
 ParticleCell::~ParticleCell()
 {
-    _memoryLogger->info("ParticleCell destructed!");
+    memoryLogger->info("ParticleCell destructed!");
 }
 
-const void ParticleCell::insertParticle(Particle *p)
+const void ParticleCell::insertParticleIndex(int index)
 {
-    _particles->push_back(p);
+    particleIndices->push_back(index);
 }
 
-const void ParticleCell::iterateParticlePairs(std::function<void(Particle &, Particle &)> f, double cutoff)
-{
-    // Since we use a vector we can directly access the particles through indexing
-    // Because f_ij = -f_ji, we can save (n^2)/2 iterations by starting the inner loop at i+1
-    for (long unsigned int i = 0; i < _particles->size(); i++)
-    {
-        if (!_particles->at(i)->getInvalid() && !_particles->at(i)->getHalo())
-        {
-            for (long unsigned int j = i + 1; j < _particles->size(); j++)
-            {   if (_particles->at(i)->getX()[0] == _particles->at(j)->getX()[0] && _particles->at(i)->getX()[1] == _particles->at(j)->getX()[1] && _particles->at(i)->getX()[2] == _particles->at(j)->getX()[2]) {
-                    _simulationLogger->debug("Particles at same position: " + _particles->at(i)->toString() + _particles->at(j)->toString());
-                }
-                if (!_particles->at(j)->getInvalid() && !_particles->at(j)->getHalo() && ArrayUtils::L2Norm(_particles->at(i)->getX() - _particles->at(j)->getX()) <= cutoff)
-                {
-                    f(*_particles->at(i), *_particles->at(j));
-                }
-            }
-        }
-    }
-}
-
-const void ParticleCell::clearCell() { _particles->clear(); }
+const void ParticleCell::clearCell() { particleIndices->clear(); }
 
 const void ParticleCell::reserveMemory(int meanParticles)
 {
-    _particles->reserve(_particles->size() + meanParticles);
+    particleIndices->reserve(particleIndices->size() + meanParticles);
 }
 
-std::vector<Particle *> *ParticleCell::getCellParticles()
+std::vector<int> *ParticleCell::getCellParticleIndices()
 {
-    return _particles.get();
+    return particleIndices.get();
 }
 
-const void ParticleCell::removeInvalid()
-{ 
-    _particles->erase(std::remove_if(_particles->begin(), _particles->end(), [](Particle *p)
-                                    { return p->getInvalid() || p->getHalo(); }),
-                        _particles->end());  
+const void ParticleCell::removeInvalid(std::vector<Particle> *particles)
+{
+    particleIndices->erase(std::remove_if(particleIndices->begin(), particleIndices->end(), [particles](int particleIndex)
+                                          { return particles->at(particleIndex).getInvalid() || particles->at(particleIndex).getHalo(); }),
+                           particleIndices->end());
 }
 
-const CellType ParticleCell::getType() { return _type; }
+const CellType ParticleCell::getType() { return type; }
 
-const std::array<BoundaryCondition, 6> &ParticleCell::getBoundaries() { return _boundaries; }
+const std::array<BoundaryCondition, 6> &ParticleCell::getBoundaries() { return boundaries; }
 
-const int ParticleCell::size() { return _particles->size(); }
+const int ParticleCell::size() { return particleIndices->size(); }
 
-const std::vector<int> &ParticleCell::getNeighbours() { return _neighbours; }
+const std::vector<int> &ParticleCell::getDomainNeighbours() { return domainNeighbours; }
 
-const void ParticleCell::setNeighbours(std::vector<int> &neighbours) { _neighbours = neighbours; }
+const std::vector<int> &ParticleCell::getPeriodicHaloNeighbours() { return periodicHaloNeighbours; }
 
-const std::vector<int> &ParticleCell::getHaloNeighbours() { return _haloNeighbours; }
+void ParticleCell::setDomainNeighbours(std::vector<int> &neighbours) { this->domainNeighbours = neighbours; }
 
-const void ParticleCell::setHaloNeighbours(std::vector<int> &haloNeighbours) { _haloNeighbours = haloNeighbours; }
+void ParticleCell::setPeriodicHaloNeighbours(std::vector<int> &neighbours) { this->periodicHaloNeighbours = neighbours; }

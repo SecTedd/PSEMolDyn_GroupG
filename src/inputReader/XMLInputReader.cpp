@@ -20,16 +20,13 @@
 
 BoundaryCondition getBoundaryCondition(std::string s)
 {
-    if (s == "Outflow")
-        return BoundaryCondition::Outflow;
-
     if (s == "Reflecting")
         return BoundaryCondition::Reflecting;
 
     if (s == "Periodic")
         return BoundaryCondition::Periodic;
 
-    return BoundaryCondition::None;
+    return BoundaryCondition::Outflow;
 }
 
 void XMLInputReader::readInput(ProgramParameters &programParameters, const char *filename)

@@ -20,7 +20,7 @@ namespace outputWriter
         _memoryLogger->info("CheckpointWriter destructed!");
     }
 
-    void CheckpointWriter::writeCheckpoint(ParticleContainer *particleContainer)
+    void CheckpointWriter::writeCheckpoint(ParticleContainer *particleContainer, std::string *filename, std::string *scheme)
     {
         simulation_state_t simulationState;
         simulation_state_t::particle_sequence &ps(simulationState.particle());
@@ -39,11 +39,10 @@ namespace outputWriter
 
         xml_schema::namespace_infomap map;
         map[""].name = "";
-        map[""].schema = "../src/xsd/SimulationState.xsd";
+        map[""].schema = *scheme;
 
         std::ofstream file;
-        std::string filename = File::getDateTime() + "simulation_status.xml";
-        file.open("../checkpoints/" + filename);
+        file.open(*filename);
         simulation_state(file, simulationState, map);
         file.close();
     }
