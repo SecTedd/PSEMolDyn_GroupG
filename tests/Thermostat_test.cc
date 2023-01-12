@@ -7,8 +7,8 @@
 #include "../src/model/LinkedCellParticleContainer.h"
 
 
-// Basic test where temp is instantly set to zero
-TEST(Thermostat, NoDeltaToZero) 
+// Basic test where temp is instantly set to 40
+TEST(Thermostat, NoDeltaTo40) 
 {
     BoundaryCondition o = BoundaryCondition::Outflow;
     BoundaryCondition r = BoundaryCondition::Reflecting;
@@ -26,43 +26,11 @@ TEST(Thermostat, NoDeltaToZero)
     pc->addParticle(x, v, m, epsilon, sigma);
 
     Thermostat t = Thermostat(pc, 100.0);
-    t.setTargetTemperature(0.0);
+    t.setTargetTemperature(40.0);
 
     t.apply();
-
-    for (auto &p : pc->getActiveParticles()) {
-        EXPECT_TRUE(p.getV()[0] == 0 && p.getV()[1] == 0 && p.getV()[2] == 0);
-    }
-}
-
-// Test behavior if current temp is already at zero
-TEST(Thermostat, AlreadyZero)
-{
-    BoundaryCondition o = BoundaryCondition::Outflow;
-    BoundaryCondition r = BoundaryCondition::Reflecting;
-    std::array<double, 3> domain = {80.0, 80.0, 1.0};
-    std::array<BoundaryCondition, 6> bound = {r, r, r, r, o, o};
-    double cutoff = 3;
-    auto pc = std::make_shared<LinkedCellParticleContainer>(cutoff, domain, bound);
-
-    std::array<double, 3> x1 = {1.0, 1.0, 0.0};
-    std::array<double, 3> x2 = {79.0, 79.0, 79.0};
-    std::array<double, 3> v = {0.0, 0.0, 0.0};
-    double m = 1;
-    double sigma = 1;
-    double epsilon = 5;
     
-    pc->addParticle(x1, v, m, epsilon, sigma);
-    pc->addParticle(x2, v, m, epsilon, sigma);
-
-    Thermostat t = Thermostat(pc, 0.0);
-    t.setTargetTemperature(0.0);
-
-    t.apply();
-
-    for (auto &p : pc->getActiveParticles()) {
-        EXPECT_TRUE(p.getV()[0] == 0 && p.getV()[1] == 0 && p.getV()[2] == 0);
-    }
+    EXPECT_TRUE(std::abs(t.calculateCurrentTemperature() - 40) < .5);
 }
 
 // Heating
@@ -85,7 +53,7 @@ TEST(Thermostat, Heating)
     pc->addParticle(x1, v, m, epsilon, sigma);
     pc->addParticle(x2, v, m, epsilon, sigma);
 
-    Thermostat t = Thermostat(pc, 1.0);
+    Thermostat t = Thermostat(pc, 10.0);
     t.setTargetTemperature(1000.0);
     t.setTemperatureDelta(0.5);
 
@@ -118,7 +86,7 @@ TEST(Thermostat, Cooling)
     pc->addParticle(x2, v, m, epsilon, sigma);
 
     Thermostat t = Thermostat(pc, 1000.0);
-    t.setTargetTemperature(0.0);
+    t.setTargetTemperature(10.0);
     t.setTemperatureDelta(0.5);
 
     for (int i = 0; i < 1000; i++) {
