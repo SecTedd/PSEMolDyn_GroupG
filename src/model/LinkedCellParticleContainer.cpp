@@ -58,12 +58,7 @@ const void LinkedCellParticleContainer::initializeCells(std::array<BoundaryCondi
         std::array<int, 3> index = PContainer::convert1DTo3D(i, numCells);
 
         // halo cell
-        if ((index[0] == 0 && domainBoundaries[0] == BoundaryCondition::Periodic) 
-            || (index[0] == numCells[0] - 1 && domainBoundaries[1] == BoundaryCondition::Periodic) 
-            || (index[1] == 0 && domainBoundaries[2] == BoundaryCondition::Periodic) 
-            || (index[1] == numCells[1] - 1 && domainBoundaries[3] == BoundaryCondition::Periodic) 
-            || (index[2] == 0 && domainBoundaries[4] == BoundaryCondition::Periodic) 
-            || (index[2] == numCells[2] - 1 && domainBoundaries[5] == BoundaryCondition::Periodic))
+        if ((index[0] == 0 && domainBoundaries[0] == BoundaryCondition::Periodic) || (index[0] == numCells[0] - 1 && domainBoundaries[1] == BoundaryCondition::Periodic) || (index[1] == 0 && domainBoundaries[2] == BoundaryCondition::Periodic) || (index[1] == numCells[1] - 1 && domainBoundaries[3] == BoundaryCondition::Periodic) || (index[2] == 0 && domainBoundaries[4] == BoundaryCondition::Periodic) || (index[2] == numCells[2] - 1 && domainBoundaries[5] == BoundaryCondition::Periodic))
         {
             ct = CellType::PeriodicHaloCell;
             _memoryLogger->debug("Periodic Halo Cell at " + std::to_string(i));
@@ -72,7 +67,6 @@ const void LinkedCellParticleContainer::initializeCells(std::array<BoundaryCondi
         {
             ct = CellType::HaloCell;
             _memoryLogger->debug("Halo Cell at " + std::to_string(i));
-
         }
         else
         {
@@ -124,14 +118,18 @@ const void LinkedCellParticleContainer::initializeCells(std::array<BoundaryCondi
 
     for (long unsigned int i = 0; i < cells.size(); i++)
     {
-        if (cells[i].getType() == CellType::BoundaryCell || cells[i].getType() == CellType::InnerCell) {
+        if (cells[i].getType() == CellType::BoundaryCell || cells[i].getType() == CellType::InnerCell)
+        {
             auto domainNeighbours = PContainer::getDomainNeighboursNewton(i, numCells);
             cells[i].setDomainNeighbours(domainNeighbours);
         }
-        if (cells[i].getType() == CellType::BoundaryCell) {
+        if (cells[i].getType() == CellType::BoundaryCell)
+        {
             std::vector<int> periodicBoundaries;
-            for (int b = 0; b < 6; b++) {
-                if (cells[i].getBoundaries()[b] == BoundaryCondition::Periodic) {
+            for (int b = 0; b < 6; b++)
+            {
+                if (cells[i].getBoundaries()[b] == BoundaryCondition::Periodic)
+                {
                     periodicBoundaries.push_back(b);
                 }
             }
@@ -225,7 +223,7 @@ const void LinkedCellParticleContainer::iterateParticleInteractions(std::functio
         // particle interactions don't need to be calculated for halo cells
         if (cell.getType() == CellType::InnerCell || cell.getType() == CellType::BoundaryCell)
         {
-            //particle interactions within cell
+            // particle interactions within cell
             std::vector<int> *particleIndices = cell.getCellParticleIndices();
             for (long unsigned int i = 0; i < particleIndices->size(); i++)
             {
@@ -239,14 +237,15 @@ const void LinkedCellParticleContainer::iterateParticleInteractions(std::functio
                     }
                 }
             }
-        
+
             std::vector<int> neighbours = cell.getDomainNeighbours();
-            //Boundary cells 
-            if (cell.getType() == CellType::BoundaryCell) {
+            // Boundary cells
+            if (cell.getType() == CellType::BoundaryCell)
+            {
                 neighbours.insert(neighbours.end(), cell.getPeriodicHaloNeighbours().begin(), cell.getPeriodicHaloNeighbours().end());
             }
 
-            //particle interactions between different cells
+            // particle interactions between different cells
             for (auto particleIndex : *cell.getCellParticleIndices())
             {
                 for (auto &neighbouringCellIndex : neighbours)
@@ -255,8 +254,8 @@ const void LinkedCellParticleContainer::iterateParticleInteractions(std::functio
                     {
                         // current particle is always within domain
                         Particle *currentParticle = &activeParticles[particleIndex];
-                        
-                        //interacting particle can also be in halo
+
+                        // interacting particle can also be in halo
                         Particle *interactingParticle;
                         if (cells[neighbouringCellIndex].getType() == CellType::HaloCell || cells[neighbouringCellIndex].getType() == CellType::PeriodicHaloCell)
                         {
@@ -288,11 +287,23 @@ const void LinkedCellParticleContainer::iterateParticles(std::function<void(Part
     {
 
         f(particle);
+        if (!calcX)
+            continue;
 
         // check if particle moved out of cell
         int cellIndex = computeCellIdx(particle);
 
-        if (cellIndex != particle.getCellIdx())
+        std::array<int, 3> idx3D = PContainer::convert1DTo3D(cellIndex, numCells);
+        bool outOfBounds = idx3D[0] < 0 || idx3D[0] >= numCells[0] || idx3D[1] < 0 || idx3D[1] >= numCells[1] || idx3D[2] < 0 || idx3D[2] >= numCells[2];
+
+        // particle out of bounds (not in domain or halo cell layer)
+        if (outOfBounds)
+        {
+            particle.setHalo(true);
+            cellRebuild = true;
+            _simulationLogger->debug("Particle way out of bounds (" + std::to_string(cellIndex) + "): " + particle.toString());
+        }
+        else if (cellIndex != particle.getCellIdx())
         {
             // particle can either be in a regular halo cell which means outflow, a periodic halo which means it needs to be mirrored or in an inner cell which means the index has to be changed
             if (cells[cellIndex].getType() == CellType::InnerCell || cells[cellIndex].getType() == CellType::BoundaryCell)
@@ -304,7 +315,6 @@ const void LinkedCellParticleContainer::iterateParticles(std::function<void(Part
             }
             else if (cells[cellIndex].getType() == CellType::HaloCell)
             {
-                particle.setCellIdx(cellIndex);
                 particle.setHalo(true);
                 cellRebuild = true;
             }
@@ -374,7 +384,7 @@ const void LinkedCellParticleContainer::reflectingBoundary(int cellIndex, std::f
                 {
                 // left boundary, x-coordinate is 0
                 case 0:
-                    if (p.getX()[0] <= reflectingDistance)
+                    if (p.getX()[0] < reflectingDistance)
                     {
                         std::array<double, 3> counterX = {(-1) * p.getX()[0], p.getX()[1], p.getX()[2]};
                         counterParticle.setX(counterX);
@@ -383,7 +393,7 @@ const void LinkedCellParticleContainer::reflectingBoundary(int cellIndex, std::f
                     break;
                 // right boundary, x-coordinate is domain size in x-direction
                 case 1:
-                    if (domain[0] - p.getX()[0] <= reflectingDistance)
+                    if (domain[0] - p.getX()[0] < reflectingDistance)
                     {
                         std::array<double, 3> counterX = {domain[0] + domain[0] - p.getX()[0], p.getX()[1], p.getX()[2]};
                         counterParticle.setX(counterX);
@@ -401,7 +411,7 @@ const void LinkedCellParticleContainer::reflectingBoundary(int cellIndex, std::f
                     break;
                 // upper boundary, y-coordinate is domain size in y-direction
                 case 3:
-                    if (domain[1] - p.getX()[1] <= reflectingDistance)
+                    if (domain[1] - p.getX()[1] < reflectingDistance)
                     {
                         std::array<double, 3> counterX = {p.getX()[0], domain[1] + domain[1] - p.getX()[1], p.getX()[2]};
                         counterParticle.setX(counterX);
@@ -419,7 +429,7 @@ const void LinkedCellParticleContainer::reflectingBoundary(int cellIndex, std::f
                     break;
                 // back boundary, z-coordinate is domain size in z-direction
                 case 5:
-                    if (domain[2] - p.getX()[2] <= reflectingDistance)
+                    if (domain[2] - p.getX()[2] < reflectingDistance)
                     {
                         std::array<double, 3> counterX = {p.getX()[0], p.getX()[1], domain[2] + domain[2] - p.getX()[2]};
                         counterParticle.setX(counterX);
@@ -458,8 +468,8 @@ const void LinkedCellParticleContainer::periodicBoundary(int cellIndex)
                 Particle &mirrored = haloParticles.back();
                 int cellIdx = computeCellIdx(mirrored);
                 mirrored.setCellIdx(cellIdx);
-                cells[cellIdx].insertParticleIndex(haloParticles.size()-1);
-                _simulationLogger->debug("Mirrored particle at " + std::to_string(newX[0]) + ", " + std::to_string(newX[1]) + ", " + std::to_string(newX[2])); 
+                cells[cellIdx].insertParticleIndex(haloParticles.size() - 1);
+                _simulationLogger->debug("Mirrored particle at " + std::to_string(newX[0]) + ", " + std::to_string(newX[1]) + ", " + std::to_string(newX[2]));
             }
         }
     }

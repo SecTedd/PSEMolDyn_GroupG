@@ -439,6 +439,15 @@ namespace PContainer
         return boundaries;
     }
 
+    /**
+     * @brief calculates all the mirroring offsets for the periodic boundary for a specific cell
+     *
+     * @param currentCell the cell from which particles are mirrored
+     * @param boundaries the boundaries of the cell
+     * @param numCells the number of cells for the linked cell
+     * @param cellSize the size off the cells in each dimension
+     * @returns a vector of arrays with mirroring positions in all dimensions
+     */
     inline std::vector<std::array<double, 3>> getMirroringOffsets(int currentCell, std::vector<int> &boundaries, std::array<int, 3> &numCells, std::array<double, 3> &cellSize)
     {
         std::vector<std::array<int, 3>> cellsToMirror;
@@ -481,6 +490,14 @@ namespace PContainer
         return mirroringOffsets;
     }
 
+    /**
+     * @brief applies all mirroring boundaries to the right dimension
+     *
+     * @param index3D the 3D index of the cell
+     * @param numCells the number of cells in each dimension
+     * @param boundaries the boundaries of the current cell
+     * @returns an array with cell setoff in each direction
+     */
     inline std::array<int, 3> applyBoundaries(std::array<int, 3> &index3D, std::array<int, 3> &numCells, std::vector<int> boundaries)
     {
         std::array<int, 3> newIndex;
@@ -507,6 +524,13 @@ namespace PContainer
         return newIndex;
     }
 
+    /**
+     * @brief calculates where  in the halo the cell should be mirrored to
+     *
+     * @param currentCellIndex3D the cell index of the current cell in 3D
+     * @param numCell the number of cells in each dimension
+     * @returns the index of the mirrored cell
+     */
     inline int getMirroredHaloIndex(int currentCellIndex3D, int numCell)
     {
         if (currentCellIndex3D == numCell - 2)

@@ -37,6 +37,7 @@ private:
 
     /**
      * @brief computes number of cells and their size in each dimension, initializes them according to domain boundary conditions
+     * @param domainBoundaries the boundaries of the domain
      */
     const void initializeCells(std::array<BoundaryCondition, 6> &domainBoundaries);
 
@@ -57,13 +58,11 @@ private:
      */
     const void rebuildCells();
 
-    const void addParticlesFromHaloCell(); 
     /**
-     * @brief computes position of ghost particle in halo 
+     * @brief computes position of ghost particle in halo
      * @param p particle which has to be mirrored
-     * @param boundaries position of periodic boundary 
-    */
-    std::array<double,3> mirroredPosition(std::array<double, 3> position);
+     */
+    std::array<double, 3> mirroredPosition(std::array<double, 3> position);
 
 public:
     LinkedCellParticleContainer(double cutoff, std::array<double, 3> &domain, std::array<BoundaryCondition, 6> &boundaries);
@@ -79,6 +78,7 @@ public:
     /**
      * @brief applies given function to every particle, checks if they cross cell borders
      * @param f function which is applied to the particles
+     * @param calcX used to prevent some function calls
      */
     const void iterateParticles(std::function<void(Particle &)> f, bool calcX) override;
 
@@ -118,17 +118,15 @@ public:
 
     /**
      * @brief adds reflection force to particles near to the reflecting boundary
-     * @param particles particles inside the cell the reflecting boundary condition belongs to
-     * @param boundary_idx position of reflecting boundary
+     * @param cellIndex the index of the current cell
      * @param f force calculation function which has to be applied at the reflecting boundary
      */
     const void reflectingBoundary(int cellIndex, std::function<void(Particle &, Particle &)> f);
 
     /**
-     * @brief emplaces ghost particles of boundary particles at periodic boundaries in halo 
-     * @param particles particles inside cell the periodic boundary condition belongs to
-     * @param boundaries position of periodic boundary
-    */
+     * @brief emplaces ghost particles of boundary particles at periodic boundaries in halo
+     * @param cellIndex the index of the current cell
+     */
     const void periodicBoundary(int cellIndex);
 
     /**

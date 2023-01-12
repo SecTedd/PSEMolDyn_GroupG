@@ -45,8 +45,8 @@ std::vector<int> *ParticleCell::getCellParticleIndices()
 const void ParticleCell::removeInvalid(std::vector<Particle> *particles)
 {
     particleIndices->erase(std::remove_if(particleIndices->begin(), particleIndices->end(), [particles](int particleIndex)
-                                     { return particles->at(particleIndex).getInvalid() || particles->at(particleIndex).getHalo(); }),
-                      particleIndices->end());
+                                          { return particles->at(particleIndex).getInvalid() || particles->at(particleIndex).getHalo(); }),
+                           particleIndices->end());
 }
 
 const CellType ParticleCell::getType() { return type; }
@@ -62,4 +62,3 @@ const std::vector<int> &ParticleCell::getPeriodicHaloNeighbours() { return perio
 void ParticleCell::setDomainNeighbours(std::vector<int> &neighbours) { this->domainNeighbours = neighbours; }
 
 void ParticleCell::setPeriodicHaloNeighbours(std::vector<int> &neighbours) { this->periodicHaloNeighbours = neighbours; }
-

@@ -25,7 +25,7 @@ namespace outputWriter
         /**
          * write the particles from the particle container to a file
          */
-        void writeCheckpoint(ParticleContainer *particleContainer);
+        void writeCheckpoint(ParticleContainer *particleContainer, std::string* filename, std::string *scheme);
 
     private:
         /**

@@ -51,7 +51,9 @@ void OutputFacade::outputVTK(int iteration)
 
 void OutputFacade::createCheckpoint()
 {
-    checkpointWriter.writeCheckpoint(programParameters->getParticleContainer().get());
+    std::string filename = "../checkpoints/" + File::getDateTime() + "simulation_status.xml";
+    std::string scheme = "../src/xsd/SimulationState.xsd";
+    checkpointWriter.writeCheckpoint(programParameters->getParticleContainer().get(), &filename, &scheme);
 }
 
 void OutputFacade::createDirectory(std::string path)

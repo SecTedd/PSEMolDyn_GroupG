@@ -21,8 +21,9 @@ TEST(LinkedCellParticleContainer, Initialization)
 
     for (unsigned int i = 0; i < cells.size(); i++)
     {
-        //halo cells
-        if (i < 25 || i >= 100 || i % 5 == 0 || i % 5 == 4 || (i/5) % 5 == 0 || (i/5) % 5 == 4) {
+        // halo cells
+        if (i < 25 || i >= 100 || i % 5 == 0 || i % 5 == 4 || (i / 5) % 5 == 0 || (i / 5) % 5 == 4)
+        {
             EXPECT_EQ(cells[i].getType(), CellType::HaloCell);
             EXPECT_THAT(cells[i].getBoundaries(), testing::ElementsAre(out, out, out, out, out, out));
         }
@@ -86,10 +87,10 @@ TEST(LinkedCellParticleContainer, IterateParticles)
     pc.addParticle(x3, v, m, epsilon, sigma);
 
     pc.iterateParticles([addX](Particle &p)
-                        { p.setX(p.getX() + addX); }, true);
+                        { p.setX(p.getX() + addX); },
+                        true);
 
     EXPECT_EQ(pc.getActiveParticles().size(), 2);
-    EXPECT_EQ(pc.getHaloParticles().size(), 1);
 
     std::vector<ParticleCell> &cells = pc.getCells();
     EXPECT_EQ(cells[31].size(), 1);
@@ -162,7 +163,7 @@ TEST(LinkedCellParticleContainer, IterateParticleInteractions)
 TEST(LinkedCellParticleContainer, ReflectingBoundaryCondition)
 {
     double cutoff = 3;
-    std::array<double, 3> domain = {9, 9, 9};
+    std::array<double, 3> domain = {9, 9, 1};
     BoundaryCondition out = BoundaryCondition::Outflow;
     std::array<BoundaryCondition, 6> boundaries = {BoundaryCondition::Reflecting, out, BoundaryCondition::Reflecting, out, out, out};
     LinkedCellParticleContainer pc = LinkedCellParticleContainer(cutoff, domain, boundaries);
@@ -195,28 +196,18 @@ TEST(LinkedCellParticleContainer, ReflectingBoundaryCondition)
     double m = 1;
     double epsilon = 1;
     double sigma = 1;
-    Particle p1 = Particle(x1, v, m, epsilon, sigma);
-    Particle p2 = Particle(x2, v, m, epsilon, sigma);
-    Particle p3 = Particle(x3, v, m, epsilon, sigma);
-    Particle p4 = Particle(x4, v, m, epsilon, sigma);
-    std::vector<Particle *> dummyCell;
-    dummyCell.reserve(4);
-    dummyCell.push_back(&p1);
-    dummyCell.push_back(&p2);
-    dummyCell.push_back(&p3);
-    dummyCell.push_back(&p4);
 
-    pc.reflectingBoundary(dummyCell, 0, forceCalculationIteration);
-    EXPECT_THAT(p1.getF(), testing::ElementsAre(120, 0, 0));
-    EXPECT_THAT(p2.getF(), testing::ElementsAre(120, 0, 0));
-    EXPECT_THAT(p3.getF(), testing::ElementsAre(0, 0, 0));
-    EXPECT_THAT(p4.getF(), testing::ElementsAre(0, 0, 0));
+    pc.reserveMemoryForParticles(5);
+    pc.addParticle(x1, v, m, epsilon, sigma);
+    pc.addParticle(x2, v, m, epsilon, sigma);
+    pc.addParticle(x3, v, m, epsilon, sigma);
+    pc.addParticle(x4, v, m, epsilon, sigma);
 
-    pc.reflectingBoundary(dummyCell, 2, forceCalculationIteration);
-    EXPECT_THAT(p1.getF(), testing::ElementsAre(120, 120, 0));
-    EXPECT_THAT(p2.getF(), testing::ElementsAre(120, 0, 0));
-    EXPECT_THAT(p3.getF(), testing::ElementsAre(0, 120, 0));
-    EXPECT_THAT(p4.getF(), testing::ElementsAre(0, 0, 0));
+    pc.reflectingBoundary(31, forceCalculationIteration);
+    EXPECT_THAT(pc.getActiveParticles()[0].getF(), testing::ElementsAre(120, 120, 0));
+    EXPECT_THAT(pc.getActiveParticles()[1].getF(), testing::ElementsAre(120, 0, 0));
+    EXPECT_THAT(pc.getActiveParticles()[2].getF(), testing::ElementsAre(0, 120, 0));
+    EXPECT_THAT(pc.getActiveParticles()[3].getF(), testing::ElementsAre(0, 0, 0));
 }
 
 /**
@@ -265,15 +256,15 @@ TEST(LinkedCellParticleContainer, OutflowBoundaryCondition)
     pc.iterateParticles(f, true);
 
     EXPECT_EQ(pc.getActiveParticles().size(), 1);
-    EXPECT_EQ(pc.getHaloParticles().size(), 3);
 }
 
 /**
  * Test correct force application over opposite domain boundaries against hand-calculated values
-*/
-TEST(PeriodicBoundaryCondition, ForceApplication) {
+ */
+TEST(PeriodicBoundaryCondition, ForceApplication)
+{
     double cutoff = 3;
-    std::array<double, 3> domain = {9,9,9};
+    std::array<double, 3> domain = {9, 9, 9};
     BoundaryCondition out = BoundaryCondition::Outflow;
     std::array<BoundaryCondition, 6> boundaries = {BoundaryCondition::Periodic, BoundaryCondition::Periodic, out, out, out, out};
     LinkedCellParticleContainer pc = LinkedCellParticleContainer(cutoff, domain, boundaries);
@@ -300,8 +291,8 @@ TEST(PeriodicBoundaryCondition, ForceApplication) {
         // Lennard-Jones force
         std::array<double, 3> f_ij = (-24 * 5 / pow(distance, 2)) * (pow6 - 2 * pow12) * (p1.getX() - p2.getX());
         std::array<double, 3> f_ji = -1 * f_ij;
-        //std::cout << "F_ij: " << f_ij << std::endl;
-        //std::cout << "F_ji: " << f_ji << std::endl;
+        // std::cout << "F_ij: " << f_ij << std::endl;
+        // std::cout << "F_ji: " << f_ji << std::endl;
 
         p1.addF(f_ij);
         p2.addF(f_ji);
@@ -321,10 +312,11 @@ TEST(PeriodicBoundaryCondition, ForceApplication) {
 
 /**
  * Test correct reappearance of particle on other domain side
-*/
-TEST(PeriodicBoundaryCondition, CrossSides) {
+ */
+TEST(PeriodicBoundaryCondition, CrossSides)
+{
     double cutoff = 3;
-    std::array<double, 3> domain = {9,9,9};
+    std::array<double, 3> domain = {9, 9, 9};
     BoundaryCondition out = BoundaryCondition::Outflow;
     std::array<BoundaryCondition, 6> boundaries = {BoundaryCondition::Periodic, BoundaryCondition::Periodic, out, out, out, out};
     LinkedCellParticleContainer pc = LinkedCellParticleContainer(cutoff, domain, boundaries);
@@ -335,7 +327,7 @@ TEST(PeriodicBoundaryCondition, CrossSides) {
     double sigma = 1;
     double epsilon = 5;
 
-    //calcX with delta_t = 1, f is initialized to zero
+    // calcX with delta_t = 1, f is initialized to zero
     std::function<void(Particle &)> f = [delta_t = 1](Particle &p1)
     {
         std::array<double, 3> x_new = p1.getX() + delta_t * p1.getV() + (delta_t * delta_t / (2 * p1.getM())) * p1.getF();

@@ -18,7 +18,7 @@ enum class CellType
 {
     InnerCell,
     BoundaryCell,
-    HaloCell, 
+    HaloCell,
     PeriodicHaloCell
 };
 
@@ -38,11 +38,11 @@ enum class BoundaryCondition
 class ParticleCell
 {
 private:
-    std::shared_ptr<std::vector<int>> particleIndices; //reference to vector of pointers to particles currently in this cell
+    std::shared_ptr<std::vector<int>> particleIndices; // reference to vector of pointers to particles currently in this cell
 
     std::vector<int> domainNeighbours; // structure to store index of neighboring domain cells with a higher index
 
-    std::vector<int> periodicHaloNeighbours; //structure to store all neighbouring halo cells at a periodic boundary
+    std::vector<int> periodicHaloNeighbours; // structure to store all neighbouring halo cells at a periodic boundary
 
     CellType type; // type of cell (inner or boundary)
 
@@ -68,7 +68,7 @@ public:
 
     /**
      * @brief inserts pointer to particle at the end of particle vector
-     * @param p pointer to new particle
+     * @param index index of new particle in activeParticleVector
      */
     const void insertParticleIndex(int index);
 
@@ -85,7 +85,8 @@ public:
 
     /**
      * @brief removes particle pointers of invalid particles
-    */
+     * @param particles the particles which correspond to the indices
+     */
     const void removeInvalid(std::vector<Particle> *particles);
 
     /**

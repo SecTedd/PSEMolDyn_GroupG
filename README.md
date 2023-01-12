@@ -54,6 +54,12 @@ After building the project you can run the executable
 6. The generated VTK-Files can be found at the path you specified in the xml. <br />
 7. **Warning** the contents of the output folders will be overwritten if you run the simulation multiple times with the same output folder path! <br />
 
+### Checkpoints 
+
+When running the program with the flag `-c` the program creates a checkpoint in the checkpoint folder, which has the `PSEMOLDYN_GROUPG` folder as its parent directory. 
+If the checkpoint folder does not exist, you need to create it manually as a direct child of the parent directory. 
+After writing a checkpoint file, you can read it with the `-f` command or include the path in the filename bracket in a XML file for the configuration. The exact syntax can be found at `src/xsd/Simulation.xsd`
+
 ### Run tests
 
 1. Navigate into the build folder: `cd build`

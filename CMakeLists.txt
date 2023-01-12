@@ -44,7 +44,6 @@ target_link_libraries(MolSim
         PUBLIC
             PkgConfig::XERCESC
 )
-add_compile_options(-g)
 
 # activate all compiler warnings. Clean up your code :P
 # depending on the compiler different flags are used
@@ -58,4 +57,4 @@ target_compile_options(MolSim
 list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/modules)
 
 include(doxygen)
-#include(googletest)
+include(googletest)
