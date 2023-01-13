@@ -40,6 +40,7 @@ void Thermostat::apply() {
     double currentTemperature = calculateCurrentTemperature();
     double newTemperature = calculateNewTemperature(currentTemperature);
 
+    // skip when is exactly zero, to not divide by zero later
     if (currentTemperature == 0) {
         return;
     }
@@ -102,7 +103,7 @@ double Thermostat::calculateNewTemperature(double currentTemperature) {
     // deltaTemperature set
 
     // deltaTemperature is bigger than what needs to be changed
-    if (abs(targetTemperature - currentTemperature) <= temperatureDelta) {
+    if (std::abs(targetTemperature - currentTemperature) <= temperatureDelta) {
         return targetTemperature;
     }
 
