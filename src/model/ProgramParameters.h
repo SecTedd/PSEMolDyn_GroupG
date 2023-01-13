@@ -40,6 +40,9 @@ private:
     int benchmark_iterations;                             /// number of runs in benchmark mode, 0 for normal simulations
     bool showMenu;                                        /// true if menu should be shown, false otherwise
     bool createCheckpoint;                                /// true if a checkpoint should be created, false otherwise
+    bool membrane;                                        /// true if the simulation should calculate force according to a membrane
+    double stiffness;                                     /// stiffness of the membrane
+    double averageBondLength;                             // average bond lenght of the membrane
     std::shared_ptr<spdlog::logger> memoryLogger;         /// a speedlog logger which logs construction and destruction of particles
 
 public:
@@ -94,6 +97,8 @@ public:
 
     const void setCreateCheckpoint(bool createCheckpoint);
 
+    const void setMembrane(bool membrane);
+
     std::shared_ptr<ParticleContainer> getParticleContainer();
 
     const double getEndTime() const;
@@ -126,5 +131,7 @@ public:
 
     const bool getShowMenu() const;
 
-    const bool getCreateCheckpoint(); 
+    const bool getCreateCheckpoint();
+
+    const bool getMembrane();
 };

@@ -74,6 +74,16 @@ private:
     bool halo;
 
     /**
+     * The direct parallel neighbours of the particle
+    */
+    std::vector<int> parallelNeighbours; 
+
+    /**
+     * The direct diagonal neighbours of the particle
+    */
+    std::vector<int> diagonalNeighbours; 
+
+    /**
      * a speedlog logger which logs construction and destruction of particles
      */
     std::shared_ptr<spdlog::logger> _memoryLogger;
@@ -150,6 +160,12 @@ public:
 
     const double getSigma() const;
     const void setSigma(double sigma_arg);
+
+    const std::vector<int> getParallelNeighbours(); 
+    const void setParallelNeighbours(std::vector<int> parallelNeighbours); 
+
+    const std::vector<int> getDiagonalNeighbours(); 
+    const void setDiagonalNeighbours(std::vector<int> digonalNeighbours); 
 
     bool operator==(Particle &other);
 

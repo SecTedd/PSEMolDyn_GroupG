@@ -33,7 +33,8 @@ ProgramParameters::ProgramParameters()
     g_grav = -12.44;
     benchmark_iterations = 0;
     showMenu = false;
-    createCheckpoint = false; 
+    createCheckpoint = false;
+    membrane = false;
     memoryLogger = spdlog::get("memory_logger");
     memoryLogger->info("ProgramParameters generated!");
 }
@@ -70,21 +71,19 @@ const void ProgramParameters::setDomain(std::array<double, 3> domain)
 const void ProgramParameters::setBoundaries(std::array<BoundaryCondition, 6> boundaries)
 {
     this->boundaries = boundaries;
-    
-    //if 2D overwrite z-boundaries to be outflow
-    if (this->domain[2] == 1) {
+
+    // if 2D overwrite z-boundaries to be outflow
+    if (this->domain[2] == 1)
+    {
         this->boundaries[4] = BoundaryCondition::Outflow;
         this->boundaries[5] = BoundaryCondition::Outflow;
     }
-    //error if periodic bondaries are not on opposite sides
+    // error if periodic bondaries are not on opposite sides
     BoundaryCondition p = BoundaryCondition::Periodic;
-    if ((boundaries[0] == p) != (boundaries[1] == p) 
-        || (boundaries[2] == p) != (boundaries[3] == p)
-        || (boundaries[4] == p) != (boundaries[5] == p))
+    if ((boundaries[0] == p) != (boundaries[1] == p) || (boundaries[2] == p) != (boundaries[3] == p) || (boundaries[4] == p) != (boundaries[5] == p))
     {
         throw std::invalid_argument("Periodic boundaries have to be on opposite sides");
     }
-        
 
     if (typeid(*particleContainer) == typeid(LinkedCellParticleContainer))
     {
@@ -101,6 +100,7 @@ const void ProgramParameters::setDeltaTemp(double delta_temp) { this->delta_temp
 const void ProgramParameters::setGGrav(double g_grav) { this->g_grav = g_grav; }
 const void ProgramParameters::setShowMenu(bool show_menu) { this->showMenu = show_menu; }
 const void ProgramParameters::setCreateCheckpoint(bool createCheckpoint) { this->createCheckpoint = createCheckpoint; }
+const void ProgramParameters::setMembrane(bool membrane) { this->membrane = membrane; }
 const int ProgramParameters::getBenchmarkIterations() const { return benchmark_iterations; }
 std::shared_ptr<ParticleContainer> ProgramParameters::getParticleContainer() { return particleContainer; }
 const double ProgramParameters::getEndTime() const { return end_time; }
@@ -118,3 +118,4 @@ const double ProgramParameters::getGGrav() const { return g_grav; }
 const std::string ProgramParameters::getBaseName() { return baseName; }
 const bool ProgramParameters::getShowMenu() const { return showMenu; }
 const bool ProgramParameters::getCreateCheckpoint() { return createCheckpoint; }
+const bool ProgramParameters::getMembrane() { return membrane; }

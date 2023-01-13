@@ -98,6 +98,12 @@ const void Particle::setEpsilon(double epsilon_arg) { epsilon = epsilon_arg; }
 const double Particle::getSigma() const { return sigma; }
 const void Particle::setSigma(double sigma_arg) { sigma = sigma_arg; }
 
+const std::vector<int> Particle::getParallelNeighbours() { return this->parallelNeighbours; }
+const void Particle::setParallelNeighbours(std::vector<int> parallelNeighbours) { this->parallelNeighbours = parallelNeighbours; }
+
+const std::vector<int> Particle::getDiagonalNeighbours() { return this->diagonalNeighbours; }
+const void Particle::setDiagonalNeighbours(std::vector<int> digaonalNeighbours) { this->diagonalNeighbours = diagonalNeighbours; }
+
 std::string Particle::toString() const
 {
     std::stringstream stream;
