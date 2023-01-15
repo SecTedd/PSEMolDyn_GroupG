@@ -36,7 +36,7 @@ private:
     int n_thermostats;                                    /// the number of iterations after which the thermostat is applied
     double temp_target;                                   /// the target temperature of the simulation
     double delta_temp;                                    /// the maximum increase in the temperature per iteration
-    double g_grav;                                        /// the gravitational constant for the simulation
+    std::array<double, 3> g_grav;                         /// the gravitational constant for the simulation
     int benchmark_iterations;                             /// number of runs in benchmark mode, 0 for normal simulations
     bool showMenu;                                        /// true if menu should be shown, false otherwise
     bool createCheckpoint;                                /// true if a checkpoint should be created, false otherwise
@@ -91,13 +91,17 @@ public:
 
     const void setDeltaTemp(double delta_temp);
 
-    const void setGGrav(double g_grav);
+    const void setGGrav(std::array<double, 3> g_grav);
 
     const void setShowMenu(bool show_menu);
 
     const void setCreateCheckpoint(bool createCheckpoint);
 
     const void setMembrane(bool membrane);
+
+    const void setStiffness(double stiffness); 
+
+    const void setAverageBondLength(double averageBondLength); 
 
     std::shared_ptr<ParticleContainer> getParticleContainer();
 
@@ -127,11 +131,16 @@ public:
 
     const double getDeltaTemp() const;
 
-    const double getGGrav() const;
+    const std::array<double, 3> getGGrav() const;
 
     const bool getShowMenu() const;
 
     const bool getCreateCheckpoint();
 
     const bool getMembrane();
+
+    const double getStiffness();
+
+    const double getAverageBondLength();
+
 };

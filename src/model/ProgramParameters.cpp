@@ -30,7 +30,7 @@ ProgramParameters::ProgramParameters()
     n_thermostats = 1000;
     temp_target = 40;
     delta_temp = -1;
-    g_grav = -12.44;
+    g_grav = std::array<double, 3> {0.0, -12.44, 0.0};
     benchmark_iterations = 0;
     showMenu = false;
     createCheckpoint = false;
@@ -97,10 +97,12 @@ const void ProgramParameters::setBrownianMotion(bool brownianMotion) { this->bro
 const void ProgramParameters::setNThermostats(int n_thermostats) { this->n_thermostats = n_thermostats; }
 const void ProgramParameters::setTempTarget(double temp_target) { this->temp_target = temp_target; }
 const void ProgramParameters::setDeltaTemp(double delta_temp) { this->delta_temp = delta_temp; }
-const void ProgramParameters::setGGrav(double g_grav) { this->g_grav = g_grav; }
+const void ProgramParameters::setGGrav(std::array<double, 3> g_grav) { this->g_grav = g_grav; }
 const void ProgramParameters::setShowMenu(bool show_menu) { this->showMenu = show_menu; }
 const void ProgramParameters::setCreateCheckpoint(bool createCheckpoint) { this->createCheckpoint = createCheckpoint; }
 const void ProgramParameters::setMembrane(bool membrane) { this->membrane = membrane; }
+const void ProgramParameters::setStiffness(double stiffness) { this->stiffness = stiffness; }
+const void ProgramParameters::setAverageBondLength(double averageBondLength) { this->averageBondLength = averageBondLength; }
 const int ProgramParameters::getBenchmarkIterations() const { return benchmark_iterations; }
 std::shared_ptr<ParticleContainer> ProgramParameters::getParticleContainer() { return particleContainer; }
 const double ProgramParameters::getEndTime() const { return end_time; }
@@ -114,8 +116,10 @@ const bool ProgramParameters::getBrownianMotion() const { return brownianMotion;
 const int ProgramParameters::getNThermostats() const { return n_thermostats; }
 const double ProgramParameters::getTempTarget() const { return temp_target; }
 const double ProgramParameters::getDeltaTemp() const { return delta_temp; }
-const double ProgramParameters::getGGrav() const { return g_grav; }
+const std::array<double, 3> ProgramParameters::getGGrav() const { return g_grav; }
 const std::string ProgramParameters::getBaseName() { return baseName; }
 const bool ProgramParameters::getShowMenu() const { return showMenu; }
 const bool ProgramParameters::getCreateCheckpoint() { return createCheckpoint; }
 const bool ProgramParameters::getMembrane() { return membrane; }
+const double ProgramParameters::getStiffness() { return stiffness; }
+const double ProgramParameters::getAverageBondLength() { return averageBondLength; }
