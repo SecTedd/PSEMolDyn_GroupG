@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include <cmath>
+#include <omp.h>
 
 LinkedCellParticleContainer::LinkedCellParticleContainer(double cutoff, std::array<double, 3> &domain, std::array<BoundaryCondition, 6> &domainBoundaries)
 {
@@ -206,18 +207,29 @@ const void LinkedCellParticleContainer::iterateParticleInteractions(std::functio
     clearHalo();
 
     // then add particles to halo or add the reflecting force
-    for (long unsigned int i = 0; i < cells.size(); i++)
-    {
-        if (cells[i].getType() == CellType::BoundaryCell)
+    // #pragma omp parallel
+    // { 
+    //     #pragma omp single
+    //     _simulationLogger->info("Num Threads in boundary calc: " + std::to_string(omp_get_num_threads()));
+    //     #pragma omp for
+        for (long unsigned int i = 0; i < cells.size(); i++)
         {
-            // handles reflecting boundaries
-            reflectingBoundary(i, f);
-            // handles periodic boundaries
-            periodicBoundary(i);
+            if (cells[i].getType() == CellType::BoundaryCell)
+            {
+                // handles reflecting boundaries
+                reflectingBoundary(i, f);
+                // handles periodic boundaries
+                periodicBoundary(i);
+            }
         }
-    }
+    // }
 
     // finally calculate interactions
+    // #pragma omp parallel
+    // {
+    //     #pragma omp single
+    //     _simulationLogger->info("Num threads in particle interactions: " + std::to_string(omp_get_num_threads()));
+    //     #pragma omp for
     for (auto &cell : cells)
     {
         // particle interactions don't need to be calculated for halo cells
@@ -273,6 +285,7 @@ const void LinkedCellParticleContainer::iterateParticleInteractions(std::functio
                 }
             }
         }
+    // }
     }
 }
 
@@ -283,49 +296,55 @@ const void LinkedCellParticleContainer::iterateParticles(std::function<void(Part
     // deletions in the active particle vector, meaning indices within the cells are rendered invalid
     bool cellRebuild = false;
 
-    for (auto &particle : activeParticles)
-    {
+    // #pragma omp parallel 
+    // {
+    //     #pragma omp single
+    //     _simulationLogger->info("Num Threads in iterateParticles: " + std::to_string(omp_get_num_threads()));
+        #pragma omp parallel for
 
-        f(particle);
-        if (!calcX)
-            continue;
-
-        // check if particle moved out of cell
-        int cellIndex = computeCellIdx(particle);
-
-        std::array<int, 3> idx3D = PContainer::convert1DTo3D(cellIndex, numCells);
-        bool outOfBounds = idx3D[0] < 0 || idx3D[0] >= numCells[0] || idx3D[1] < 0 || idx3D[1] >= numCells[1] || idx3D[2] < 0 || idx3D[2] >= numCells[2];
-
-        // particle out of bounds (not in domain or halo cell layer)
-        if (outOfBounds)
+        for (auto &particle : activeParticles)
         {
-            particle.setHalo(true);
-            cellRebuild = true;
-            _simulationLogger->debug("Particle way out of bounds (" + std::to_string(cellIndex) + "): " + particle.toString());
-        }
-        else if (cellIndex != particle.getCellIdx())
-        {
-            // particle can either be in a regular halo cell which means outflow, a periodic halo which means it needs to be mirrored or in an inner cell which means the index has to be changed
-            if (cells[cellIndex].getType() == CellType::InnerCell || cells[cellIndex].getType() == CellType::BoundaryCell)
-            {
-                // only change in cell index and then a rebuild required
-                particle.setCellIdx(cellIndex);
-                particle.setInvalid(true);
-                cellUpdate = true;
-            }
-            else if (cells[cellIndex].getType() == CellType::HaloCell)
+            f(particle);
+            if (!calcX)
+                continue;
+
+            // check if particle moved out of cell
+            int cellIndex = computeCellIdx(particle);
+
+            std::array<int, 3> idx3D = PContainer::convert1DTo3D(cellIndex, numCells);
+            bool outOfBounds = idx3D[0] < 0 || idx3D[0] >= numCells[0] || idx3D[1] < 0 || idx3D[1] >= numCells[1] || idx3D[2] < 0 || idx3D[2] >= numCells[2];
+
+            // particle out of bounds (not in domain or halo cell layer)
+            if (outOfBounds)
             {
                 particle.setHalo(true);
                 cellRebuild = true;
+                _simulationLogger->debug("Particle way out of bounds (" + std::to_string(cellIndex) + "): " + particle.toString());
             }
-            else if (cells[cellIndex].getType() == CellType::PeriodicHaloCell)
+            else if (cellIndex != particle.getCellIdx())
             {
-                particle.setX(mirroredPosition(particle.getX()));
-                particle.setInvalid(true);
-                cellUpdate = true;
+                // particle can either be in a regular halo cell which means outflow, a periodic halo which means it needs to be mirrored or in an inner cell which means the index has to be changed
+                if (cells[cellIndex].getType() == CellType::InnerCell || cells[cellIndex].getType() == CellType::BoundaryCell)
+                {
+                    // only change in cell index and then a rebuild required
+                    particle.setCellIdx(cellIndex);
+                    particle.setInvalid(true);
+                    cellUpdate = true;
+                }
+                else if (cells[cellIndex].getType() == CellType::HaloCell)
+                {
+                    particle.setHalo(true);
+                    cellRebuild = true;
+                }
+                else if (cells[cellIndex].getType() == CellType::PeriodicHaloCell)
+                {
+                    particle.setX(mirroredPosition(particle.getX()));
+                    particle.setInvalid(true);
+                    cellUpdate = true;
+                }
             }
         }
-    }
+    // }
 
     // reorganising cell structure
     if (cellRebuild)
