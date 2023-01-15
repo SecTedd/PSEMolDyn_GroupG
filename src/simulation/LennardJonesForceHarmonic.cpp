@@ -12,7 +12,7 @@
 #include <iostream>
 #include <math.h>
 
-LennardJonesForceHarmonic::LennardJonesForceHarmonic()
+LennardJonesForceHarmonic::LennardJonesForceHarmonic(double stiffness, double averageBondLength) : stiffness(stiffness), averageBondLength(averageBondLength)
 {
     _logicLogger = spdlog::get("simulation_logger");
 }
@@ -28,29 +28,31 @@ void LennardJonesForceHarmonic::calculateForce(ParticleContainer &particleContai
 
     particleContainer.iterateParticles(forceInitializationIteration, false);
 
-
     std::function<void(Particle &)> harmonicPotential = [&](Particle &p1)
     {
-        auto &particles = particleContainer.getActiveParticles(); 
-        
-        for(unsigned long i; i < particles.size(); i++){
-            auto particle = particles[i]; 
+        auto &particles = particleContainer.getActiveParticles();
 
-            for(int index : particle.getParallelNeighbours()){
-                if(index > i){
-                    //TODO
-                }
-            }
+        for (int index : p1.getParallelNeighbours())
+        {
+            double distance = ArrayUtils::L2Norm(p1.getX() - particles[index].getX());
+            auto f_ij = (stiffness * (distance - averageBondLength) / distance) * (p1.getX() - particles[index].getX());
+            auto f_ji = -1 * f_ij;
+            p1.addF(f_ij);
+            particles[index].addF(f_ji);
+        }
 
-            for(int index : particle.getParallelNeighbours()){
-                if(index > i){
-                    //TODO
-                }
-            }
+        auto sqrt = std::sqrt(2);
+
+        for (int index : p1.getParallelNeighbours())
+        {
+            double distance = ArrayUtils::L2Norm(p1.getX() - particles[index].getX());
+            auto f_ij = (stiffness * (distance - sqrt * averageBondLength) / distance) * (p1.getX() - particles[index].getX());
+            auto f_ji = -1 * f_ij;
+            p1.addF(f_ij);
+            particles[index].addF(f_ji);
         }
     };
     particleContainer.iterateParticles(harmonicPotential, false);
-
 
     // in the second step we calculate the forces between pairs of particles according to the Lennard-Jones formula
     std::function<void(Particle &, Particle &)> forceCalculationIteration = [this](Particle &p1, Particle &p2)

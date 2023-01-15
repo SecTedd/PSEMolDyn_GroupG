@@ -14,13 +14,14 @@ TEST(SingleParticleGravitationalForce, GravitationalForce)
     double m = 1;
     double sigma = 1;
     double epsilon = 5;
-    double g_grav = -12;
+    std::array<double, 3> g_grav = {0, -12, 0};
     pc.addParticle(x1, v, m, epsilon, sigma);
 
     // calculating new forces according to Lennard-Jones potential with hardcoded values epsilon=5 and sigma=1
-    std::unique_ptr<SingleParticleGravitationalForce> calculation = std::make_unique<SingleParticleGravitationalForce>();
+    std::unique_ptr<SingleParticleGravitationalForce> calculation; 
+    calculation.reset(new SingleParticleGravitationalForce(g_grav));
 
-    calculation->calculateForce(pc, g_grav);
+    calculation->calculateForce(pc, 0);
 
     std::vector<Particle> &particles = pc.getActiveParticles();
 

@@ -24,7 +24,7 @@ class Simulation
 private:
     ProgramParameters *_programParameters;
     std::shared_ptr<InterParticleForce> _interParticleForceCalculation;
-    std::shared_ptr<SingleParticleForce> _singleParticleForceCalculation; 
+    std::shared_ptr<std::list<SingleParticleForce*>> _singleParticleForceCalculations; 
     std::shared_ptr<spdlog::logger> _logicLogger;
     /**
      * a speedlog logger which logs construction and destruction of particles

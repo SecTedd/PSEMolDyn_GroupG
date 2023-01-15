@@ -8,6 +8,7 @@
 #include "./XMLInputReader.h"
 #include "./InputFacade.h"
 #include "../model/Sphere.h"
+#include "../simulation/TemporalSingleParticleForce.h"
 #include "../utils/MaxwellBoltzmannDistribution.h"
 #include "../utils/ArrayUtils.h"
 #include "../utils/ParticleGenerator.h"
@@ -120,6 +121,13 @@ void XMLInputReader::readInput(ProgramParameters &programParameters, const char 
         boundaries[5] = getBoundaryCondition(boundary);
         programParameters.setBoundaries(boundaries);
 
+        std::array<double, 3> gGrav;
+        simulation_t::g_grav_type g = xml->g_grav();
+        gGrav[0] = g.x();
+        gGrav[1] = g.y();
+        gGrav[2] = g.z();
+        programParameters.setGGrav(gGrav);
+
         programParameters.setNThermostats(xml->n_thermostat());
 
         if (xml->temp_target().present())
@@ -132,9 +140,19 @@ void XMLInputReader::readInput(ProgramParameters &programParameters, const char 
             programParameters.setDeltaTemp(xml->delta_temp().get());
         }
 
-        if (xml->g_grav().present())
+        if (xml->membrane().present())
         {
-            programParameters.setGGrav(xml->g_grav().get());
+            programParameters.setMembrane(xml->membrane().get());
+        }
+
+        if (xml->stiffness().present())
+        {
+            programParameters.setStiffness(xml->stiffness().get());
+        }
+
+        if (xml->average_bond_length().present())
+        {
+            programParameters.setAverageBondLength(xml->stiffness().get());
         }
 
         if (xml->writeFrequency().present())
@@ -156,6 +174,40 @@ void XMLInputReader::readInput(ProgramParameters &programParameters, const char 
         {
             std::string filename = i->substr(0, i->length());
             inputFacade->readInput(programParameters, filename.c_str());
+        }
+
+        std::shared_ptr<std::list<SingleParticleForce>> _singleParticleForceCalculations;
+        for (simulation_t::force_const_iterator i(xml->force().begin()); i != xml->force().end(); i++)
+        {
+            std::array<double, 3> force;
+            simulation_t::force_traits::type::force1_type f1 = i->force1();
+            force[0] = f1.x();
+            force[1] = f1.y();
+            force[2] = f1.z();
+
+            double end_time = i->end_time();
+
+            std::vector<int> indices;
+
+            for (simulation_t::force_traits::type::particles_const_iterator j(i->particles().begin()); j != i->particles().end(); j++)
+            {
+                std::array<int, 3> index3D;
+                simulation_t::force_traits::type::particles_traits::type::particle_index_type pIndex = j->particle_index();
+                index3D[0] = pIndex.x();
+                index3D[1] = pIndex.y();
+                index3D[2] = pIndex.z();
+
+                std::array<int, 3> dimensions;
+                simulation_t::force_traits::type::particles_traits::type::dimensions_type dim = j->dimensions();
+                dimensions[0] = dim.x();
+                dimensions[1] = dim.y();
+                dimensions[2] = dim.z();
+
+                indices.push_back(ParticleGenerator::index3DTo1D(index3D, dimensions)); 
+            }
+            std::shared_ptr<SingleParticleForce> spForce; 
+            spForce.reset(new TemporalSingleParticleForce(force, end_time, indices));
+            programParameters.addForce(spForce);
         }
 
         for (simulation_t::cuboid_const_iterator i(xml->cuboid().begin()); i != xml->cuboid().end(); i++)
@@ -188,7 +240,7 @@ void XMLInputReader::readInput(ProgramParameters &programParameters, const char 
             int type = i->type();
 
             std::unique_ptr<Cuboid> cuboid = std::make_unique<Cuboid>(Cuboid(position, dimensions, h, m, velocity, epsilon, sigma, type));
-            ParticleGenerator::generateCuboid(*programParameters.getParticleContainer(), *cuboid);
+            ParticleGenerator::generateCuboid(*programParameters.getParticleContainer(), *cuboid, programParameters.getMembrane());
         }
 
         for (simulation_t::sphere_const_iterator i(xml->sphere().begin()); i != xml->sphere().end(); i++)

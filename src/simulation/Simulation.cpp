@@ -22,10 +22,13 @@ Simulation::Simulation(ProgramParameters *programParameters)
 {
     _programParameters = programParameters;
     if (programParameters->getMembrane())
-        _interParticleForceCalculation.reset(new LennardJonesForceHarmonic());
+        _interParticleForceCalculation.reset(new LennardJonesForceHarmonic(programParameters->getStiffness(), programParameters->getAverageBondLength()));
     else
         _interParticleForceCalculation.reset(new LennardJonesForce());
-    _singleParticleForceCalculation.reset(new SingleParticleGravitationalForce());
+    _singleParticleForceCalculations = programParameters->getForces();
+    std::shared_ptr<SingleParticleForce> force; 
+    force.reset(new SingleParticleGravitationalForce(programParameters->getGGrav()));
+    _singleParticleForceCalculations->emplace_back(force.get());
     _logicLogger = spdlog::get("simulation_logger");
     _memoryLogger = spdlog::get("memory_logger");
     _memoryLogger->info("Simulation generated!");
@@ -64,8 +67,11 @@ const void Simulation::simulate()
     }
 
     // calculating force once to initialize force
-    _singleParticleForceCalculation->calculateForce(*_programParameters->getParticleContainer(), _programParameters->getGGrav());
     _interParticleForceCalculation->calculateForce(*_programParameters->getParticleContainer());
+    for (auto force : *_singleParticleForceCalculations)
+    {
+        force->calculateForce(*_programParameters->getParticleContainer(), current_time);
+    }
     outputFacade.outputVTK(iteration);
 
     // for this loop, we assume: current x, current f and current v are known
@@ -76,8 +82,10 @@ const void Simulation::simulate()
 
         // calculate new f
         _interParticleForceCalculation->calculateForce(*_programParameters->getParticleContainer());
-        _singleParticleForceCalculation->calculateForce(*_programParameters->getParticleContainer(), _programParameters->getGGrav());
-
+        for (auto force : *_singleParticleForceCalculations)
+        {
+            force->calculateForce(*_programParameters->getParticleContainer(), current_time);
+        }
         // calculate new v
         calculateV();
 

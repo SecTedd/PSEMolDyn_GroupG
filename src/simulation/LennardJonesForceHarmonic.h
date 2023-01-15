@@ -17,6 +17,10 @@ class LennardJonesForceHarmonic : public InterParticleForce
 private:
     std::shared_ptr<spdlog::logger> _logicLogger;
 
+    double stiffness; /// stiffness of membrane
+
+    double averageBondLength; /// average bond length of membrane
+
 public:
     /**
      * @brief Calculate the force for all particles
@@ -25,5 +29,5 @@ public:
      */
     void calculateForce(ParticleContainer &particleContainer) override;
 
-    LennardJonesForceHarmonic();
+    LennardJonesForceHarmonic(double stiffness, double averageBondLength);
 };

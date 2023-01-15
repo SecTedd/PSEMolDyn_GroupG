@@ -10,6 +10,7 @@
 #include "../model/ParticleContainer.h"
 #include "../model/DirectSumParticleContainer.h"
 #include "../model/ParticleCell.h"
+#include "../simulation/SingleParticleForce.h"
 #include "spdlog/sinks/basic_file_sink.h"
 #include "spdlog/spdlog.h"
 
@@ -23,27 +24,28 @@ class InputFacade;
 class ProgramParameters
 {
 private:
-    std::shared_ptr<ParticleContainer> particleContainer; /// container for all the particles
-    double end_time;                                      /// end_time of the simulation
-    double delta_t;                                       /// increase in step size for the time
-    double cutoff;                                        /// cutoff for the linked cell algorith
-    std::array<double, 3> domain;                         /// the size of the domain
-    std::array<BoundaryCondition, 6> boundaries;          /// the boundaries for the simulation
-    int writeFrequency;                                   /// the number of iterations after which an vtk file is written
-    std::string baseName;                                 /// the path to the output folder
-    double temp_init;                                     /// the initial temperature
-    bool brownianMotion;                                  /// specifies if particles should be initialized with brownian motion
-    int n_thermostats;                                    /// the number of iterations after which the thermostat is applied
-    double temp_target;                                   /// the target temperature of the simulation
-    double delta_temp;                                    /// the maximum increase in the temperature per iteration
-    std::array<double, 3> g_grav;                         /// the gravitational constant for the simulation
-    int benchmark_iterations;                             /// number of runs in benchmark mode, 0 for normal simulations
-    bool showMenu;                                        /// true if menu should be shown, false otherwise
-    bool createCheckpoint;                                /// true if a checkpoint should be created, false otherwise
-    bool membrane;                                        /// true if the simulation should calculate force according to a membrane
-    double stiffness;                                     /// stiffness of the membrane
-    double averageBondLength;                             // average bond lenght of the membrane
-    std::shared_ptr<spdlog::logger> memoryLogger;         /// a speedlog logger which logs construction and destruction of particles
+    std::shared_ptr<ParticleContainer> particleContainer;   /// container for all the particles
+    double end_time;                                        /// end_time of the simulation
+    double delta_t;                                         /// increase in step size for the time
+    double cutoff;                                          /// cutoff for the linked cell algorith
+    std::array<double, 3> domain;                           /// the size of the domain
+    std::array<BoundaryCondition, 6> boundaries;            /// the boundaries for the simulation
+    int writeFrequency;                                     /// the number of iterations after which an vtk file is written
+    std::string baseName;                                   /// the path to the output folder
+    double temp_init;                                       /// the initial temperature
+    bool brownianMotion;                                    /// specifies if particles should be initialized with brownian motion
+    int n_thermostats;                                      /// the number of iterations after which the thermostat is applied
+    double temp_target;                                     /// the target temperature of the simulation
+    double delta_temp;                                      /// the maximum increase in the temperature per iteration
+    std::array<double, 3> g_grav;                           /// the gravitational constant for the simulation
+    int benchmark_iterations;                               /// number of runs in benchmark mode, 0 for normal simulations
+    bool showMenu;                                          /// true if menu should be shown, false otherwise
+    bool createCheckpoint;                                  /// true if a checkpoint should be created, false otherwise
+    bool membrane;                                          /// true if the simulation should calculate force according to a membrane
+    double stiffness;                                       /// stiffness of the membrane
+    double averageBondLength;                               /// average bond lenght of the membrane
+    std::shared_ptr<std::list<SingleParticleForce*>> forces; /// list of forces that are applied
+    std::shared_ptr<spdlog::logger> memoryLogger;           /// a speedlog logger which logs construction and destruction of particles
 
 public:
     /**
@@ -99,9 +101,11 @@ public:
 
     const void setMembrane(bool membrane);
 
-    const void setStiffness(double stiffness); 
+    const void setStiffness(double stiffness);
 
-    const void setAverageBondLength(double averageBondLength); 
+    const void setAverageBondLength(double averageBondLength);
+
+    const void addForce(std::shared_ptr<SingleParticleForce> force); 
 
     std::shared_ptr<ParticleContainer> getParticleContainer();
 
@@ -143,4 +147,5 @@ public:
 
     const double getAverageBondLength();
 
+    const std::shared_ptr<std::list<SingleParticleForce*>> getForces(); 
 };
