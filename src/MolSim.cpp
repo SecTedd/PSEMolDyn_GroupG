@@ -92,7 +92,7 @@ const void handleLogging(int argc, char *argsv[])
   bool benchmark = false;
   while (1)
   {
-    int result = getopt(argc, argsv, "mhe:f:d:l:v:b:c");
+    int result = getopt(argc, argsv, "mhe:f:d:l:v:b:cp:");
     if (result == -1)
     {
       break;
@@ -172,7 +172,7 @@ const void handleInput(int argc, char *argsv[], ProgramParameters *programParame
 {
   while (1)
   {
-    int result = getopt(argc, argsv, "mhe:f:d:l:v:b:c");
+    int result = getopt(argc, argsv, "mhe:f:d:l:v:b:cp:");
 
     if (result == -1)
     {
@@ -255,6 +255,22 @@ const void handleInput(int argc, char *argsv[], ProgramParameters *programParame
     case 'c':
       programParameters->setCreateCheckpoint(true);
       break;
+    case 'p':
+      if (Input::isInt(optarg)) {
+        int parallel = std::__cxx11::stoi(optarg);
+        if (parallel != 1 && parallel != 2) {
+          std::cout << "Error: parallel strategy parameter (-p) must refer to an available strategy (1 or 2)" << std::endl;
+          printHelp();
+          exit(0);
+        }
+        programParameters->setParallel(parallel);
+      }
+      else {
+        std::cout << "Error: parallel strategy parameter (-p) is not an int" << std::endl;
+        printHelp();
+        exit(0);
+      }
+      break;
     default:
       break;
     }
@@ -266,10 +282,11 @@ void printHelp()
   printf(" -f <filename> .......... The path to an input file. If not specified and no cuboids are generated, no particles appear in the simulation.\n");
   printf(" -e <end_time> .......... The end time of the simulation. If not specified, 100 is used\n");
   printf(" -d <delta_t> ........... The size of the time steps in the simulation. If not specified 0.014 is used\n");
-  printf(" -v <verbosity_level>.... Sets the verbosity level for the program: 'o' (off), 'e' (error), 'c' (critical), 'w' (warn), 'i' (info), 'd' (debug), 't' (trace). By default info is used\n");
-  printf(" -l <log_mode>........... Specifies where the logs for the program are written to: 'f' (file), 'c' (console). By default, logs are written to the console when opening the menu\n");
-  printf(" -b <runs>............... Activate benchmark mode, compute mean simulation time over given number of runs. Overwrites any log-level specification to turn all loggers off\n");
+  printf(" -v <verbosity_level> ... Sets the verbosity level for the program: 'o' (off), 'e' (error), 'c' (critical), 'w' (warn), 'i' (info), 'd' (debug), 't' (trace). By default info is used\n");
+  printf(" -l <log_mode> .......... Specifies where the logs for the program are written to: 'f' (file), 'c' (console). By default, logs are written to the console when opening the menu\n");
+  printf(" -b <runs> .............. Activate benchmark mode, compute mean simulation time over given number of runs. Overwrites any log-level specification to turn all loggers off\n");
   printf(" -c ..................... Specify if a checkpoint file should be written\n");
   printf(" -m ..................... Enter the console menu, here you can read in files, create cuboids and re-run the program with the same parameters. If the menu is specified, logs are written to files by default\n");
+  printf(" -p <strategy> .......... Specify parallelization strategy if compiled with OpenMP, current available strategies are 1 and 2\n");
   printf(" -h ..................... Help\n");
 }

@@ -27,6 +27,8 @@ private:
 
     std::vector<ParticleCell> cells; // stores all cells
 
+    std::vector<std::vector<int>> cellGroups; // stores indices of grouped cells
+
     std::array<double, 3> domain; // domain size in each dimension
 
     double cutoff; // max. rdistance of particles where force calculation is applied
@@ -35,11 +37,7 @@ private:
 
     std::array<double, 3> cellSize; // cell size in each dimension
 
-    /**
-     * @brief computes number of cells and their size in each dimension, initializes them according to domain boundary conditions
-     * @param domainBoundaries the boundaries of the domain
-     */
-    const void initializeCells(std::array<BoundaryCondition, 6> &domainBoundaries);
+    int parallel; //0 for no parallelization, 1 for first parallel strategy, 2 for second parallel strategy
 
     /**
      * @brief compute index of cell the given particle belongs to
@@ -64,8 +62,16 @@ private:
      */
     std::array<double, 3> mirroredPosition(std::array<double, 3> position);
 
+    void initializeGroups(int parallel);
+    
+    const int computeCellGroup(int cellIdx, int parallel);
+
+    const int parallelStrategy1(int cellIdx);
+
+    const int parallelStrategy2(int cellIdx);
+
 public:
-    LinkedCellParticleContainer(double cutoff, std::array<double, 3> &domain, std::array<BoundaryCondition, 6> &boundaries);
+    LinkedCellParticleContainer(double cutoff, std::array<double, 3> &domain, std::array<BoundaryCondition, 6> &boundaries, int parallel);
 
     ~LinkedCellParticleContainer() override;
 
@@ -117,6 +123,13 @@ public:
     const void addParticle(std::array<double, 3> &x, std::array<double, 3> &v, std::array<double, 3> &f, std::array<double, 3> &old_f, double &m, double &epsilon, double &sigma, int &type);
 
     /**
+     * @brief computes number of cells and their size in each dimension, initializes them according to domain boundary conditions
+     * @param domainBoundaries the boundaries of the domain
+     * @param parallel parallelization strategy which should be used in particleInteractions
+     */
+    const void initializeCells(std::array<BoundaryCondition, 6> &domainBoundaries, int parallel);
+
+    /**
      * @brief adds reflection force to particles near to the reflecting boundary
      * @param cellIndex the index of the current cell
      * @param f force calculation function which has to be applied at the reflecting boundary
@@ -162,4 +175,11 @@ public:
     std::vector<Particle> &getHaloParticles();
 
     std::vector<Particle> &getActiveParticles() override;
+
+    std::vector<std::vector<int>> &getCellGroups();
+
+    void setParallel(int parallel);
+
+    const int getParallel();
 };
+

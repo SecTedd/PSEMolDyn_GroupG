@@ -37,6 +37,7 @@ target_link_libraries(
     gtest 
     gmock
     xerces-c
+    #OpenMP::OpenMP_CXX
 )
 
 include(GoogleTest)

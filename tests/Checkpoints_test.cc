@@ -46,7 +46,8 @@ TEST(Checkpoints, WriteAndReadCheckpoint)
     BoundaryCondition out = BoundaryCondition::Outflow;
     std::array<BoundaryCondition, 6> boundaries = {out, out, out, out, out, out};
     std::unique_ptr<ParticleContainer> pc;
-    pc.reset(new LinkedCellParticleContainer(cutoff, domain, boundaries));
+    int parallelization = 0; //since tests are compiled without OpenMP this would automatically reset to 0 anyways
+    pc.reset(new LinkedCellParticleContainer(cutoff, domain, boundaries, parallelization));
 
     std::array<double, 3> x = {1, 2, 0};
     std::array<double, 3> v = {-1, -2, -3};

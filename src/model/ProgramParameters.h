@@ -40,6 +40,7 @@ private:
     int benchmark_iterations;                             /// number of runs in benchmark mode, 0 for normal simulations
     bool showMenu;                                        /// true if menu should be shown, false otherwise
     bool createCheckpoint;                                /// true if a checkpoint should be created, false otherwise
+    int parallel;                                         /// 0 for no parallelization, 1 for first parallel strategy, 2 for the other
     std::shared_ptr<spdlog::logger> memoryLogger;         /// a speedlog logger which logs construction and destruction of particles
 
 public:
@@ -94,6 +95,8 @@ public:
 
     const void setCreateCheckpoint(bool createCheckpoint);
 
+    const void setParallel(int parallel);
+
     std::shared_ptr<ParticleContainer> getParticleContainer();
 
     const double getEndTime() const;
@@ -127,4 +130,6 @@ public:
     const bool getShowMenu() const;
 
     const bool getCreateCheckpoint(); 
+
+    const int getParallel();
 };

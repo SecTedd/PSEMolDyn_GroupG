@@ -15,7 +15,8 @@ TEST(Thermostat, NoDeltaTo40)
     std::array<double, 3> domain = {80.0, 80.0, 1.0};
     std::array<BoundaryCondition, 6> bound = {r, r, r, r, o, o};
     double cutoff = 3;
-    auto pc = std::make_shared<LinkedCellParticleContainer>(cutoff, domain, bound);
+    int parallelization = 0; //since tests are compiled without OpenMP this would automatically reset to 0 anyways
+    auto pc = std::make_shared<LinkedCellParticleContainer>(cutoff, domain, bound, parallelization);
 
     std::array<double, 3> x = {0.0, 0.0, 0.0};
     std::array<double, 3> v = {100.0, 100.0, 100.0};
@@ -41,7 +42,8 @@ TEST(Thermostat, Heating)
     std::array<double, 3> domain = {80.0, 80.0, 1.0};
     std::array<BoundaryCondition, 6> bound = {r, r, r, r, o, o};
     double cutoff = 3;
-    auto pc = std::make_shared<LinkedCellParticleContainer>(cutoff, domain, bound);
+    int parallelization = 0; //since tests are compiled without OpenMP this would automatically reset to 0 anyways
+    auto pc = std::make_shared<LinkedCellParticleContainer>(cutoff, domain, bound, parallelization);
 
     std::array<double, 3> x1 = {1.0, 1.0, 0.0};
     std::array<double, 3> x2 = {79.0, 79.0, 79.0};
@@ -73,7 +75,8 @@ TEST(Thermostat, Cooling)
     std::array<double, 3> domain = {80.0, 80.0, 1.0};
     std::array<BoundaryCondition, 6> bound = {r, r, r, r, o, o};
     double cutoff = 3;
-    auto pc = std::make_shared<LinkedCellParticleContainer>(cutoff, domain, bound);
+    int parallelization = 0; //since tests are compiled without OpenMP this would automatically reset to 0 anyways
+    auto pc = std::make_shared<LinkedCellParticleContainer>(cutoff, domain, bound, parallelization);
 
     std::array<double, 3> x1 = {1.0, 1.0, 0.0};
     std::array<double, 3> x2 = {79.0, 79.0, 79.0};
@@ -105,7 +108,8 @@ TEST(Thermostat, HoldingTemperature)
     std::array<double, 3> domain = {80.0, 80.0, 1.0};
     std::array<BoundaryCondition, 6> bound = {r, r, r, r, o, o};
     double cutoff = 3;
-    auto pc = std::make_shared<LinkedCellParticleContainer>(cutoff, domain, bound);
+    int parallelization = 0; //since tests are compiled without OpenMP this would automatically reset to 0 anyways
+    auto pc = std::make_shared<LinkedCellParticleContainer>(cutoff, domain, bound, parallelization);
 
     std::array<double, 3> x1 = {1.0, 1.0, 0.0};
     std::array<double, 3> x2 = {79.0, 79.0, 79.0};

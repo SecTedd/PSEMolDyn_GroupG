@@ -1,12 +1,13 @@
 
 #include "LinkedCellParticleContainer.h"
 #include "../utils/PContainer.h"
+#include "../utils/ArrayUtils.h"
 
 #include <iostream>
 #include <cmath>
 #include <omp.h>
 
-LinkedCellParticleContainer::LinkedCellParticleContainer(double cutoff, std::array<double, 3> &domain, std::array<BoundaryCondition, 6> &domainBoundaries)
+LinkedCellParticleContainer::LinkedCellParticleContainer(double cutoff, std::array<double, 3> &domain, std::array<BoundaryCondition, 6> &domainBoundaries, int parallel)
 {
     _memoryLogger = spdlog::get("memory_logger");
     _memoryLogger->info("LinkedCellParticleContainer generated!");
@@ -14,8 +15,18 @@ LinkedCellParticleContainer::LinkedCellParticleContainer(double cutoff, std::arr
 
     this->domain = domain;
     this->cutoff = cutoff;
+    
+    //use given parallelization strategy if compiled with OpenMP
+    //no parallelization otherwise
+    #ifdef _OPENMP
+    this->parallel = parallel;
+    #else
+    this->parallel = 0;
+    #endif
 
-    initializeCells(domainBoundaries);
+    _memoryLogger->warn("Parallel set to " + std::to_string(parallel));
+
+    initializeCells(domainBoundaries, parallel);
 }
 
 LinkedCellParticleContainer::~LinkedCellParticleContainer()
@@ -23,8 +34,12 @@ LinkedCellParticleContainer::~LinkedCellParticleContainer()
     _memoryLogger->info("LinkedCellParticleContainer destructed!");
 }
 
-const void LinkedCellParticleContainer::initializeCells(std::array<BoundaryCondition, 6> &domainBoundaries)
+const void LinkedCellParticleContainer::initializeCells(std::array<BoundaryCondition, 6> &domainBoundaries, int parallel)
 {
+    //needed for executing multiple tests
+    cells.clear();
+    cellGroups.clear();
+
     // smallest cellsize bigger than cutoff plus boundaries
     int numberOfXCells = static_cast<int>(std::floor(domain[0] / cutoff));
     int numberOfYCells = static_cast<int>(std::floor(domain[1] / cutoff));
@@ -47,8 +62,12 @@ const void LinkedCellParticleContainer::initializeCells(std::array<BoundaryCondi
 
     cellSize = {sizeX, sizeY, sizeZ};
 
+    _memoryLogger->warn("Cell size: " + std::to_string(sizeX) + ", " + std::to_string(sizeY) + ", " + std::to_string(sizeZ));
+    _memoryLogger->warn("Num cells: " + std::to_string(numCells[0]) + ", " + std::to_string(numCells[1]) + ", " + std::to_string(numCells[2]));
+
     // now we need to initialize the cells
     cells.reserve(numCells[0] * numCells[1] * numCells[2]);
+    initializeGroups(parallel);
 
     for (int i = 0; i < numCells[0] * numCells[1] * numCells[2]; i++)
     {
@@ -119,10 +138,15 @@ const void LinkedCellParticleContainer::initializeCells(std::array<BoundaryCondi
 
     for (long unsigned int i = 0; i < cells.size(); i++)
     {
+        _memoryLogger->debug("Boundaries for cell " + std::to_string(i));
         if (cells[i].getType() == CellType::BoundaryCell || cells[i].getType() == CellType::InnerCell)
         {
             auto domainNeighbours = PContainer::getDomainNeighboursNewton(i, numCells);
             cells[i].setDomainNeighbours(domainNeighbours);
+            cellGroups[computeCellGroup(i, parallel)].emplace_back(i);
+            _memoryLogger->warn("Cell " + std::to_string(i) + " in group " + std::to_string(computeCellGroup(i, parallel)));
+        
+            
         }
         if (cells[i].getType() == CellType::BoundaryCell)
         {
@@ -138,8 +162,80 @@ const void LinkedCellParticleContainer::initializeCells(std::array<BoundaryCondi
             cells[i].setPeriodicHaloNeighbours(haloNeighbours);
         }
     }
-    _memoryLogger->debug("Cell size: " + std::to_string(sizeX) + ", " + std::to_string(sizeY) + ", " + std::to_string(sizeZ));
-    _memoryLogger->debug("Num cells: " + std::to_string(numCells[0]) + ", " + std::to_string(numCells[1]) + ", " + std::to_string(numCells[2]));
+}
+
+void LinkedCellParticleContainer::initializeGroups(int parallel) {
+    //no parallelization because code is not compiled with OpenMP
+    //cells can be all in one group since they are never executed in parallel
+    if (parallel == 0) {
+        std::vector<int> group;
+        cellGroups.push_back(group);
+        cellGroups[0].reserve((numCells[0]-2) * (numCells[1]-2) * (numCells[2]-2));
+    }
+    //constant number of groups with varying number of cells per group
+    else if (parallel == 1) {
+
+        //distinguish 2D and 3D cases
+        int numGroups = numCells[2] > 1 ? 18 : 6;
+        int offsetX = (numCells[0]-2) % 3 > 0 ? 1 : 0;
+        int offsetY = (numCells[1]-2) % 3 > 0 ? 1 : 0;
+        int maxCellsPerGroup = numCells[2] > 1 
+            ? ((numCells[0]-2) / 3 + offsetX) * ((numCells[1]-2) / 3 + offsetY) * ((numCells[2]-2) / 2 + (numCells[2]-2) % 2) 
+            : ((numCells[0]-2) / 3 + offsetX) * ((numCells[1]-2) / 2 + (numCells[1]-2) % 2);
+
+        //reserve memory for groups & cells in groups
+        //initialize group vectors  
+        cellGroups.reserve(numGroups);
+        for (int i = 0; i < numGroups; i++) {
+            std::vector<int> group;
+            cellGroups.push_back(group);
+            cellGroups[i].reserve(maxCellsPerGroup);
+        }
+    }
+    //varying number of groups with constant number of cells
+    //ATTENTION: numCells[0] has to be at least 4 for this method to work
+    //TODO
+    else if (parallel == 2) {
+        //naive implementation, number of groups always oriented in x-direction
+        //optimize by choosing orientation according to dimensions
+        // int numGroups = 4 + (numCells[0] % 4); 
+        // int numCellsPerGroup = numCells[1] * numGroups;
+    }
+}
+
+const int LinkedCellParticleContainer::computeCellGroup(int cellIdx, int parallel) {
+    //every domain cell in same group because their execution is not parallelized
+    if (parallel == 0){
+        return 0;
+    }
+    else if (parallel == 1)
+        return parallelStrategy1(cellIdx);
+    else 
+        return parallelStrategy2(cellIdx);
+}
+
+const int LinkedCellParticleContainer::parallelStrategy1(int cellIdx) {
+    int numGroupsX = 3;
+
+    //distinguish 2D and 3D case
+    int numGroupsY = domain[2] > 1 ? 3 : 2;
+    int numGroupsZ = domain[2] > 1 ? 2 : 1;
+    
+    std::array<int, 3> index3D = PContainer::convert1DTo3D(cellIdx, numCells);
+    int groupX = (index3D[0] - 1) % numGroupsX;
+    int groupY = (index3D[1] - 1) % numGroupsY;
+    int groupZ = (index3D[2] - 1) % numGroupsZ;
+
+    return groupX + numGroupsX * groupY + numGroupsX * numGroupsY * groupZ;
+}
+
+const int LinkedCellParticleContainer::parallelStrategy2(int cellIdx) {
+    //TODO
+    // int numGroupsX = 4 + (numCells[0] % 4);
+    // int numGroupsZ = 1;
+    // if (domain[2] > 1)
+    //     numGroupsZ = 2;
+    return 0;
 }
 
 const int LinkedCellParticleContainer::computeCellIdx(Particle &p)
@@ -229,7 +325,8 @@ const void LinkedCellParticleContainer::iterateParticleInteractions(std::functio
     // {
     //     #pragma omp single
     //     _simulationLogger->info("Num threads in particle interactions: " + std::to_string(omp_get_num_threads()));
-    //     #pragma omp for
+    //interaction within same cell
+    #pragma omp parallel for
     for (auto &cell : cells)
     {
         // particle interactions don't need to be calculated for halo cells
@@ -249,6 +346,18 @@ const void LinkedCellParticleContainer::iterateParticleInteractions(std::functio
                     }
                 }
             }
+        }
+    }
+
+    //interaction between different cells
+    //if compiled without OpenMP no parallelization of cell interactions
+    for (auto &group : cellGroups) {
+        
+        //interactions of cells in one group can be executed in parallel 
+        //no parallelization if not compiled with openMP
+        #pragma omp parallel for
+        for (int idx : group) {
+            ParticleCell &cell = cells[idx];
 
             std::vector<int> neighbours = cell.getDomainNeighbours();
             // Boundary cells
@@ -285,7 +394,6 @@ const void LinkedCellParticleContainer::iterateParticleInteractions(std::functio
                 }
             }
         }
-    // }
     }
 }
 
@@ -556,3 +664,9 @@ std::vector<ParticleCell> &LinkedCellParticleContainer::getCells() { return cell
 std::vector<Particle> &LinkedCellParticleContainer::getHaloParticles() { return haloParticles; }
 
 std::vector<Particle> &LinkedCellParticleContainer::getActiveParticles() { return activeParticles; }
+
+std::vector<std::vector<int>> &LinkedCellParticleContainer::getCellGroups() { return cellGroups; }
+
+void LinkedCellParticleContainer::setParallel(int parallel) { this->parallel = parallel; }
+
+const int LinkedCellParticleContainer::getParallel() { return parallel; }
