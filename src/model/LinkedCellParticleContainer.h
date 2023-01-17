@@ -31,7 +31,7 @@ private:
 
     std::array<double, 3> domain; // domain size in each dimension
 
-    double cutoff; // max. rdistance of particles where force calculation is applied
+    double cutoff; // max. distance of particles where force calculation is applied
 
     std::array<int, 3> numCells; // number of cells in each dimension
 
@@ -62,12 +62,32 @@ private:
      */
     std::array<double, 3> mirroredPosition(std::array<double, 3> position);
 
+    /**
+     * @brief reserves memory for & initializes vector of cell groups according to parallelization strategy
+     * @param parallel parallelization strategy which has to be used
+    */
     void initializeGroups(int parallel);
     
+    /**
+     * @brief computes group the given cell belongs to according to parallelization strategy
+     * @param cellIdx index of cell
+     * @param parallel parallelization strategy 
+     * @return group index of cell
+    */
     const int computeCellGroup(int cellIdx, int parallel);
 
+    /**
+     * @brief computes group the given cell belongs to according to parallelization strategy 1
+     * @param cellIdx index of cell
+     * @return group index of cell
+    */
     const int parallelStrategy1(int cellIdx);
 
+    /**
+     * @brief computes group the given cell belongs to according to parallelization strategy 2
+     * @param cellIdx index of cell
+     * @return group index of cell
+    */
     const int parallelStrategy2(int cellIdx);
 
 public:

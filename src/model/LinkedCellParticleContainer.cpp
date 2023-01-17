@@ -24,7 +24,7 @@ LinkedCellParticleContainer::LinkedCellParticleContainer(double cutoff, std::arr
     this->parallel = 0;
     #endif
 
-    _memoryLogger->warn("Parallel set to " + std::to_string(parallel));
+    _memoryLogger->debug("Parallel set to " + std::to_string(parallel));
 
     initializeCells(domainBoundaries, parallel);
 }
@@ -62,8 +62,8 @@ const void LinkedCellParticleContainer::initializeCells(std::array<BoundaryCondi
 
     cellSize = {sizeX, sizeY, sizeZ};
 
-    _memoryLogger->warn("Cell size: " + std::to_string(sizeX) + ", " + std::to_string(sizeY) + ", " + std::to_string(sizeZ));
-    _memoryLogger->warn("Num cells: " + std::to_string(numCells[0]) + ", " + std::to_string(numCells[1]) + ", " + std::to_string(numCells[2]));
+    _memoryLogger->debug("Cell size: " + std::to_string(sizeX) + ", " + std::to_string(sizeY) + ", " + std::to_string(sizeZ));
+    _memoryLogger->debug("Num cells: " + std::to_string(numCells[0]) + ", " + std::to_string(numCells[1]) + ", " + std::to_string(numCells[2]));
 
     // now we need to initialize the cells
     cells.reserve(numCells[0] * numCells[1] * numCells[2]);
@@ -138,13 +138,12 @@ const void LinkedCellParticleContainer::initializeCells(std::array<BoundaryCondi
 
     for (long unsigned int i = 0; i < cells.size(); i++)
     {
-        _memoryLogger->debug("Boundaries for cell " + std::to_string(i));
         if (cells[i].getType() == CellType::BoundaryCell || cells[i].getType() == CellType::InnerCell)
         {
             auto domainNeighbours = PContainer::getDomainNeighboursNewton(i, numCells);
             cells[i].setDomainNeighbours(domainNeighbours);
             cellGroups[computeCellGroup(i, parallel)].emplace_back(i);
-            _memoryLogger->warn("Cell " + std::to_string(i) + " in group " + std::to_string(computeCellGroup(i, parallel)));
+            _memoryLogger->debug("Cell " + std::to_string(i) + " in group " + std::to_string(computeCellGroup(i, parallel)));
         
             
         }
@@ -193,13 +192,8 @@ void LinkedCellParticleContainer::initializeGroups(int parallel) {
         }
     }
     //varying number of groups with constant number of cells
-    //ATTENTION: numCells[0] has to be at least 4 for this method to work
-    //TODO
     else if (parallel == 2) {
-        //naive implementation, number of groups always oriented in x-direction
-        //optimize by choosing orientation according to dimensions
-        // int numGroups = 4 + (numCells[0] % 4); 
-        // int numCellsPerGroup = numCells[1] * numGroups;
+       //TODO
     }
 }
 
@@ -231,10 +225,6 @@ const int LinkedCellParticleContainer::parallelStrategy1(int cellIdx) {
 
 const int LinkedCellParticleContainer::parallelStrategy2(int cellIdx) {
     //TODO
-    // int numGroupsX = 4 + (numCells[0] % 4);
-    // int numGroupsZ = 1;
-    // if (domain[2] > 1)
-    //     numGroupsZ = 2;
     return 0;
 }
 
@@ -302,30 +292,17 @@ const void LinkedCellParticleContainer::iterateParticleInteractions(std::functio
     // first we need to clear the halo
     clearHalo();
 
-    // then add particles to halo or add the reflecting force
-    // #pragma omp parallel
-    // { 
-    //     #pragma omp single
-    //     _simulationLogger->info("Num Threads in boundary calc: " + std::to_string(omp_get_num_threads()));
-    //     #pragma omp for
-        for (long unsigned int i = 0; i < cells.size(); i++)
+    for (long unsigned int i = 0; i < cells.size(); i++)
+    {
+        if (cells[i].getType() == CellType::BoundaryCell)
         {
-            if (cells[i].getType() == CellType::BoundaryCell)
-            {
-                // handles reflecting boundaries
-                reflectingBoundary(i, f);
-                // handles periodic boundaries
-                periodicBoundary(i);
-            }
+            // handles reflecting boundaries
+            reflectingBoundary(i, f);
+            // handles periodic boundaries
+            periodicBoundary(i);
         }
-    // }
+    }
 
-    // finally calculate interactions
-    // #pragma omp parallel
-    // {
-    //     #pragma omp single
-    //     _simulationLogger->info("Num threads in particle interactions: " + std::to_string(omp_get_num_threads()));
-    //interaction within same cell
     #pragma omp parallel for
     for (auto &cell : cells)
     {
@@ -404,55 +381,50 @@ const void LinkedCellParticleContainer::iterateParticles(std::function<void(Part
     // deletions in the active particle vector, meaning indices within the cells are rendered invalid
     bool cellRebuild = false;
 
-    // #pragma omp parallel 
-    // {
-    //     #pragma omp single
-    //     _simulationLogger->info("Num Threads in iterateParticles: " + std::to_string(omp_get_num_threads()));
-        #pragma omp parallel for
+    #pragma omp parallel for
 
-        for (auto &particle : activeParticles)
+    for (auto &particle : activeParticles)
+    {
+        f(particle);
+        if (!calcX)
+            continue;
+
+        // check if particle moved out of cell
+        int cellIndex = computeCellIdx(particle);
+
+        std::array<int, 3> idx3D = PContainer::convert1DTo3D(cellIndex, numCells);
+        bool outOfBounds = idx3D[0] < 0 || idx3D[0] >= numCells[0] || idx3D[1] < 0 || idx3D[1] >= numCells[1] || idx3D[2] < 0 || idx3D[2] >= numCells[2];
+
+        // particle out of bounds (not in domain or halo cell layer)
+        if (outOfBounds)
         {
-            f(particle);
-            if (!calcX)
-                continue;
-
-            // check if particle moved out of cell
-            int cellIndex = computeCellIdx(particle);
-
-            std::array<int, 3> idx3D = PContainer::convert1DTo3D(cellIndex, numCells);
-            bool outOfBounds = idx3D[0] < 0 || idx3D[0] >= numCells[0] || idx3D[1] < 0 || idx3D[1] >= numCells[1] || idx3D[2] < 0 || idx3D[2] >= numCells[2];
-
-            // particle out of bounds (not in domain or halo cell layer)
-            if (outOfBounds)
+            particle.setHalo(true);
+            cellRebuild = true;
+            _simulationLogger->debug("Particle way out of bounds (" + std::to_string(cellIndex) + "): " + particle.toString());
+        }
+        else if (cellIndex != particle.getCellIdx())
+        {
+            // particle can either be in a regular halo cell which means outflow, a periodic halo which means it needs to be mirrored or in an inner cell which means the index has to be changed
+            if (cells[cellIndex].getType() == CellType::InnerCell || cells[cellIndex].getType() == CellType::BoundaryCell)
+            {
+                // only change in cell index and then a rebuild required
+                particle.setCellIdx(cellIndex);
+                particle.setInvalid(true);
+                cellUpdate = true;
+            }
+            else if (cells[cellIndex].getType() == CellType::HaloCell)
             {
                 particle.setHalo(true);
                 cellRebuild = true;
-                _simulationLogger->debug("Particle way out of bounds (" + std::to_string(cellIndex) + "): " + particle.toString());
             }
-            else if (cellIndex != particle.getCellIdx())
+            else if (cells[cellIndex].getType() == CellType::PeriodicHaloCell)
             {
-                // particle can either be in a regular halo cell which means outflow, a periodic halo which means it needs to be mirrored or in an inner cell which means the index has to be changed
-                if (cells[cellIndex].getType() == CellType::InnerCell || cells[cellIndex].getType() == CellType::BoundaryCell)
-                {
-                    // only change in cell index and then a rebuild required
-                    particle.setCellIdx(cellIndex);
-                    particle.setInvalid(true);
-                    cellUpdate = true;
-                }
-                else if (cells[cellIndex].getType() == CellType::HaloCell)
-                {
-                    particle.setHalo(true);
-                    cellRebuild = true;
-                }
-                else if (cells[cellIndex].getType() == CellType::PeriodicHaloCell)
-                {
-                    particle.setX(mirroredPosition(particle.getX()));
-                    particle.setInvalid(true);
-                    cellUpdate = true;
-                }
+                particle.setX(mirroredPosition(particle.getX()));
+                particle.setInvalid(true);
+                cellUpdate = true;
             }
         }
-    // }
+    }
 
     // reorganising cell structure
     if (cellRebuild)
