@@ -75,13 +75,23 @@ private:
 
     /**
      * The direct parallel neighbours of the particle
-    */
-    std::vector<int> parallelNeighbours; 
+     */
+    std::vector<int> parallelNeighbours;
 
     /**
      * The direct diagonal neighbours of the particle
+     */
+    std::vector<int> diagonalNeighbours;
+
+    /**
+     * Stiffness of molecule
     */
-    std::vector<int> diagonalNeighbours; 
+    double stiffness;
+
+    /**
+     * Average Bond Length of molecule
+    */
+    double averageBondLength;
 
     /**
      * a speedlog logger which logs construction and destruction of particles
@@ -101,11 +111,13 @@ public:
      * @param type_arg The type of the particle
      * @param epsilon_arg The epsilon of the particle
      * @param sigma_arg The sigma of the particle
+     * @param stiffness The stiffness of the molecule
+     * @param averageBondLength The average Bond Length of the olecule
      */
     Particle(
         // for visualization, we need always 3 coordinates
         // -> in case of 2d, we use only the first and the second
-        std::array<double, 3> x_arg, std::array<double, 3> v_arg, double m_arg, double epsilon_arg, double sigma_arg, int type_arg = 0);
+        std::array<double, 3> x_arg, std::array<double, 3> v_arg, double m_arg, double epsilon_arg, double sigma_arg, int type_arg, double stiffness_arg = 1, double averageBondLength_arg = 1);
 
     /**
      * @brief Creates a new particle and adds it to the vector
@@ -114,14 +126,16 @@ public:
      * @param f_arg The force acting on the particle
      * @param old_f_arg The previous force acting on the particle
      * @param m_arg The mass of the particle
-     * @param type_arg The type of the particle
      * @param epsilon_arg The epsilon of the particle
      * @param sigma_arg The sigma of the particle
+     * @param type_arg The type of the particle
+     * @param stiffness The stiffness of the molecule
+     * @param averageBondLength The average Bond Length of the molecule
      */
     Particle(
         // for visualization, we need always 3 coordinates
         // -> in case of 2d, we use only the first and the second
-        std::array<double, 3> x_arg, std::array<double, 3> v_arg, std::array<double, 3> f_arg, std::array<double, 3> old_f_arg, double m_arg, double epsilon_arg, double sigma_arg, int type_arg = 0);
+        std::array<double, 3> x_arg, std::array<double, 3> v_arg, std::array<double, 3> f_arg, std::array<double, 3> old_f_arg, double m_arg, double epsilon_arg, double sigma_arg, int type_arg, double stiffness_arg = 1, double averageBondLength_arg = 1);
 
     virtual ~Particle();
 
@@ -161,11 +175,17 @@ public:
     const double getSigma() const;
     const void setSigma(double sigma_arg);
 
-    const std::vector<int> getParallelNeighbours(); 
-    const void setParallelNeighbours(std::vector<int> parallelNeighbours); 
+    const std::vector<int> getParallelNeighbours();
+    const void setParallelNeighbours(std::vector<int> parallelNeighbours);
 
-    const std::vector<int> getDiagonalNeighbours(); 
-    const void setDiagonalNeighbours(std::vector<int> digonalNeighbours); 
+    const std::vector<int> getDiagonalNeighbours();
+    const void setDiagonalNeighbours(std::vector<int> digonalNeighbours);
+
+    const void setStiffness(double stiffness_arg);
+    const double getStiffness();
+
+    const double getAverageBondLength();
+    const void setAverageBondLength(double averageBondLength_arg);
 
     bool operator==(Particle &other);
 

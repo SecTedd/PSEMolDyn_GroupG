@@ -35,8 +35,6 @@ ProgramParameters::ProgramParameters()
     showMenu = false;
     createCheckpoint = false;
     membrane = false;
-    stiffness = 1; 
-    averageBondLength = 1; 
     memoryLogger = spdlog::get("memory_logger");
     memoryLogger->info("ProgramParameters generated!");
 }
@@ -103,9 +101,7 @@ const void ProgramParameters::setGGrav(std::array<double, 3> g_grav) { this->g_g
 const void ProgramParameters::setShowMenu(bool show_menu) { this->showMenu = show_menu; }
 const void ProgramParameters::setCreateCheckpoint(bool createCheckpoint) { this->createCheckpoint = createCheckpoint; }
 const void ProgramParameters::setMembrane(bool membrane) { this->membrane = membrane; }
-const void ProgramParameters::setStiffness(double stiffness) { this->stiffness = stiffness; }
-const void ProgramParameters::setAverageBondLength(double averageBondLength) { this->averageBondLength = averageBondLength; }
-const void ProgramParameters::addForce(std::shared_ptr<SingleParticleForce> force) { forces->emplace_back(force.get()); }
+const void ProgramParameters::addForce(std::shared_ptr<SingleParticleForce> force) { forces.emplace_back(force.get()); }
 const int ProgramParameters::getBenchmarkIterations() const { return benchmark_iterations; }
 std::shared_ptr<ParticleContainer> ProgramParameters::getParticleContainer() { return particleContainer; }
 const double ProgramParameters::getEndTime() const { return end_time; }
@@ -124,6 +120,4 @@ const std::string ProgramParameters::getBaseName() { return baseName; }
 const bool ProgramParameters::getShowMenu() const { return showMenu; }
 const bool ProgramParameters::getCreateCheckpoint() { return createCheckpoint; }
 const bool ProgramParameters::getMembrane() { return membrane; }
-const double ProgramParameters::getStiffness() { return stiffness; }
-const double ProgramParameters::getAverageBondLength() { return averageBondLength; }
-const std::shared_ptr<std::list<SingleParticleForce*>> ProgramParameters::getForces() { return forces; }
+const std::list<std::shared_ptr<SingleParticleForce>> ProgramParameters::getForces() { return forces; }

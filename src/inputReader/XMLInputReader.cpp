@@ -69,8 +69,10 @@ void XMLInputReader::readInput(ProgramParameters &programParameters, const char 
             old_f[2] = old_f_xml.z();
 
             int type = i->type();
+            double stiffness = i->stiffness(); 
+            double averageBondLength = i->averageBondLength();
 
-            programParameters.getParticleContainer()->addParticle(position, velocity, f, old_f, m, epsilon, sigma, type);
+            programParameters.getParticleContainer()->addParticle(position, velocity, f, old_f, m, epsilon, sigma, type, stiffness, averageBondLength);
         }
         return;
     }
@@ -145,16 +147,6 @@ void XMLInputReader::readInput(ProgramParameters &programParameters, const char 
             programParameters.setMembrane(xml->membrane().get());
         }
 
-        if (xml->stiffness().present())
-        {
-            programParameters.setStiffness(xml->stiffness().get());
-        }
-
-        if (xml->average_bond_length().present())
-        {
-            programParameters.setAverageBondLength(xml->stiffness().get());
-        }
-
         if (xml->writeFrequency().present())
         {
             programParameters.setWriteFrequency(xml->writeFrequency().get());
@@ -174,40 +166,6 @@ void XMLInputReader::readInput(ProgramParameters &programParameters, const char 
         {
             std::string filename = i->substr(0, i->length());
             inputFacade->readInput(programParameters, filename.c_str());
-        }
-
-        std::shared_ptr<std::list<SingleParticleForce>> _singleParticleForceCalculations;
-        for (simulation_t::force_const_iterator i(xml->force().begin()); i != xml->force().end(); i++)
-        {
-            std::array<double, 3> force;
-            simulation_t::force_traits::type::force1_type f1 = i->force1();
-            force[0] = f1.x();
-            force[1] = f1.y();
-            force[2] = f1.z();
-
-            double end_time = i->end_time();
-
-            std::vector<int> indices;
-
-            for (simulation_t::force_traits::type::particles_const_iterator j(i->particles().begin()); j != i->particles().end(); j++)
-            {
-                std::array<int, 3> index3D;
-                simulation_t::force_traits::type::particles_traits::type::particle_index_type pIndex = j->particle_index();
-                index3D[0] = pIndex.x();
-                index3D[1] = pIndex.y();
-                index3D[2] = pIndex.z();
-
-                std::array<int, 3> dimensions;
-                simulation_t::force_traits::type::particles_traits::type::dimensions_type dim = j->dimensions();
-                dimensions[0] = dim.x();
-                dimensions[1] = dim.y();
-                dimensions[2] = dim.z();
-
-                indices.push_back(ParticleGenerator::index3DTo1D(index3D, dimensions)); 
-            }
-            std::shared_ptr<SingleParticleForce> spForce; 
-            spForce.reset(new TemporalSingleParticleForce(force, end_time, indices));
-            programParameters.addForce(spForce);
         }
 
         for (simulation_t::cuboid_const_iterator i(xml->cuboid().begin()); i != xml->cuboid().end(); i++)
@@ -233,11 +191,51 @@ void XMLInputReader::readInput(ProgramParameters &programParameters, const char 
             dimensions[1] = dim.y();
             dimensions[2] = dim.z();
 
+            for (simulation_t::cuboid_type::force_const_iterator j(i->force().begin()); j != i->force().end(); j++)
+            {
+                std::array<double, 3> force;
+                simulation_t::cuboid_type::force_type::force1_type f1 = j->force1();
+                force[0] = f1.x();
+                force[1] = f1.y();
+                force[2] = f1.z();
+
+                double end_time = j->end_time();
+
+                std::vector<int> indices;
+                int numberOfParticles = programParameters.getParticleContainer()->size();
+
+                for (simulation_t::cuboid_type::force_type::particles_const_iterator k(j->particles().begin()); k != j->particles().end(); k++)
+                {
+                    std::array<int, 3> index3D;
+                    simulation_t::cuboid_type::force_type::particles_type::particle_index_type pIndex = k->particle_index();
+                    index3D[0] = pIndex.x();
+                    index3D[1] = pIndex.y();
+                    index3D[2] = pIndex.z();
+
+                    indices.push_back(ParticleGenerator::index3DTo1D(index3D, dimensions) + numberOfParticles);
+                }
+                std::shared_ptr<SingleParticleForce> spForce;
+                spForce.reset(new TemporalSingleParticleForce(force, end_time, indices));
+                programParameters.addForce(spForce);
+            }
+
             double h = i->h();
             double m = i->mass();
             double epsilon = i->epsilon();
             double sigma = i->sigma();
             int type = i->type();
+            double stiffness = 1;
+            double averageBondLength = 1;
+
+            if (i->stiffness().present())
+            {
+                stiffness = i->stiffness().get();
+            }
+
+            if (i->average_bond_length().present())
+            {
+                averageBondLength = i->stiffness().get();
+            }
 
             std::unique_ptr<Cuboid> cuboid = std::make_unique<Cuboid>(Cuboid(position, dimensions, h, m, velocity, epsilon, sigma, type));
             ParticleGenerator::generateCuboid(*programParameters.getParticleContainer(), *cuboid, programParameters.getMembrane());

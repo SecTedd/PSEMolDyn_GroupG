@@ -307,54 +307,6 @@ membrane (const membrane_optional& x)
   this->membrane_ = x;
 }
 
-const simulation_t::stiffness_optional& simulation_t::
-stiffness () const
-{
-  return this->stiffness_;
-}
-
-simulation_t::stiffness_optional& simulation_t::
-stiffness ()
-{
-  return this->stiffness_;
-}
-
-void simulation_t::
-stiffness (const stiffness_type& x)
-{
-  this->stiffness_.set (x);
-}
-
-void simulation_t::
-stiffness (const stiffness_optional& x)
-{
-  this->stiffness_ = x;
-}
-
-const simulation_t::average_bond_length_optional& simulation_t::
-average_bond_length () const
-{
-  return this->average_bond_length_;
-}
-
-simulation_t::average_bond_length_optional& simulation_t::
-average_bond_length ()
-{
-  return this->average_bond_length_;
-}
-
-void simulation_t::
-average_bond_length (const average_bond_length_type& x)
-{
-  this->average_bond_length_.set (x);
-}
-
-void simulation_t::
-average_bond_length (const average_bond_length_optional& x)
-{
-  this->average_bond_length_ = x;
-}
-
 const simulation_t::dimension_optional& simulation_t::
 dimension () const
 {
@@ -473,24 +425,6 @@ void simulation_t::
 file_name (const file_name_sequence& s)
 {
   this->file_name_ = s;
-}
-
-const simulation_t::force_sequence& simulation_t::
-force () const
-{
-  return this->force_;
-}
-
-simulation_t::force_sequence& simulation_t::
-force ()
-{
-  return this->force_;
-}
-
-void simulation_t::
-force (const force_sequence& s)
-{
-  this->force_ = s;
 }
 
 const simulation_t::cuboid_sequence& simulation_t::
@@ -794,70 +728,6 @@ z (const z_type& x)
 }
 
 
-// force
-// 
-
-const force::end_time_type& force::
-end_time () const
-{
-  return this->end_time_.get ();
-}
-
-force::end_time_type& force::
-end_time ()
-{
-  return this->end_time_.get ();
-}
-
-void force::
-end_time (const end_time_type& x)
-{
-  this->end_time_.set (x);
-}
-
-const force::force1_type& force::
-force1 () const
-{
-  return this->force1_.get ();
-}
-
-force::force1_type& force::
-force1 ()
-{
-  return this->force1_.get ();
-}
-
-void force::
-force1 (const force1_type& x)
-{
-  this->force1_.set (x);
-}
-
-void force::
-force1 (::std::unique_ptr< force1_type > x)
-{
-  this->force1_.set (std::move (x));
-}
-
-const force::particles_sequence& force::
-particles () const
-{
-  return this->particles_;
-}
-
-force::particles_sequence& force::
-particles ()
-{
-  return this->particles_;
-}
-
-void force::
-particles (const particles_sequence& s)
-{
-  this->particles_ = s;
-}
-
-
 // cuboid
 // 
 
@@ -951,6 +821,54 @@ type (const type_type& x)
   this->type_.set (x);
 }
 
+const cuboid::stiffness_optional& cuboid::
+stiffness () const
+{
+  return this->stiffness_;
+}
+
+cuboid::stiffness_optional& cuboid::
+stiffness ()
+{
+  return this->stiffness_;
+}
+
+void cuboid::
+stiffness (const stiffness_type& x)
+{
+  this->stiffness_.set (x);
+}
+
+void cuboid::
+stiffness (const stiffness_optional& x)
+{
+  this->stiffness_ = x;
+}
+
+const cuboid::average_bond_length_optional& cuboid::
+average_bond_length () const
+{
+  return this->average_bond_length_;
+}
+
+cuboid::average_bond_length_optional& cuboid::
+average_bond_length ()
+{
+  return this->average_bond_length_;
+}
+
+void cuboid::
+average_bond_length (const average_bond_length_type& x)
+{
+  this->average_bond_length_.set (x);
+}
+
+void cuboid::
+average_bond_length (const average_bond_length_optional& x)
+{
+  this->average_bond_length_ = x;
+}
+
 const cuboid::position_type& cuboid::
 position () const
 {
@@ -1021,6 +939,24 @@ void cuboid::
 dimensions (::std::unique_ptr< dimensions_type > x)
 {
   this->dimensions_.set (std::move (x));
+}
+
+const cuboid::force_sequence& cuboid::
+force () const
+{
+  return this->force_;
+}
+
+cuboid::force_sequence& cuboid::
+force ()
+{
+  return this->force_;
+}
+
+void cuboid::
+force (const force_sequence& s)
+{
+  this->force_ = s;
 }
 
 
@@ -1181,116 +1117,6 @@ void sphere::
 velocity (::std::unique_ptr< velocity_type > x)
 {
   this->velocity_.set (std::move (x));
-}
-
-
-// force1
-// 
-
-const force1::x_type& force1::
-x () const
-{
-  return this->x_.get ();
-}
-
-force1::x_type& force1::
-x ()
-{
-  return this->x_.get ();
-}
-
-void force1::
-x (const x_type& x)
-{
-  this->x_.set (x);
-}
-
-const force1::y_type& force1::
-y () const
-{
-  return this->y_.get ();
-}
-
-force1::y_type& force1::
-y ()
-{
-  return this->y_.get ();
-}
-
-void force1::
-y (const y_type& x)
-{
-  this->y_.set (x);
-}
-
-const force1::z_type& force1::
-z () const
-{
-  return this->z_.get ();
-}
-
-force1::z_type& force1::
-z ()
-{
-  return this->z_.get ();
-}
-
-void force1::
-z (const z_type& x)
-{
-  this->z_.set (x);
-}
-
-
-// particles
-// 
-
-const particles::particle_index_type& particles::
-particle_index () const
-{
-  return this->particle_index_.get ();
-}
-
-particles::particle_index_type& particles::
-particle_index ()
-{
-  return this->particle_index_.get ();
-}
-
-void particles::
-particle_index (const particle_index_type& x)
-{
-  this->particle_index_.set (x);
-}
-
-void particles::
-particle_index (::std::unique_ptr< particle_index_type > x)
-{
-  this->particle_index_.set (std::move (x));
-}
-
-const particles::dimensions_type& particles::
-dimensions () const
-{
-  return this->dimensions_.get ();
-}
-
-particles::dimensions_type& particles::
-dimensions ()
-{
-  return this->dimensions_.get ();
-}
-
-void particles::
-dimensions (const dimensions_type& x)
-{
-  this->dimensions_.set (x);
-}
-
-void particles::
-dimensions (::std::unique_ptr< dimensions_type > x)
-{
-  this->dimensions_.set (std::move (x));
 }
 
 
@@ -1468,6 +1294,70 @@ z (const z_type& x)
 }
 
 
+// force
+// 
+
+const force::end_time_type& force::
+end_time () const
+{
+  return this->end_time_.get ();
+}
+
+force::end_time_type& force::
+end_time ()
+{
+  return this->end_time_.get ();
+}
+
+void force::
+end_time (const end_time_type& x)
+{
+  this->end_time_.set (x);
+}
+
+const force::force1_type& force::
+force1 () const
+{
+  return this->force1_.get ();
+}
+
+force::force1_type& force::
+force1 ()
+{
+  return this->force1_.get ();
+}
+
+void force::
+force1 (const force1_type& x)
+{
+  this->force1_.set (x);
+}
+
+void force::
+force1 (::std::unique_ptr< force1_type > x)
+{
+  this->force1_.set (std::move (x));
+}
+
+const force::particles_sequence& force::
+particles () const
+{
+  return this->particles_;
+}
+
+force::particles_sequence& force::
+particles ()
+{
+  return this->particles_;
+}
+
+void force::
+particles (const particles_sequence& s)
+{
+  this->particles_ = s;
+}
+
+
 // center
 // 
 
@@ -1523,6 +1413,92 @@ void center::
 z (const z_type& x)
 {
   this->z_.set (x);
+}
+
+
+// force1
+// 
+
+const force1::x_type& force1::
+x () const
+{
+  return this->x_.get ();
+}
+
+force1::x_type& force1::
+x ()
+{
+  return this->x_.get ();
+}
+
+void force1::
+x (const x_type& x)
+{
+  this->x_.set (x);
+}
+
+const force1::y_type& force1::
+y () const
+{
+  return this->y_.get ();
+}
+
+force1::y_type& force1::
+y ()
+{
+  return this->y_.get ();
+}
+
+void force1::
+y (const y_type& x)
+{
+  this->y_.set (x);
+}
+
+const force1::z_type& force1::
+z () const
+{
+  return this->z_.get ();
+}
+
+force1::z_type& force1::
+z ()
+{
+  return this->z_.get ();
+}
+
+void force1::
+z (const z_type& x)
+{
+  this->z_.set (x);
+}
+
+
+// particles
+// 
+
+const particles::particle_index_type& particles::
+particle_index () const
+{
+  return this->particle_index_.get ();
+}
+
+particles::particle_index_type& particles::
+particle_index ()
+{
+  return this->particle_index_.get ();
+}
+
+void particles::
+particle_index (const particle_index_type& x)
+{
+  this->particle_index_.set (x);
+}
+
+void particles::
+particle_index (::std::unique_ptr< particle_index_type > x)
+{
+  this->particle_index_.set (std::move (x));
 }
 
 
@@ -1610,14 +1586,11 @@ simulation_t (const end_time_type& end_time,
   temp_target_ (this),
   delta_temp_ (this),
   membrane_ (this),
-  stiffness_ (this),
-  average_bond_length_ (this),
   dimension_ (this),
   writeFrequency_ (this),
   baseName_ (this),
   createCheckpoint_ (this),
   file_name_ (this),
-  force_ (this),
   cuboid_ (this),
   sphere_ (this)
 {
@@ -1644,14 +1617,11 @@ simulation_t (const end_time_type& end_time,
   temp_target_ (this),
   delta_temp_ (this),
   membrane_ (this),
-  stiffness_ (this),
-  average_bond_length_ (this),
   dimension_ (this),
   writeFrequency_ (this),
   baseName_ (this),
   createCheckpoint_ (this),
   file_name_ (this),
-  force_ (this),
   cuboid_ (this),
   sphere_ (this)
 {
@@ -1674,14 +1644,11 @@ simulation_t (const simulation_t& x,
   temp_target_ (x.temp_target_, f, this),
   delta_temp_ (x.delta_temp_, f, this),
   membrane_ (x.membrane_, f, this),
-  stiffness_ (x.stiffness_, f, this),
-  average_bond_length_ (x.average_bond_length_, f, this),
   dimension_ (x.dimension_, f, this),
   writeFrequency_ (x.writeFrequency_, f, this),
   baseName_ (x.baseName_, f, this),
   createCheckpoint_ (x.createCheckpoint_, f, this),
   file_name_ (x.file_name_, f, this),
-  force_ (x.force_, f, this),
   cuboid_ (x.cuboid_, f, this),
   sphere_ (x.sphere_, f, this)
 {
@@ -1704,14 +1671,11 @@ simulation_t (const ::xercesc::DOMElement& e,
   temp_target_ (this),
   delta_temp_ (this),
   membrane_ (this),
-  stiffness_ (this),
-  average_bond_length_ (this),
   dimension_ (this),
   writeFrequency_ (this),
   baseName_ (this),
   createCheckpoint_ (this),
   file_name_ (this),
-  force_ (this),
   cuboid_ (this),
   sphere_ (this)
 {
@@ -1873,28 +1837,6 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       }
     }
 
-    // stiffness
-    //
-    if (n.name () == "stiffness" && n.namespace_ ().empty ())
-    {
-      if (!this->stiffness_)
-      {
-        this->stiffness_.set (stiffness_traits::create (i, f, this));
-        continue;
-      }
-    }
-
-    // average_bond_length
-    //
-    if (n.name () == "average_bond_length" && n.namespace_ ().empty ())
-    {
-      if (!this->average_bond_length_)
-      {
-        this->average_bond_length_.set (average_bond_length_traits::create (i, f, this));
-        continue;
-      }
-    }
-
     // dimension
     //
     if (n.name () == "dimension" && n.namespace_ ().empty ())
@@ -1950,17 +1892,6 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
         file_name_traits::create (i, f, this));
 
       this->file_name_.push_back (::std::move (r));
-      continue;
-    }
-
-    // force
-    //
-    if (n.name () == "force" && n.namespace_ ().empty ())
-    {
-      ::std::unique_ptr< force_type > r (
-        force_traits::create (i, f, this));
-
-      this->force_.push_back (::std::move (r));
       continue;
     }
 
@@ -2064,14 +1995,11 @@ operator= (const simulation_t& x)
     this->temp_target_ = x.temp_target_;
     this->delta_temp_ = x.delta_temp_;
     this->membrane_ = x.membrane_;
-    this->stiffness_ = x.stiffness_;
-    this->average_bond_length_ = x.average_bond_length_;
     this->dimension_ = x.dimension_;
     this->writeFrequency_ = x.writeFrequency_;
     this->baseName_ = x.baseName_;
     this->createCheckpoint_ = x.createCheckpoint_;
     this->file_name_ = x.file_name_;
-    this->force_ = x.force_;
     this->cuboid_ = x.cuboid_;
     this->sphere_ = x.sphere_;
   }
@@ -2576,146 +2504,6 @@ g_grav::
 {
 }
 
-// force
-//
-
-force::
-force (const end_time_type& end_time,
-       const force1_type& force1)
-: ::xml_schema::type (),
-  end_time_ (end_time, this),
-  force1_ (force1, this),
-  particles_ (this)
-{
-}
-
-force::
-force (const end_time_type& end_time,
-       ::std::unique_ptr< force1_type > force1)
-: ::xml_schema::type (),
-  end_time_ (end_time, this),
-  force1_ (std::move (force1), this),
-  particles_ (this)
-{
-}
-
-force::
-force (const force& x,
-       ::xml_schema::flags f,
-       ::xml_schema::container* c)
-: ::xml_schema::type (x, f, c),
-  end_time_ (x.end_time_, f, this),
-  force1_ (x.force1_, f, this),
-  particles_ (x.particles_, f, this)
-{
-}
-
-force::
-force (const ::xercesc::DOMElement& e,
-       ::xml_schema::flags f,
-       ::xml_schema::container* c)
-: ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
-  end_time_ (this),
-  force1_ (this),
-  particles_ (this)
-{
-  if ((f & ::xml_schema::flags::base) == 0)
-  {
-    ::xsd::cxx::xml::dom::parser< char > p (e, true, false, false);
-    this->parse (p, f);
-  }
-}
-
-void force::
-parse (::xsd::cxx::xml::dom::parser< char >& p,
-       ::xml_schema::flags f)
-{
-  for (; p.more_content (); p.next_content (false))
-  {
-    const ::xercesc::DOMElement& i (p.cur_element ());
-    const ::xsd::cxx::xml::qualified_name< char > n (
-      ::xsd::cxx::xml::dom::name< char > (i));
-
-    // end_time
-    //
-    if (n.name () == "end_time" && n.namespace_ ().empty ())
-    {
-      if (!end_time_.present ())
-      {
-        this->end_time_.set (end_time_traits::create (i, f, this));
-        continue;
-      }
-    }
-
-    // force
-    //
-    if (n.name () == "force" && n.namespace_ ().empty ())
-    {
-      ::std::unique_ptr< force1_type > r (
-        force1_traits::create (i, f, this));
-
-      if (!force1_.present ())
-      {
-        this->force1_.set (::std::move (r));
-        continue;
-      }
-    }
-
-    // particles
-    //
-    if (n.name () == "particles" && n.namespace_ ().empty ())
-    {
-      ::std::unique_ptr< particles_type > r (
-        particles_traits::create (i, f, this));
-
-      this->particles_.push_back (::std::move (r));
-      continue;
-    }
-
-    break;
-  }
-
-  if (!end_time_.present ())
-  {
-    throw ::xsd::cxx::tree::expected_element< char > (
-      "end_time",
-      "");
-  }
-
-  if (!force1_.present ())
-  {
-    throw ::xsd::cxx::tree::expected_element< char > (
-      "force",
-      "");
-  }
-}
-
-force* force::
-_clone (::xml_schema::flags f,
-        ::xml_schema::container* c) const
-{
-  return new class force (*this, f, c);
-}
-
-force& force::
-operator= (const force& x)
-{
-  if (this != &x)
-  {
-    static_cast< ::xml_schema::type& > (*this) = x;
-    this->end_time_ = x.end_time_;
-    this->force1_ = x.force1_;
-    this->particles_ = x.particles_;
-  }
-
-  return *this;
-}
-
-force::
-~force ()
-{
-}
-
 // cuboid
 //
 
@@ -2734,9 +2522,12 @@ cuboid (const mass_type& mass,
   epsilon_ (epsilon, this),
   sigma_ (sigma, this),
   type_ (type, this),
+  stiffness_ (this),
+  average_bond_length_ (this),
   position_ (position, this),
   velocity_ (velocity, this),
-  dimensions_ (dimensions, this)
+  dimensions_ (dimensions, this),
+  force_ (this)
 {
 }
 
@@ -2755,9 +2546,12 @@ cuboid (const mass_type& mass,
   epsilon_ (epsilon, this),
   sigma_ (sigma, this),
   type_ (type, this),
+  stiffness_ (this),
+  average_bond_length_ (this),
   position_ (std::move (position), this),
   velocity_ (std::move (velocity), this),
-  dimensions_ (std::move (dimensions), this)
+  dimensions_ (std::move (dimensions), this),
+  force_ (this)
 {
 }
 
@@ -2771,9 +2565,12 @@ cuboid (const cuboid& x,
   epsilon_ (x.epsilon_, f, this),
   sigma_ (x.sigma_, f, this),
   type_ (x.type_, f, this),
+  stiffness_ (x.stiffness_, f, this),
+  average_bond_length_ (x.average_bond_length_, f, this),
   position_ (x.position_, f, this),
   velocity_ (x.velocity_, f, this),
-  dimensions_ (x.dimensions_, f, this)
+  dimensions_ (x.dimensions_, f, this),
+  force_ (x.force_, f, this)
 {
 }
 
@@ -2787,9 +2584,12 @@ cuboid (const ::xercesc::DOMElement& e,
   epsilon_ (this),
   sigma_ (this),
   type_ (this),
+  stiffness_ (this),
+  average_bond_length_ (this),
   position_ (this),
   velocity_ (this),
-  dimensions_ (this)
+  dimensions_ (this),
+  force_ (this)
 {
   if ((f & ::xml_schema::flags::base) == 0)
   {
@@ -2863,6 +2663,28 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       }
     }
 
+    // stiffness
+    //
+    if (n.name () == "stiffness" && n.namespace_ ().empty ())
+    {
+      if (!this->stiffness_)
+      {
+        this->stiffness_.set (stiffness_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    // average_bond_length
+    //
+    if (n.name () == "average_bond_length" && n.namespace_ ().empty ())
+    {
+      if (!this->average_bond_length_)
+      {
+        this->average_bond_length_.set (average_bond_length_traits::create (i, f, this));
+        continue;
+      }
+    }
+
     // position
     //
     if (n.name () == "position" && n.namespace_ ().empty ())
@@ -2903,6 +2725,17 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
         this->dimensions_.set (::std::move (r));
         continue;
       }
+    }
+
+    // force
+    //
+    if (n.name () == "force" && n.namespace_ ().empty ())
+    {
+      ::std::unique_ptr< force_type > r (
+        force_traits::create (i, f, this));
+
+      this->force_.push_back (::std::move (r));
+      continue;
     }
 
     break;
@@ -2983,9 +2816,12 @@ operator= (const cuboid& x)
     this->epsilon_ = x.epsilon_;
     this->sigma_ = x.sigma_;
     this->type_ = x.type_;
+    this->stiffness_ = x.stiffness_;
+    this->average_bond_length_ = x.average_bond_length_;
     this->position_ = x.position_;
     this->velocity_ = x.velocity_;
     this->dimensions_ = x.dimensions_;
+    this->force_ = x.force_;
   }
 
   return *this;
@@ -3270,268 +3106,6 @@ operator= (const sphere& x)
 
 sphere::
 ~sphere ()
-{
-}
-
-// force1
-//
-
-force1::
-force1 (const x_type& x,
-        const y_type& y,
-        const z_type& z)
-: ::xml_schema::type (),
-  x_ (x, this),
-  y_ (y, this),
-  z_ (z, this)
-{
-}
-
-force1::
-force1 (const force1& x,
-        ::xml_schema::flags f,
-        ::xml_schema::container* c)
-: ::xml_schema::type (x, f, c),
-  x_ (x.x_, f, this),
-  y_ (x.y_, f, this),
-  z_ (x.z_, f, this)
-{
-}
-
-force1::
-force1 (const ::xercesc::DOMElement& e,
-        ::xml_schema::flags f,
-        ::xml_schema::container* c)
-: ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
-  x_ (this),
-  y_ (this),
-  z_ (this)
-{
-  if ((f & ::xml_schema::flags::base) == 0)
-  {
-    ::xsd::cxx::xml::dom::parser< char > p (e, true, false, false);
-    this->parse (p, f);
-  }
-}
-
-void force1::
-parse (::xsd::cxx::xml::dom::parser< char >& p,
-       ::xml_schema::flags f)
-{
-  for (; p.more_content (); p.next_content (false))
-  {
-    const ::xercesc::DOMElement& i (p.cur_element ());
-    const ::xsd::cxx::xml::qualified_name< char > n (
-      ::xsd::cxx::xml::dom::name< char > (i));
-
-    // x
-    //
-    if (n.name () == "x" && n.namespace_ ().empty ())
-    {
-      if (!x_.present ())
-      {
-        this->x_.set (x_traits::create (i, f, this));
-        continue;
-      }
-    }
-
-    // y
-    //
-    if (n.name () == "y" && n.namespace_ ().empty ())
-    {
-      if (!y_.present ())
-      {
-        this->y_.set (y_traits::create (i, f, this));
-        continue;
-      }
-    }
-
-    // z
-    //
-    if (n.name () == "z" && n.namespace_ ().empty ())
-    {
-      if (!z_.present ())
-      {
-        this->z_.set (z_traits::create (i, f, this));
-        continue;
-      }
-    }
-
-    break;
-  }
-
-  if (!x_.present ())
-  {
-    throw ::xsd::cxx::tree::expected_element< char > (
-      "x",
-      "");
-  }
-
-  if (!y_.present ())
-  {
-    throw ::xsd::cxx::tree::expected_element< char > (
-      "y",
-      "");
-  }
-
-  if (!z_.present ())
-  {
-    throw ::xsd::cxx::tree::expected_element< char > (
-      "z",
-      "");
-  }
-}
-
-force1* force1::
-_clone (::xml_schema::flags f,
-        ::xml_schema::container* c) const
-{
-  return new class force1 (*this, f, c);
-}
-
-force1& force1::
-operator= (const force1& x)
-{
-  if (this != &x)
-  {
-    static_cast< ::xml_schema::type& > (*this) = x;
-    this->x_ = x.x_;
-    this->y_ = x.y_;
-    this->z_ = x.z_;
-  }
-
-  return *this;
-}
-
-force1::
-~force1 ()
-{
-}
-
-// particles
-//
-
-particles::
-particles (const particle_index_type& particle_index,
-           const dimensions_type& dimensions)
-: ::xml_schema::type (),
-  particle_index_ (particle_index, this),
-  dimensions_ (dimensions, this)
-{
-}
-
-particles::
-particles (::std::unique_ptr< particle_index_type > particle_index,
-           ::std::unique_ptr< dimensions_type > dimensions)
-: ::xml_schema::type (),
-  particle_index_ (std::move (particle_index), this),
-  dimensions_ (std::move (dimensions), this)
-{
-}
-
-particles::
-particles (const particles& x,
-           ::xml_schema::flags f,
-           ::xml_schema::container* c)
-: ::xml_schema::type (x, f, c),
-  particle_index_ (x.particle_index_, f, this),
-  dimensions_ (x.dimensions_, f, this)
-{
-}
-
-particles::
-particles (const ::xercesc::DOMElement& e,
-           ::xml_schema::flags f,
-           ::xml_schema::container* c)
-: ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
-  particle_index_ (this),
-  dimensions_ (this)
-{
-  if ((f & ::xml_schema::flags::base) == 0)
-  {
-    ::xsd::cxx::xml::dom::parser< char > p (e, true, false, false);
-    this->parse (p, f);
-  }
-}
-
-void particles::
-parse (::xsd::cxx::xml::dom::parser< char >& p,
-       ::xml_schema::flags f)
-{
-  for (; p.more_content (); p.next_content (false))
-  {
-    const ::xercesc::DOMElement& i (p.cur_element ());
-    const ::xsd::cxx::xml::qualified_name< char > n (
-      ::xsd::cxx::xml::dom::name< char > (i));
-
-    // particle_index
-    //
-    if (n.name () == "particle_index" && n.namespace_ ().empty ())
-    {
-      ::std::unique_ptr< particle_index_type > r (
-        particle_index_traits::create (i, f, this));
-
-      if (!particle_index_.present ())
-      {
-        this->particle_index_.set (::std::move (r));
-        continue;
-      }
-    }
-
-    // dimensions
-    //
-    if (n.name () == "dimensions" && n.namespace_ ().empty ())
-    {
-      ::std::unique_ptr< dimensions_type > r (
-        dimensions_traits::create (i, f, this));
-
-      if (!dimensions_.present ())
-      {
-        this->dimensions_.set (::std::move (r));
-        continue;
-      }
-    }
-
-    break;
-  }
-
-  if (!particle_index_.present ())
-  {
-    throw ::xsd::cxx::tree::expected_element< char > (
-      "particle_index",
-      "");
-  }
-
-  if (!dimensions_.present ())
-  {
-    throw ::xsd::cxx::tree::expected_element< char > (
-      "dimensions",
-      "");
-  }
-}
-
-particles* particles::
-_clone (::xml_schema::flags f,
-        ::xml_schema::container* c) const
-{
-  return new class particles (*this, f, c);
-}
-
-particles& particles::
-operator= (const particles& x)
-{
-  if (this != &x)
-  {
-    static_cast< ::xml_schema::type& > (*this) = x;
-    this->particle_index_ = x.particle_index_;
-    this->dimensions_ = x.dimensions_;
-  }
-
-  return *this;
-}
-
-particles::
-~particles ()
 {
 }
 
@@ -3940,6 +3514,146 @@ dimensions::
 {
 }
 
+// force
+//
+
+force::
+force (const end_time_type& end_time,
+       const force1_type& force1)
+: ::xml_schema::type (),
+  end_time_ (end_time, this),
+  force1_ (force1, this),
+  particles_ (this)
+{
+}
+
+force::
+force (const end_time_type& end_time,
+       ::std::unique_ptr< force1_type > force1)
+: ::xml_schema::type (),
+  end_time_ (end_time, this),
+  force1_ (std::move (force1), this),
+  particles_ (this)
+{
+}
+
+force::
+force (const force& x,
+       ::xml_schema::flags f,
+       ::xml_schema::container* c)
+: ::xml_schema::type (x, f, c),
+  end_time_ (x.end_time_, f, this),
+  force1_ (x.force1_, f, this),
+  particles_ (x.particles_, f, this)
+{
+}
+
+force::
+force (const ::xercesc::DOMElement& e,
+       ::xml_schema::flags f,
+       ::xml_schema::container* c)
+: ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
+  end_time_ (this),
+  force1_ (this),
+  particles_ (this)
+{
+  if ((f & ::xml_schema::flags::base) == 0)
+  {
+    ::xsd::cxx::xml::dom::parser< char > p (e, true, false, false);
+    this->parse (p, f);
+  }
+}
+
+void force::
+parse (::xsd::cxx::xml::dom::parser< char >& p,
+       ::xml_schema::flags f)
+{
+  for (; p.more_content (); p.next_content (false))
+  {
+    const ::xercesc::DOMElement& i (p.cur_element ());
+    const ::xsd::cxx::xml::qualified_name< char > n (
+      ::xsd::cxx::xml::dom::name< char > (i));
+
+    // end_time
+    //
+    if (n.name () == "end_time" && n.namespace_ ().empty ())
+    {
+      if (!end_time_.present ())
+      {
+        this->end_time_.set (end_time_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    // force
+    //
+    if (n.name () == "force" && n.namespace_ ().empty ())
+    {
+      ::std::unique_ptr< force1_type > r (
+        force1_traits::create (i, f, this));
+
+      if (!force1_.present ())
+      {
+        this->force1_.set (::std::move (r));
+        continue;
+      }
+    }
+
+    // particles
+    //
+    if (n.name () == "particles" && n.namespace_ ().empty ())
+    {
+      ::std::unique_ptr< particles_type > r (
+        particles_traits::create (i, f, this));
+
+      this->particles_.push_back (::std::move (r));
+      continue;
+    }
+
+    break;
+  }
+
+  if (!end_time_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "end_time",
+      "");
+  }
+
+  if (!force1_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "force",
+      "");
+  }
+}
+
+force* force::
+_clone (::xml_schema::flags f,
+        ::xml_schema::container* c) const
+{
+  return new class force (*this, f, c);
+}
+
+force& force::
+operator= (const force& x)
+{
+  if (this != &x)
+  {
+    static_cast< ::xml_schema::type& > (*this) = x;
+    this->end_time_ = x.end_time_;
+    this->force1_ = x.force1_;
+    this->particles_ = x.particles_;
+  }
+
+  return *this;
+}
+
+force::
+~force ()
+{
+}
+
 // center
 //
 
@@ -4072,6 +3786,240 @@ operator= (const center& x)
 
 center::
 ~center ()
+{
+}
+
+// force1
+//
+
+force1::
+force1 (const x_type& x,
+        const y_type& y,
+        const z_type& z)
+: ::xml_schema::type (),
+  x_ (x, this),
+  y_ (y, this),
+  z_ (z, this)
+{
+}
+
+force1::
+force1 (const force1& x,
+        ::xml_schema::flags f,
+        ::xml_schema::container* c)
+: ::xml_schema::type (x, f, c),
+  x_ (x.x_, f, this),
+  y_ (x.y_, f, this),
+  z_ (x.z_, f, this)
+{
+}
+
+force1::
+force1 (const ::xercesc::DOMElement& e,
+        ::xml_schema::flags f,
+        ::xml_schema::container* c)
+: ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
+  x_ (this),
+  y_ (this),
+  z_ (this)
+{
+  if ((f & ::xml_schema::flags::base) == 0)
+  {
+    ::xsd::cxx::xml::dom::parser< char > p (e, true, false, false);
+    this->parse (p, f);
+  }
+}
+
+void force1::
+parse (::xsd::cxx::xml::dom::parser< char >& p,
+       ::xml_schema::flags f)
+{
+  for (; p.more_content (); p.next_content (false))
+  {
+    const ::xercesc::DOMElement& i (p.cur_element ());
+    const ::xsd::cxx::xml::qualified_name< char > n (
+      ::xsd::cxx::xml::dom::name< char > (i));
+
+    // x
+    //
+    if (n.name () == "x" && n.namespace_ ().empty ())
+    {
+      if (!x_.present ())
+      {
+        this->x_.set (x_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    // y
+    //
+    if (n.name () == "y" && n.namespace_ ().empty ())
+    {
+      if (!y_.present ())
+      {
+        this->y_.set (y_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    // z
+    //
+    if (n.name () == "z" && n.namespace_ ().empty ())
+    {
+      if (!z_.present ())
+      {
+        this->z_.set (z_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    break;
+  }
+
+  if (!x_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "x",
+      "");
+  }
+
+  if (!y_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "y",
+      "");
+  }
+
+  if (!z_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "z",
+      "");
+  }
+}
+
+force1* force1::
+_clone (::xml_schema::flags f,
+        ::xml_schema::container* c) const
+{
+  return new class force1 (*this, f, c);
+}
+
+force1& force1::
+operator= (const force1& x)
+{
+  if (this != &x)
+  {
+    static_cast< ::xml_schema::type& > (*this) = x;
+    this->x_ = x.x_;
+    this->y_ = x.y_;
+    this->z_ = x.z_;
+  }
+
+  return *this;
+}
+
+force1::
+~force1 ()
+{
+}
+
+// particles
+//
+
+particles::
+particles (const particle_index_type& particle_index)
+: ::xml_schema::type (),
+  particle_index_ (particle_index, this)
+{
+}
+
+particles::
+particles (::std::unique_ptr< particle_index_type > particle_index)
+: ::xml_schema::type (),
+  particle_index_ (std::move (particle_index), this)
+{
+}
+
+particles::
+particles (const particles& x,
+           ::xml_schema::flags f,
+           ::xml_schema::container* c)
+: ::xml_schema::type (x, f, c),
+  particle_index_ (x.particle_index_, f, this)
+{
+}
+
+particles::
+particles (const ::xercesc::DOMElement& e,
+           ::xml_schema::flags f,
+           ::xml_schema::container* c)
+: ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
+  particle_index_ (this)
+{
+  if ((f & ::xml_schema::flags::base) == 0)
+  {
+    ::xsd::cxx::xml::dom::parser< char > p (e, true, false, false);
+    this->parse (p, f);
+  }
+}
+
+void particles::
+parse (::xsd::cxx::xml::dom::parser< char >& p,
+       ::xml_schema::flags f)
+{
+  for (; p.more_content (); p.next_content (false))
+  {
+    const ::xercesc::DOMElement& i (p.cur_element ());
+    const ::xsd::cxx::xml::qualified_name< char > n (
+      ::xsd::cxx::xml::dom::name< char > (i));
+
+    // particle_index
+    //
+    if (n.name () == "particle_index" && n.namespace_ ().empty ())
+    {
+      ::std::unique_ptr< particle_index_type > r (
+        particle_index_traits::create (i, f, this));
+
+      if (!particle_index_.present ())
+      {
+        this->particle_index_.set (::std::move (r));
+        continue;
+      }
+    }
+
+    break;
+  }
+
+  if (!particle_index_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "particle_index",
+      "");
+  }
+}
+
+particles* particles::
+_clone (::xml_schema::flags f,
+        ::xml_schema::container* c) const
+{
+  return new class particles (*this, f, c);
+}
+
+particles& particles::
+operator= (const particles& x)
+{
+  if (this != &x)
+  {
+    static_cast< ::xml_schema::type& > (*this) = x;
+    this->particle_index_ = x.particle_index_;
+  }
+
+  return *this;
+}
+
+particles::
+~particles ()
 {
 }
 

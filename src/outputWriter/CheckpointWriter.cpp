@@ -34,7 +34,7 @@ namespace outputWriter
             particle::old_f_type old_f_xml = old_f(p.getOldF()[0], p.getOldF()[1], p.getOldF()[2]);
 
             ps.push_back(
-                particle(p.getM(), p.getEpsilon(), p.getSigma(), p.getType(), x_xml, v_xml, f_xml, old_f_xml));
+                particle(p.getM(), p.getEpsilon(), p.getSigma(), p.getType(), p.getStiffness(), p.getAverageBondLength(), x_xml, v_xml, f_xml, old_f_xml));
         }
 
         xml_schema::namespace_infomap map;

@@ -42,9 +42,7 @@ private:
     bool showMenu;                                          /// true if menu should be shown, false otherwise
     bool createCheckpoint;                                  /// true if a checkpoint should be created, false otherwise
     bool membrane;                                          /// true if the simulation should calculate force according to a membrane
-    double stiffness;                                       /// stiffness of the membrane
-    double averageBondLength;                               /// average bond lenght of the membrane
-    std::shared_ptr<std::list<SingleParticleForce*>> forces; /// list of forces that are applied
+    std::list<std::shared_ptr<SingleParticleForce>> forces; /// list of forces that are applied
     std::shared_ptr<spdlog::logger> memoryLogger;           /// a speedlog logger which logs construction and destruction of particles
 
 public:
@@ -101,10 +99,6 @@ public:
 
     const void setMembrane(bool membrane);
 
-    const void setStiffness(double stiffness);
-
-    const void setAverageBondLength(double averageBondLength);
-
     const void addForce(std::shared_ptr<SingleParticleForce> force); 
 
     std::shared_ptr<ParticleContainer> getParticleContainer();
@@ -143,9 +137,5 @@ public:
 
     const bool getMembrane();
 
-    const double getStiffness();
-
-    const double getAverageBondLength();
-
-    const std::shared_ptr<std::list<SingleParticleForce*>> getForces(); 
+    const std::list<std::shared_ptr<SingleParticleForce>> getForces(); 
 };
