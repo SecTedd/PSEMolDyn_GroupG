@@ -10,7 +10,6 @@
 #include "../model/ParticleContainer.h"
 #include "../model/Cuboid.h"
 #include "../model/Sphere.h"
-#include "./MaxwellBoltzmannDistribution.h"
 #include "./ArrayUtils.h"
 
 #include <iostream>
@@ -64,12 +63,10 @@ namespace ParticleGenerator
      * @brief generates all particles of a sphere and adds them to the particle container, if radius is 0, there is still
      * @param particleContainer contains all particles for the simulation
      * @param sphere contains all necessary parameters for the construction of the sphere
+     * @param dimension 2D or 3D Sphere
      */
-    inline void generateSphere(ParticleContainer &particleContainer, Sphere &sphere)
+    inline void generateSphere(ParticleContainer &particleContainer, Sphere &sphere, int dimension)
     {
-        // Dimension
-        int dimension = 2;
-
         std::array<double, 3> center = sphere.getCenter();
         double m = sphere.getM();
         int r = sphere.getR();

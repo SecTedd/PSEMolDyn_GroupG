@@ -25,7 +25,7 @@ TEST(Thermostat, NoDeltaTo40)
     
     pc->addParticle(x, v, m, epsilon, sigma);
 
-    Thermostat t = Thermostat(pc, 100.0);
+    Thermostat t = Thermostat(pc, 100.0, 2);
     t.setTargetTemperature(40.0);
 
     t.apply();
@@ -53,7 +53,7 @@ TEST(Thermostat, Heating)
     pc->addParticle(x1, v, m, epsilon, sigma);
     pc->addParticle(x2, v, m, epsilon, sigma);
 
-    Thermostat t = Thermostat(pc, 10.0);
+    Thermostat t = Thermostat(pc, 10.0, 2);
     t.setTargetTemperature(1000.0);
     t.setTemperatureDelta(0.5);
 
@@ -85,7 +85,7 @@ TEST(Thermostat, Cooling)
     pc->addParticle(x1, v, m, epsilon, sigma);
     pc->addParticle(x2, v, m, epsilon, sigma);
 
-    Thermostat t = Thermostat(pc, 1000.0);
+    Thermostat t = Thermostat(pc, 1000.0, 2);
     t.setTargetTemperature(10.0);
     t.setTemperatureDelta(0.5);
 
@@ -117,7 +117,7 @@ TEST(Thermostat, HoldingTemperature)
     pc->addParticle(x1, v, m, epsilon, sigma);
     pc->addParticle(x2, v, m, epsilon, sigma);
 
-    Thermostat t = Thermostat(pc, 100.0);
+    Thermostat t = Thermostat(pc, 100.0, 2);
     t.setTargetTemperature(100.0);
     t.setTemperatureDelta(0.5);
     t.initializeBrownianMotion();

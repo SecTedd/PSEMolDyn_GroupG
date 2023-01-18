@@ -28,6 +28,7 @@ private:
     double delta_t;                                       /// increase in step size for the time
     double cutoff;                                        /// cutoff for the linked cell algorith
     std::array<double, 3> domain;                         /// the size of the domain
+    int dimension;                                       /// the number of dimensions (2 or 3)
     std::array<BoundaryCondition, 6> boundaries;          /// the boundaries for the simulation
     int writeFrequency;                                   /// the number of iterations after which an vtk file is written
     std::string baseName;                                 /// the path to the output folder
@@ -72,6 +73,8 @@ public:
 
     const void setDomain(std::array<double, 3> domain);
 
+    const void setDimension(int dimension);
+
     const void setBoundaries(std::array<BoundaryCondition, 6> boundaries);
 
     const void setWriteFrequency(int writeFrequency);
@@ -105,6 +108,8 @@ public:
     const double getCutoff() const;
 
     const std::array<double, 3> getDomain() const;
+
+    const int getDimension() const;
 
     const std::array<BoundaryCondition, 6> getBoundaries() const;
 

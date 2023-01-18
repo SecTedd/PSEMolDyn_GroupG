@@ -42,7 +42,7 @@ const void Simulation::simulate()
     OutputFacade outputFacade = OutputFacade(_programParameters);
 
     // initialize Thermostat
-    Thermostat t = Thermostat(_programParameters->getParticleContainer(), _programParameters->getTempInit());
+    Thermostat t = Thermostat(_programParameters->getParticleContainer(), _programParameters->getTempInit(), _programParameters->getDimension());
     // target temperature provided
     if (_programParameters->getTempTarget() != -1) {
         t.setTargetTemperature(_programParameters->getTempTarget());

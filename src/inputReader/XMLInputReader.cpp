@@ -104,6 +104,9 @@ void XMLInputReader::readInput(ProgramParameters &programParameters, const char 
         domain[2] = d.z();
         programParameters.setDomain(domain);
 
+        // TODO: Read in dimension from xml file and set here
+        // programparameters.setDimension(xml->dimension());
+
         std::array<BoundaryCondition, 6> boundaries = std::array<BoundaryCondition, 6>();
         simulation_t::boundaries_type b = xml->boundaries();
         std::string boundary = b.xLeft();
@@ -213,7 +216,7 @@ void XMLInputReader::readInput(ProgramParameters &programParameters, const char 
             int type = i->type();
 
             std::unique_ptr<Sphere> sphere = std::make_unique<Sphere>(Sphere(center, r, h, m, velocity, epsilon, sigma, type));
-            ParticleGenerator::generateSphere(*programParameters.getParticleContainer(), *sphere);
+            ParticleGenerator::generateSphere(*programParameters.getParticleContainer(), *sphere, programParameters.getDimension());
         }
     }
     catch (const xml_schema::exception &e)

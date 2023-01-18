@@ -25,6 +25,9 @@ private:
     // init temperature of the system
     double initTemperature;
 
+    // dimensions of the observed system
+    int dimension;
+
     // particles of the observed system
     std::shared_ptr<ParticleContainer> particleContainer;
     
@@ -41,8 +44,9 @@ public:
      * 
      * @param particleContainer particles of the observed system
      * @param initTemperature init temperature of the system the thermostat is watching
+     * @param dimension dimensions of the observed system
      */
-    Thermostat(std::shared_ptr<ParticleContainer> particleContainer, double initTemperature);
+    Thermostat(std::shared_ptr<ParticleContainer> particleContainer, double initTemperature, int dimension);
 
     ~Thermostat();
     

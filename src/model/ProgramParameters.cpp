@@ -19,6 +19,7 @@ ProgramParameters::ProgramParameters()
     domain = {3, 3, 1};
     BoundaryCondition o = BoundaryCondition::Outflow;
     boundaries = {o, o, o, o, o, o};
+    dimension = 3;
     end_time = 1;
     delta_t = 0.0005;
     cutoff = 3;
@@ -91,6 +92,7 @@ const void ProgramParameters::setBoundaries(std::array<BoundaryCondition, 6> bou
         particleContainer.reset(new LinkedCellParticleContainer(cutoff, domain, boundaries));
     }
 }
+const void ProgramParameters::setDimension(int dimension) { this->dimension = dimension; }
 const void ProgramParameters::setWriteFrequency(int writeFrequency) { this->writeFrequency = writeFrequency; }
 const void ProgramParameters::setBaseName(std::string baseName) { this->baseName = baseName; }
 const void ProgramParameters::setTempInit(double temp_init) { this->temp_init = temp_init; }
@@ -107,6 +109,7 @@ const double ProgramParameters::getEndTime() const { return end_time; }
 const double ProgramParameters::getDeltaT() const { return delta_t; }
 const double ProgramParameters::getCutoff() const { return cutoff; }
 const std::array<double, 3> ProgramParameters::getDomain() const { return domain; }
+const int ProgramParameters::getDimension() const { return dimension; }
 const std::array<BoundaryCondition, 6> ProgramParameters::getBoundaries() const { return boundaries; }
 const int ProgramParameters::getWriteFrequency() { return writeFrequency; }
 const double ProgramParameters::getTempInit() const { return temp_init; }
