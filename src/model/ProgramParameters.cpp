@@ -19,11 +19,11 @@ ProgramParameters::ProgramParameters()
     domain = {3, 3, 1};
     BoundaryCondition o = BoundaryCondition::Outflow;
     boundaries = {o, o, o, o, o, o};
-    dimension = 3;
+    dimension = 2;
     end_time = 1;
     delta_t = 0.0005;
     cutoff = 3;
-    parallel = 1;
+    parallel = 2;
     writeFrequency = 50;
     particleContainer.reset(new LinkedCellParticleContainer(cutoff, domain, boundaries, parallel));
     baseName = "outputVTK";
@@ -96,10 +96,10 @@ const void ProgramParameters::setBoundaries(std::array<BoundaryCondition, 6> bou
 
 const void ProgramParameters::setParallel(int parallel) { 
     this->parallel = parallel; 
-    if (typeid(*particleContainer) == typeid(LinkedCellParticleContainer))
-    {
-        particleContainer.reset(new LinkedCellParticleContainer(cutoff, domain, boundaries, parallel));
-    }
+    // if (typeid(*particleContainer) == typeid(LinkedCellParticleContainer))
+    // {
+    //     particleContainer.reset(new LinkedCellParticleContainer(cutoff, domain, boundaries, parallel));
+    // }
 }
 
 const void ProgramParameters::setDimension(int dimension) { this->dimension = dimension; }

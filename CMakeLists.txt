@@ -49,8 +49,8 @@ set(MP_OPT_GCC "")
 set(MP_OPT_INTEL "")
 #set(MP_OPT_CLANG "")
 
-find_package(OpenMP)
-set(OpenMP_CXX_FOUND 0)
+#find_package(OpenMP)
+set(OpenMP_CXX_FOUND 0) #for testing if it works without OpenMP
 if(OpenMP_CXX_FOUND)
     target_link_libraries(MolSim PUBLIC OpenMP::OpenMP_CXX)
     set(MP_OPT_GCC -fopenmp)

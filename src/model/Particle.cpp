@@ -9,6 +9,7 @@
 #include "../utils/ArrayUtils.h"
 
 #include <iostream>
+#include <omp.h>
 
 Particle::Particle(int type_arg)
 {
@@ -74,7 +75,12 @@ const void Particle::setV(const std::array<double, 3> &new_v) { v = new_v; }
 
 const std::array<double, 3> &Particle::getF() const { return f; }
 const void Particle::setF(const std::array<double, 3> &new_f) { f = new_f; }
-const void Particle::addF(const std::array<double, 3> &new_f) { f = f + new_f; }
+const void Particle::addF(const std::array<double, 3> &new_f) {
+    //protection needed for parallel strategy 2
+    //lock should not be applied for parallel strategy 1
+    #pragma omp critical
+        f = f + new_f; 
+}
 
 const std::array<double, 3> &Particle::getOldF() const { return old_f; }
 const void Particle::setOldF(const std::array<double, 3> &new_old_f) { old_f = new_old_f; }

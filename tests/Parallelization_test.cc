@@ -120,6 +120,8 @@ TEST(ParallelParticleInteractions, Strategy1) {
 
     std::vector<Particle> &particles = pc.getActiveParticles();
 
+    EXPECT_EQ(pc.getParallel(), 1);
+
     EXPECT_THAT(particles[0].getF(), testing::ElementsAre(120, 0, 0));
     EXPECT_THAT(particles[1].getF(), testing::ElementsAre(0, -120, 0));
     EXPECT_THAT(particles[2].getF(), testing::ElementsAre(0, 120, 0));

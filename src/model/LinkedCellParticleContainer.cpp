@@ -164,36 +164,37 @@ const void LinkedCellParticleContainer::initializeCells(std::array<BoundaryCondi
 }
 
 void LinkedCellParticleContainer::initializeGroups(int parallel) {
-    //no parallelization because code is not compiled with OpenMP
-    //cells can be all in one group since they are never executed in parallel
-    if (parallel == 0) {
-        std::vector<int> group;
-        cellGroups.push_back(group);
-        cellGroups[0].reserve((numCells[0]-2) * (numCells[1]-2) * (numCells[2]-2));
-    }
+
+    //default values if no parallelization is applied
+    //code is not compiled with OpenMP so cells can be all in one group
+    int numGroups = 1; 
+    int maxCellsPerGroup = (numCells[0]-2) * (numCells[1]-2) * (numCells[2]-2);
+
     //constant number of groups with varying number of cells per group
-    else if (parallel == 1) {
+    if (parallel == 1) {
 
         //distinguish 2D and 3D cases
-        int numGroups = numCells[2] > 1 ? 18 : 6;
+        numGroups = numCells[2] > 1 ? 18 : 6;
         int offsetX = (numCells[0]-2) % 3 > 0 ? 1 : 0;
         int offsetY = (numCells[1]-2) % 3 > 0 ? 1 : 0;
-        int maxCellsPerGroup = numCells[2] > 1 
+        maxCellsPerGroup = numCells[2] > 1 
             ? ((numCells[0]-2) / 3 + offsetX) * ((numCells[1]-2) / 3 + offsetY) * ((numCells[2]-2) / 2 + (numCells[2]-2) % 2) 
-            : ((numCells[0]-2) / 3 + offsetX) * ((numCells[1]-2) / 2 + (numCells[1]-2) % 2);
-
-        //reserve memory for groups & cells in groups
-        //initialize group vectors  
-        cellGroups.reserve(numGroups);
-        for (int i = 0; i < numGroups; i++) {
-            std::vector<int> group;
-            cellGroups.push_back(group);
-            cellGroups[i].reserve(maxCellsPerGroup);
-        }
+            : ((numCells[0]-2) / 3 + offsetX) * ((numCells[1]-2) / 2 + (numCells[1]-2) % 2); 
     }
-    //varying number of groups with constant number of cells
+
+    //cells grouped together are nearer, overlapping is handled through locks in addF
     else if (parallel == 2) {
-       //TODO
+        numGroups = numCells[2] > 1 ? 4 : 8;
+        maxCellsPerGroup = ((numCells[0]-2) / 2 + (numCells[0]-2) % 2) * ((numCells[1]-2) / 2 + (numCells[1]-2) % 2) * ((numCells[2]-2) / 2 + (numCells[2]-2) % 2);
+    }
+
+    //reserve memory for groups & cells in groups
+    //initialize group vectors  
+    cellGroups.reserve(numGroups);
+    for (int i = 0; i < numGroups; i++) {
+        std::vector<int> group;
+        cellGroups.push_back(group);
+        cellGroups[i].reserve(maxCellsPerGroup);
     }
 }
 
@@ -224,8 +225,16 @@ const int LinkedCellParticleContainer::parallelStrategy1(int cellIdx) {
 }
 
 const int LinkedCellParticleContainer::parallelStrategy2(int cellIdx) {
-    //TODO
-    return 0;
+    int numGroupsX = 2;
+    int numGroupsY = 2;
+    int numGroupsZ = domain[2] > 1 ? 2 : 1;
+
+    std::array<int, 3> index3D = PContainer::convert1DTo3D(cellIdx, numCells);
+    int groupX = (index3D[0] - 1) % numGroupsX;
+    int groupY = (index3D[1] - 1) % numGroupsY;
+    int groupZ = (index3D[2] - 1) % numGroupsZ;
+
+    return groupX + numGroupsX * groupY + numGroupsX * numGroupsY * groupZ;
 }
 
 const int LinkedCellParticleContainer::computeCellIdx(Particle &p)
