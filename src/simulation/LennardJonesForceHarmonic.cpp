@@ -30,8 +30,8 @@ void LennardJonesForceHarmonic::calculateForce(ParticleContainer &particleContai
 
     std::function<void(Particle &)> harmonicPotential = [&](Particle &p1)
     {
-        double stiffness = p1.getStiffness(); 
-        double averageBondLength = p1.getAverageBondLength(); 
+        double stiffness = p1.getStiffness();
+        double averageBondLength = p1.getAverageBondLength();
 
         auto &particles = particleContainer.getActiveParticles();
 
@@ -61,10 +61,10 @@ void LennardJonesForceHarmonic::calculateForce(ParticleContainer &particleContai
     std::function<void(Particle &, Particle &)> forceCalculationIteration = [this](Particle &p1, Particle &p2)
     {
         double sigma = (p1.getSigma() + p2.getSigma()) / 2;
+        double distance = ArrayUtils::L2Norm(p1.getX() - p2.getX());
 
-        if (ArrayUtils::L2Norm(p1.getX() - p2.getX()) > std::pow(2, 1.0 / 6) * sigma)
+        if (distance < std::pow(2, 1.0 / 6) * sigma)
         {
-            double distance = ArrayUtils::L2Norm(p1.getX() - p2.getX());
             double epsilon;
             if (p1.getEpsilon() == p2.getEpsilon())
                 epsilon = p1.getEpsilon();
