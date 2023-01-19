@@ -14,8 +14,8 @@
         <xRight>Reflecting</xRight>
         <yBottom>Reflecting</yBottom>
         <yTop>Reflecting</yTop>
-        <zFront>Periodic</zFront>
-        <zBack>Periodic</zBack>
+        <zFront>Reflecting</zFront>
+        <zBack>Reflecting</zBack>
     </boundaries>
     <temp_init>40</temp_init>
     <brownianMotion>true</brownianMotion>
@@ -23,6 +23,7 @@
     <g_grav>-12.44</g_grav>
     <writeFrequency>100</writeFrequency>
     <baseName>outputVTK3d</baseName>
+    <file_name>/u/halle/borisov/home_at/Praktikum/PSEMolDyn_GroupG/input/eingabe-cuboid.txt</file_name>
     <sphere>
         <mass>1.0</mass>
         <h>1.2</h>

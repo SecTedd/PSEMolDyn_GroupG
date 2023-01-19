@@ -41,6 +41,9 @@ private:
     // Variable for the Lennard Jones force
     double sigma;
 
+    // indicates whether particles of sphere should be stationary
+    bool fixed;
+
     /**
      * a speedlog logger which logs construction and destruction of particles
      */
@@ -58,8 +61,9 @@ public:
      * @param epsilon The epsilon value of the particles
      * @param sigma The sigma value of the particles
      * @param type The type of the particles in the cuboid
+     * @param fixed indicates whether particles of sphere should be fixed
      */
-    Sphere(std::array<double, 3> center, int r, double h, double m, std::array<double, 3> v, double epsilon, double sigma, int type);
+    Sphere(std::array<double, 3> center, int r, double h, double m, std::array<double, 3> v, double epsilon, double sigma, int type, bool fixed);
 
     ~Sphere();
 
@@ -83,6 +87,8 @@ public:
 
     const double getSigma() const;
 
+    const bool getFixed();
+
     /*
      * Setters
      */
@@ -98,4 +104,6 @@ public:
     const void setV(std::array<double, 3> &v);
 
     const void setType(int type);
+
+    const void setFixed(bool fixed);
 };

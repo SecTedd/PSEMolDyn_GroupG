@@ -190,7 +190,8 @@ void XMLInputReader::readInput(ProgramParameters &programParameters, const char 
             double sigma = i->sigma();
             int type = i->type();
 
-            std::unique_ptr<Cuboid> cuboid = std::make_unique<Cuboid>(Cuboid(position, dimensions, h, m, velocity, epsilon, sigma, type));
+            // TODO: Read in fixed bool from xml and remove hard coded false
+            std::unique_ptr<Cuboid> cuboid = std::make_unique<Cuboid>(Cuboid(position, dimensions, h, m, velocity, epsilon, sigma, type, false));
             ParticleGenerator::generateCuboid(*programParameters.getParticleContainer(), *cuboid);
         }
 
@@ -215,7 +216,8 @@ void XMLInputReader::readInput(ProgramParameters &programParameters, const char 
             double sigma = i->sigma();
             int type = i->type();
 
-            std::unique_ptr<Sphere> sphere = std::make_unique<Sphere>(Sphere(center, r, h, m, velocity, epsilon, sigma, type));
+            // TODO: Read in fixed bool from xml and remove hard coded false
+            std::unique_ptr<Sphere> sphere = std::make_unique<Sphere>(Sphere(center, r, h, m, velocity, epsilon, sigma, type, false));
             ParticleGenerator::generateSphere(*programParameters.getParticleContainer(), *sphere, programParameters.getDimension());
         }
     }

@@ -7,7 +7,7 @@
 
 #include "./Sphere.h"
 
-Sphere::Sphere(std::array<double, 3> center, int r, double h, double m, std::array<double, 3> v, double epsilon, double sigma, int type)
+Sphere::Sphere(std::array<double, 3> center, int r, double h, double m, std::array<double, 3> v, double epsilon, double sigma, int type, bool fixed)
 {
     this->center = center;
     this->r = r;
@@ -17,6 +17,7 @@ Sphere::Sphere(std::array<double, 3> center, int r, double h, double m, std::arr
     this->epsilon = epsilon;
     this->sigma = sigma;
     this->type = type;
+    this->fixed = fixed;
     _memoryLogger = spdlog::get("memory_logger");
     _memoryLogger->info("Sphere generated!");
 }
@@ -70,6 +71,11 @@ const int Sphere::getType()
     return this->type;
 }
 
+const bool Sphere::getFixed()
+{
+    return this->fixed;
+}
+
 /*
  * Setters
  */
@@ -102,4 +108,9 @@ const void Sphere::setV(std::array<double, 3> &v)
 const void Sphere::setType(int type)
 {
     this->type = type;
+}
+
+const void Sphere::setFixed(bool fixed)
+{
+    this->fixed = fixed;
 }

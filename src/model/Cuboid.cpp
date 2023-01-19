@@ -7,7 +7,7 @@
 
 #include "./Cuboid.h"
 
-Cuboid::Cuboid(std::array<double, 3> x, std::array<int, 3> n, double h, double m, std::array<double, 3> v, double epsilon, double sigma, int type)
+Cuboid::Cuboid(std::array<double, 3> x, std::array<int, 3> n, double h, double m, std::array<double, 3> v, double epsilon, double sigma, int type, bool fixed)
 {
     this->x = x;
     this->n = n;
@@ -17,6 +17,7 @@ Cuboid::Cuboid(std::array<double, 3> x, std::array<int, 3> n, double h, double m
     this->epsilon = epsilon;
     this->sigma = sigma;
     this->type = type;
+    this->fixed = fixed;
     _memoryLogger = spdlog::get("memory_logger");
     _memoryLogger->info("Cuboid generated!");
 }
@@ -69,6 +70,12 @@ const int Cuboid::getType()
 {
     return this->type;
 }
+
+const bool Cuboid::getFixed()
+{
+    return this->fixed;
+}
+
 /*
  * Setters
  */
@@ -101,4 +108,9 @@ const void Cuboid::setV(std::array<double, 3> &v)
 const void Cuboid::setType(int type)
 {
     this->type = type;
+}
+
+const void Cuboid::setFixed(bool fixed) 
+{
+    this->fixed = fixed;
 }

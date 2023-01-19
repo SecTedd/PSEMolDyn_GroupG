@@ -17,12 +17,14 @@ $Cub
 # 6. epsilon value for the Lennard Jones force
 # 7. sigma value for the Lennard Jones force
 # 8. Type for the particles, used for displaying different colors (1 int value)
+# 9. Indicator for stationary cuboid (1 int value where 0 means false and 1 means true)
 #
-0.0 0.0 0.0
-40 8 1
+0.6 2.0 0.0
+20 2 20
 1.1225
 1.0
 0.0 0.0 0.0
 1.0
 1.0
+1
 1

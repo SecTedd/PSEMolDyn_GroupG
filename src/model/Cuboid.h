@@ -41,6 +41,9 @@ private:
     // Variable for the Lennard Jones force
     double sigma;
 
+    // indicates whether particles of the cuboid should be stationary
+    bool fixed;
+
     /**
      * a speedlog logger which logs construction and destruction of particles
      */
@@ -58,8 +61,9 @@ public:
      * @param sigma The sigma value of the particles
      * @param epsilon The epsilon value of the particles in the cuboid
      * @param type The type of the particles in the cuboid
+     * @param fixed Indicates whether particles of the cuboid should be stationary
      */
-    Cuboid(std::array<double, 3> x, std::array<int, 3> n, double h, double m, std::array<double, 3> v, double epsilon, double sigma, int type);
+    Cuboid(std::array<double, 3> x, std::array<int, 3> n, double h, double m, std::array<double, 3> v, double epsilon, double sigma, int type, bool fixed);
 
     ~Cuboid();
 
@@ -83,6 +87,8 @@ public:
 
     const int getType();
 
+    const bool getFixed();
+
     /*
      * Setters
      */
@@ -98,4 +104,6 @@ public:
     const void setV(std::array<double, 3> &v);
 
     const void setType(int type);
+
+    const void setFixed(bool fixed);
 };

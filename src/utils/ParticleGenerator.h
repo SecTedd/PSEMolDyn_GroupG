@@ -31,6 +31,7 @@ namespace ParticleGenerator
         double epsilon = cuboid.getEpsilon(); 
         double sigma = cuboid.getSigma(); 
         int type = cuboid.getType();
+        bool fixed = cuboid.getFixed();
 
         std::array<int, 3> n = cuboid.getN();
         int numParticles = n[0] * n[1] * n[2];
@@ -53,7 +54,7 @@ namespace ParticleGenerator
                     position[0] = lowerLeftCorner[0] + (x * meshWidth);
                     position[1] = lowerLeftCorner[1] + (y * meshWidth);
                     position[2] = lowerLeftCorner[2] + (z * meshWidth);
-                    particleContainer.addParticle(position, initV, m, epsilon, sigma, type);
+                    particleContainer.addParticle(position, initV, m, epsilon, sigma, fixed, type);
                 }
             }
         }
@@ -75,6 +76,7 @@ namespace ParticleGenerator
         double epsilon = sphere.getEpsilon(); 
         double sigma = sphere.getSigma(); 
         int type = sphere.getType();
+        bool fixed = sphere.getFixed();
 
         // number of particles which are later allocated
         int numParticles = 0;
@@ -130,7 +132,7 @@ namespace ParticleGenerator
                 // normally r-0.5 * mesh width but we want to include a bit more particles
                 if (ArrayUtils::L2Norm(position - center) <= r * meshWidth)
                 {
-                    particleContainer.addParticle(position, initV, m, epsilon, sigma, type);
+                    particleContainer.addParticle(position, initV, m, epsilon, sigma, fixed, type);
                 }
 
                 // if three dimensions, we need to do this for every z
@@ -143,7 +145,7 @@ namespace ParticleGenerator
                     position[2] = startingPoint[2] + (z * meshWidth);
                     if (ArrayUtils::L2Norm(position - center) <= r * meshWidth)
                     {
-                        particleContainer.addParticle(position, initV, m, epsilon, sigma, type);
+                        particleContainer.addParticle(position, initV, m, epsilon, sigma, fixed, type);
                     }
                 }
             }
