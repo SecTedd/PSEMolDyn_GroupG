@@ -22,8 +22,9 @@ TEST(Thermostat, NoDeltaTo40)
     double m = 1;
     double sigma = 1;
     double epsilon = 5;
+    int type = 1; 
     
-    pc->addParticle(x, v, m, epsilon, sigma);
+    pc->addParticle(x, v, m, epsilon, sigma, type);
 
     Thermostat t = Thermostat(pc, 100.0);
     t.setTargetTemperature(40.0);
@@ -49,9 +50,10 @@ TEST(Thermostat, Heating)
     double m = 1;
     double sigma = 1;
     double epsilon = 5;
+    int type = 1; 
     
-    pc->addParticle(x1, v, m, epsilon, sigma);
-    pc->addParticle(x2, v, m, epsilon, sigma);
+    pc->addParticle(x1, v, m, epsilon, sigma, type);
+    pc->addParticle(x2, v, m, epsilon, sigma, type);
 
     Thermostat t = Thermostat(pc, 10.0);
     t.setTargetTemperature(1000.0);
@@ -81,9 +83,10 @@ TEST(Thermostat, Cooling)
     double m = 1;
     double sigma = 1;
     double epsilon = 5;
+    int type; 
     
-    pc->addParticle(x1, v, m, epsilon, sigma);
-    pc->addParticle(x2, v, m, epsilon, sigma);
+    pc->addParticle(x1, v, m, epsilon, sigma, type);
+    pc->addParticle(x2, v, m, epsilon, sigma, type);
 
     Thermostat t = Thermostat(pc, 1000.0);
     t.setTargetTemperature(10.0);
@@ -113,9 +116,10 @@ TEST(Thermostat, HoldingTemperature)
     double m = 1;
     double sigma = 1;
     double epsilon = 5;
+    int type; 
     
-    pc->addParticle(x1, v, m, epsilon, sigma);
-    pc->addParticle(x2, v, m, epsilon, sigma);
+    pc->addParticle(x1, v, m, epsilon, sigma, type);
+    pc->addParticle(x2, v, m, epsilon, sigma, type);
 
     Thermostat t = Thermostat(pc, 100.0);
     t.setTargetTemperature(100.0);

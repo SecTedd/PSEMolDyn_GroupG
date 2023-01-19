@@ -37,6 +37,8 @@ namespace ParticleGenerator
         double epsilon = cuboid.getEpsilon();
         double sigma = cuboid.getSigma();
         int type = cuboid.getType();
+        double stiffness = cuboid.getStiffness(); 
+        double averageBondLength = cuboid.getAverageBondLength();
 
         std::array<int, 3> n = cuboid.getN();
         int numParticles = n[0] * n[1] * n[2];
@@ -59,7 +61,7 @@ namespace ParticleGenerator
                     position[0] = lowerLeftCorner[0] + (x * meshWidth);
                     position[1] = lowerLeftCorner[1] + (y * meshWidth);
                     position[2] = lowerLeftCorner[2] + (z * meshWidth);
-                    particleContainer.addParticle(position, initV, m, epsilon, sigma, type);
+                    particleContainer.addParticle(position, initV, m, epsilon, sigma, type, stiffness, averageBondLength);
                 }
             }
         }
@@ -101,7 +103,7 @@ namespace ParticleGenerator
 
         for (int x = minX; x <= maxX; x++)
         {
-            for (int y = 0; y <= maxY; y++)
+            for (int y = minY; y <= maxY; y++)
             {
                 if (y == index3D[1] || x == index3D[0])
                     neighbours3D.emplace_back(std::array<int, 3>{x, y, index3D[2]});
@@ -141,7 +143,7 @@ namespace ParticleGenerator
 
         for (int x = minX; x <= maxX; x++)
         {
-            for (int y = 0; y <= maxY; y++)
+            for (int y = minY; y <= maxY; y++)
             {
                 if (y != index3D[1] && x != index3D[0])
                     neighbours3D.emplace_back(std::array<int, 3>{x, y, index3D[2]});

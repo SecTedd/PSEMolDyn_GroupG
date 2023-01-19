@@ -349,7 +349,7 @@ const void LinkedCellParticleContainer::addParticle(std::array<double, 3> &x, st
     if (x[0] >= 0 && x[0] < domain[0] && x[1] >= 0 && x[1] < domain[1] && x[2] >= 0 && x[2] < domain[2])
     {
 
-        activeParticles.emplace_back(x, v, m, epsilon, sigma, stiffness, averageBondLength, type);
+        activeParticles.emplace_back(x, v, m, epsilon, sigma, type, stiffness, averageBondLength);
         rebuildCells();
     }
 }
@@ -359,7 +359,7 @@ const void LinkedCellParticleContainer::addParticle(std::array<double, 3> &x, st
     if (x[0] >= 0 && x[0] < domain[0] && x[1] >= 0 && x[1] < domain[1] && x[2] >= 0 && x[2] < domain[2])
     {
 
-        activeParticles.emplace_back(x, v, f, old_f, m, epsilon, sigma, stiffness, averageBondLength, type);
+        activeParticles.emplace_back(x, v, f, old_f, m, epsilon, sigma, type, stiffness, averageBondLength);
         rebuildCells();
     }
 }
@@ -464,7 +464,8 @@ const void LinkedCellParticleContainer::periodicBoundary(int cellIndex)
             {
                 Particle &toMirror = activeParticles[particleIndex];
                 std::array<double, 3> newX = toMirror.getX() + mirroringOffset;
-                haloParticles.emplace_back(newX, toMirror.getV(), toMirror.getM(), toMirror.getEpsilon(), toMirror.getSigma(), 0);
+                int type = 0; 
+                haloParticles.emplace_back(newX, toMirror.getV(), toMirror.getM(), toMirror.getEpsilon(), toMirror.getSigma(), type);
                 Particle &mirrored = haloParticles.back();
                 int cellIdx = computeCellIdx(mirrored);
                 mirrored.setCellIdx(cellIdx);

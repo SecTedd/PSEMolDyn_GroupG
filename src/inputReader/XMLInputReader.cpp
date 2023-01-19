@@ -237,7 +237,7 @@ void XMLInputReader::readInput(ProgramParameters &programParameters, const char 
                 averageBondLength = i->stiffness().get();
             }
 
-            std::unique_ptr<Cuboid> cuboid = std::make_unique<Cuboid>(Cuboid(position, dimensions, h, m, velocity, epsilon, sigma, type));
+            std::unique_ptr<Cuboid> cuboid = std::make_unique<Cuboid>(Cuboid(position, dimensions, h, m, velocity, epsilon, sigma, type, stiffness, averageBondLength));
             ParticleGenerator::generateCuboid(*programParameters.getParticleContainer(), *cuboid, programParameters.getMembrane());
         }
 

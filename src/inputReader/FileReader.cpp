@@ -69,7 +69,8 @@ void FileReader::readInput(ProgramParameters &programParameters, const char *fil
             datastream >> m;
             datastream >> epsilon;
             datastream >> sigma;
-            particleContainer->addParticle(x, v, m, epsilon, sigma);
+            int type = 0; 
+            particleContainer->addParticle(x, v, m, epsilon, sigma, type);
 
             getline(input_file, tmp_string);
             getLogicLogger()->info("Read line: {}", tmp_string);

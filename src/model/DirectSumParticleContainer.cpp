@@ -55,13 +55,13 @@ const void DirectSumParticleContainer::addParticle(std::array<double, 3> &x, std
 const void DirectSumParticleContainer::addParticle(std::array<double, 3> &x, std::array<double, 3> &v, double &m, double &epsilon, double &sigma, int &type, double &stiffness, double &averageBondLength)
 {
 
-    particles.emplace_back(x, v, m, epsilon, sigma, stiffness, averageBondLength, type);
+    particles.emplace_back(x, v, m, epsilon, sigma, type, stiffness, averageBondLength);
 }
 
 const void DirectSumParticleContainer::addParticle(std::array<double, 3> &x, std::array<double, 3> &v, std::array<double, 3> &f, std::array<double, 3> &old_f, double &m, double &epsilon, double &sigma, int &type, double &stiffness, double &averageBondLength)
 {
 
-    particles.emplace_back(x, v, f, old_f, m, epsilon, sigma, stiffness, averageBondLength, type);
+    particles.emplace_back(x, v, f, old_f, m, epsilon, sigma, type, stiffness, averageBondLength);
 }
 
 const void DirectSumParticleContainer::reserveMemoryForParticles(int numberOfParticles)

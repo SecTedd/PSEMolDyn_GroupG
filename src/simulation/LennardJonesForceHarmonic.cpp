@@ -12,7 +12,7 @@
 #include <iostream>
 #include <math.h>
 
-LennardJonesForceHarmonic::LennardJonesForceHarmonic(double stiffness, double averageBondLength) : stiffness(stiffness), averageBondLength(averageBondLength)
+LennardJonesForceHarmonic::LennardJonesForceHarmonic()
 {
     _logicLogger = spdlog::get("simulation_logger");
 }
@@ -30,6 +30,8 @@ void LennardJonesForceHarmonic::calculateForce(ParticleContainer &particleContai
 
     std::function<void(Particle &)> harmonicPotential = [&](Particle &p1)
     {
+        double stiffness = p1.getStiffness(); 
+        double averageBondLength = p1.getAverageBondLength(); 
         auto &particles = particleContainer.getActiveParticles();
 
         for (int index : p1.getParallelNeighbours())
@@ -43,7 +45,7 @@ void LennardJonesForceHarmonic::calculateForce(ParticleContainer &particleContai
 
         auto sqrt = std::sqrt(2);
 
-        for (int index : p1.getParallelNeighbours())
+        for (int index : p1.getDiagonalNeighbours())
         {
             double distance = ArrayUtils::L2Norm(p1.getX() - particles[index].getX());
             auto f_ij = (stiffness * (distance - sqrt * averageBondLength) / distance) * (p1.getX() - particles[index].getX());

@@ -101,7 +101,7 @@ const void ProgramParameters::setGGrav(std::array<double, 3> g_grav) { this->g_g
 const void ProgramParameters::setShowMenu(bool show_menu) { this->showMenu = show_menu; }
 const void ProgramParameters::setCreateCheckpoint(bool createCheckpoint) { this->createCheckpoint = createCheckpoint; }
 const void ProgramParameters::setMembrane(bool membrane) { this->membrane = membrane; }
-const void ProgramParameters::addForce(std::shared_ptr<SingleParticleForce> force) { forces.emplace_back(force.get()); }
+const void ProgramParameters::addForce(std::shared_ptr<SingleParticleForce> force) { forces.emplace_back(force); }
 const int ProgramParameters::getBenchmarkIterations() const { return benchmark_iterations; }
 std::shared_ptr<ParticleContainer> ProgramParameters::getParticleContainer() { return particleContainer; }
 const double ProgramParameters::getEndTime() const { return end_time; }
