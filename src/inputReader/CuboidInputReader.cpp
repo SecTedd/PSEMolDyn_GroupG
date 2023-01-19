@@ -6,7 +6,6 @@
  */
 
 #include "./CuboidInputReader.h"
-#include "../utils/MaxwellBoltzmannDistribution.h"
 #include "../utils/ArrayUtils.h"
 #include "../utils/ParticleGenerator.h"
 

@@ -12,7 +12,7 @@
 
 // Constructors
 
-Thermostat::Thermostat(std::shared_ptr<ParticleContainer> particleContainer, double initTemperature) {
+Thermostat::Thermostat(std::shared_ptr<ParticleContainer> particleContainer, double initTemperature, int dimension) {
     // Spdlog
     _logicLogger = spdlog::get("simulation_logger");
     _memoryLogger = spdlog::get("memory_logger");
@@ -26,6 +26,7 @@ Thermostat::Thermostat(std::shared_ptr<ParticleContainer> particleContainer, dou
     this->initTemperature = initTemperature;
     this->targetTemperature = initTemperature;
     this->temperatureDelta = -1;
+    this->dimension = dimension;
 
     _memoryLogger->info("Thermostat generated!");
 }
@@ -56,21 +57,16 @@ void Thermostat::apply() {
 }
 
 void Thermostat::initializeBrownianMotion() {
-    // dimensions
-    int dimensions = 2;
 
     for (auto &p: particleContainer->getActiveParticles()) {
         double meanV = sqrt(this->initTemperature / p.getM());
-        p.setV(p.getV() + maxwellBoltzmannDistributedVelocity(meanV, dimensions));
+        p.setV(p.getV() + maxwellBoltzmannDistributedVelocity(meanV, dimension));
     }
 
     _logicLogger->info("Initialized brownian motion with initial temperature: {}", this->initTemperature);
 }
 
 double Thermostat::calculateCurrentTemperature() {
-    // dimensions
-    int dimensions = 2;
-
     // calculate the kinetic energie
     double kineticE = 0;
 
@@ -87,7 +83,7 @@ double Thermostat::calculateCurrentTemperature() {
     }
 
     // calculate temperature from kinetic energie
-    double temperature = (2 * kineticE) / (dimensions * particleContainer->size());
+    double temperature = (2 * kineticE) / (dimension * particleContainer->size());
 
     _logicLogger->debug("Current temperature: {}", temperature);
 

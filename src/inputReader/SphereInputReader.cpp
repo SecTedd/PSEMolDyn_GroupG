@@ -6,7 +6,6 @@
  */
 
 #include "./SphereInputReader.h"
-#include "../utils/MaxwellBoltzmannDistribution.h"
 #include "../utils/ArrayUtils.h"
 #include "../utils/ParticleGenerator.h"
 
@@ -112,5 +111,5 @@ void SphereInputReader::readInput(ProgramParameters &programParameters, const ch
         exit(-1);
     }
     std::unique_ptr<Sphere> sphere = std::make_unique<Sphere>(Sphere(center, r, h, m, v, epsilon, sigma, type));
-    ParticleGenerator::generateSphere(*particleContainer, *sphere);
+    ParticleGenerator::generateSphere(*particleContainer, *sphere, programParameters.getDimension());
 }
