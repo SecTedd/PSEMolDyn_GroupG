@@ -2679,6 +2679,71 @@ class cuboid: public ::xml_schema::type
   //@}
 
   /**
+   * @name fixed
+   *
+   * @brief Accessor and modifier functions for the %fixed
+   * optional element.
+   */
+  //@{
+
+  /**
+   * @brief Element type.
+   */
+  typedef ::xml_schema::boolean fixed_type;
+
+  /**
+   * @brief Element optional container type.
+   */
+  typedef ::xsd::cxx::tree::optional< fixed_type > fixed_optional;
+
+  /**
+   * @brief Element traits type.
+   */
+  typedef ::xsd::cxx::tree::traits< fixed_type, char > fixed_traits;
+
+  /**
+   * @brief Return a read-only (constant) reference to the element
+   * container.
+   *
+   * @return A constant reference to the optional container.
+   */
+  const fixed_optional&
+  fixed () const;
+
+  /**
+   * @brief Return a read-write reference to the element container.
+   *
+   * @return A reference to the optional container.
+   */
+  fixed_optional&
+  fixed ();
+
+  /**
+   * @brief Set the element value.
+   *
+   * @param x A new value to set.
+   *
+   * This function makes a copy of its argument and sets it as
+   * the new value of the element.
+   */
+  void
+  fixed (const fixed_type& x);
+
+  /**
+   * @brief Set the element value.
+   *
+   * @param x An optional container with the new value to set.
+   *
+   * If the value is present in @a x then this function makes a copy 
+   * of this value and sets it as the new value of the element.
+   * Otherwise the element container is set the 'not present' state.
+   */
+  void
+  fixed (const fixed_optional& x);
+
+  //@}
+
+  /**
    * @name position
    *
    * @brief Accessor and modifier functions for the %position
@@ -2962,6 +3027,7 @@ class cuboid: public ::xml_schema::type
   ::xsd::cxx::tree::one< epsilon_type > epsilon_;
   ::xsd::cxx::tree::one< sigma_type > sigma_;
   ::xsd::cxx::tree::one< type_type > type_;
+  fixed_optional fixed_;
   ::xsd::cxx::tree::one< position_type > position_;
   ::xsd::cxx::tree::one< velocity_type > velocity_;
   ::xsd::cxx::tree::one< dimensions_type > dimensions_;
@@ -3260,6 +3326,71 @@ class sphere: public ::xml_schema::type
   //@}
 
   /**
+   * @name fixed
+   *
+   * @brief Accessor and modifier functions for the %fixed
+   * optional element.
+   */
+  //@{
+
+  /**
+   * @brief Element type.
+   */
+  typedef ::xml_schema::boolean fixed_type;
+
+  /**
+   * @brief Element optional container type.
+   */
+  typedef ::xsd::cxx::tree::optional< fixed_type > fixed_optional;
+
+  /**
+   * @brief Element traits type.
+   */
+  typedef ::xsd::cxx::tree::traits< fixed_type, char > fixed_traits;
+
+  /**
+   * @brief Return a read-only (constant) reference to the element
+   * container.
+   *
+   * @return A constant reference to the optional container.
+   */
+  const fixed_optional&
+  fixed () const;
+
+  /**
+   * @brief Return a read-write reference to the element container.
+   *
+   * @return A reference to the optional container.
+   */
+  fixed_optional&
+  fixed ();
+
+  /**
+   * @brief Set the element value.
+   *
+   * @param x A new value to set.
+   *
+   * This function makes a copy of its argument and sets it as
+   * the new value of the element.
+   */
+  void
+  fixed (const fixed_type& x);
+
+  /**
+   * @brief Set the element value.
+   *
+   * @param x An optional container with the new value to set.
+   *
+   * If the value is present in @a x then this function makes a copy 
+   * of this value and sets it as the new value of the element.
+   * Otherwise the element container is set the 'not present' state.
+   */
+  void
+  fixed (const fixed_optional& x);
+
+  //@}
+
+  /**
    * @name center
    *
    * @brief Accessor and modifier functions for the %center
@@ -3486,6 +3617,7 @@ class sphere: public ::xml_schema::type
   ::xsd::cxx::tree::one< epsilon_type > epsilon_;
   ::xsd::cxx::tree::one< sigma_type > sigma_;
   ::xsd::cxx::tree::one< type_type > type_;
+  fixed_optional fixed_;
   ::xsd::cxx::tree::one< center_type > center_;
   ::xsd::cxx::tree::one< velocity_type > velocity_;
 

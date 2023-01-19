@@ -715,6 +715,30 @@ type (const type_type& x)
   this->type_.set (x);
 }
 
+const cuboid::fixed_optional& cuboid::
+fixed () const
+{
+  return this->fixed_;
+}
+
+cuboid::fixed_optional& cuboid::
+fixed ()
+{
+  return this->fixed_;
+}
+
+void cuboid::
+fixed (const fixed_type& x)
+{
+  this->fixed_.set (x);
+}
+
+void cuboid::
+fixed (const fixed_optional& x)
+{
+  this->fixed_ = x;
+}
+
 const cuboid::position_type& cuboid::
 position () const
 {
@@ -897,6 +921,30 @@ void sphere::
 type (const type_type& x)
 {
   this->type_.set (x);
+}
+
+const sphere::fixed_optional& sphere::
+fixed () const
+{
+  return this->fixed_;
+}
+
+sphere::fixed_optional& sphere::
+fixed ()
+{
+  return this->fixed_;
+}
+
+void sphere::
+fixed (const fixed_type& x)
+{
+  this->fixed_.set (x);
+}
+
+void sphere::
+fixed (const fixed_optional& x)
+{
+  this->fixed_ = x;
 }
 
 const sphere::center_type& sphere::
@@ -1963,6 +2011,7 @@ cuboid (const mass_type& mass,
   epsilon_ (epsilon, this),
   sigma_ (sigma, this),
   type_ (type, this),
+  fixed_ (this),
   position_ (position, this),
   velocity_ (velocity, this),
   dimensions_ (dimensions, this)
@@ -1984,6 +2033,7 @@ cuboid (const mass_type& mass,
   epsilon_ (epsilon, this),
   sigma_ (sigma, this),
   type_ (type, this),
+  fixed_ (this),
   position_ (std::move (position), this),
   velocity_ (std::move (velocity), this),
   dimensions_ (std::move (dimensions), this)
@@ -2000,6 +2050,7 @@ cuboid (const cuboid& x,
   epsilon_ (x.epsilon_, f, this),
   sigma_ (x.sigma_, f, this),
   type_ (x.type_, f, this),
+  fixed_ (x.fixed_, f, this),
   position_ (x.position_, f, this),
   velocity_ (x.velocity_, f, this),
   dimensions_ (x.dimensions_, f, this)
@@ -2016,6 +2067,7 @@ cuboid (const ::xercesc::DOMElement& e,
   epsilon_ (this),
   sigma_ (this),
   type_ (this),
+  fixed_ (this),
   position_ (this),
   velocity_ (this),
   dimensions_ (this)
@@ -2088,6 +2140,17 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       if (!type_.present ())
       {
         this->type_.set (type_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    // fixed
+    //
+    if (n.name () == "fixed" && n.namespace_ ().empty ())
+    {
+      if (!this->fixed_)
+      {
+        this->fixed_.set (fixed_traits::create (i, f, this));
         continue;
       }
     }
@@ -2212,6 +2275,7 @@ operator= (const cuboid& x)
     this->epsilon_ = x.epsilon_;
     this->sigma_ = x.sigma_;
     this->type_ = x.type_;
+    this->fixed_ = x.fixed_;
     this->position_ = x.position_;
     this->velocity_ = x.velocity_;
     this->dimensions_ = x.dimensions_;
@@ -2244,6 +2308,7 @@ sphere (const mass_type& mass,
   epsilon_ (epsilon, this),
   sigma_ (sigma, this),
   type_ (type, this),
+  fixed_ (this),
   center_ (center, this),
   velocity_ (velocity, this)
 {
@@ -2265,6 +2330,7 @@ sphere (const mass_type& mass,
   epsilon_ (epsilon, this),
   sigma_ (sigma, this),
   type_ (type, this),
+  fixed_ (this),
   center_ (std::move (center), this),
   velocity_ (std::move (velocity), this)
 {
@@ -2281,6 +2347,7 @@ sphere (const sphere& x,
   epsilon_ (x.epsilon_, f, this),
   sigma_ (x.sigma_, f, this),
   type_ (x.type_, f, this),
+  fixed_ (x.fixed_, f, this),
   center_ (x.center_, f, this),
   velocity_ (x.velocity_, f, this)
 {
@@ -2297,6 +2364,7 @@ sphere (const ::xercesc::DOMElement& e,
   epsilon_ (this),
   sigma_ (this),
   type_ (this),
+  fixed_ (this),
   center_ (this),
   velocity_ (this)
 {
@@ -2379,6 +2447,17 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       if (!type_.present ())
       {
         this->type_.set (type_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    // fixed
+    //
+    if (n.name () == "fixed" && n.namespace_ ().empty ())
+    {
+      if (!this->fixed_)
+      {
+        this->fixed_.set (fixed_traits::create (i, f, this));
         continue;
       }
     }
@@ -2490,6 +2569,7 @@ operator= (const sphere& x)
     this->epsilon_ = x.epsilon_;
     this->sigma_ = x.sigma_;
     this->type_ = x.type_;
+    this->fixed_ = x.fixed_;
     this->center_ = x.center_;
     this->velocity_ = x.velocity_;
   }

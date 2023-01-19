@@ -45,6 +45,7 @@
                         <xs:element name="epsilon" type="xs:double" maxOccurs="1" minOccurs="1"/>
                         <xs:element name="sigma" type="xs:double" maxOccurs="1" minOccurs="1"/>
                         <xs:element name="type" type="xs:int" maxOccurs="1" minOccurs="1"/>
+                        <xs:element name="fixed" type="xs:boolean" maxOccurs="1" minOccurs="0"/>                    
                         <xs:element name="position">
                             <xs:complexType>
                                 <xs:sequence>
@@ -83,7 +84,8 @@
                         <xs:element name="r" type="xs:int" maxOccurs="1" minOccurs="1"/>   
                         <xs:element name="epsilon" type="xs:double" maxOccurs="1" minOccurs="1"/>
                         <xs:element name="sigma" type="xs:double" maxOccurs="1" minOccurs="1"/> 
-                        <xs:element name="type" type="xs:int" maxOccurs="1" minOccurs="1"/>                        
+                        <xs:element name="type" type="xs:int" maxOccurs="1" minOccurs="1"/>           
+                        <xs:element name="fixed" type="xs:boolean" maxOccurs="1" minOccurs="0"/>                    
                         <xs:element name="center">
                             <xs:complexType>
                                 <xs:sequence>
