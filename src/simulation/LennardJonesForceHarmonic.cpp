@@ -32,12 +32,13 @@ void LennardJonesForceHarmonic::calculateForce(ParticleContainer &particleContai
     {
         double stiffness = p1.getStiffness(); 
         double averageBondLength = p1.getAverageBondLength(); 
+
         auto &particles = particleContainer.getActiveParticles();
 
         for (int index : p1.getParallelNeighbours())
         {
             double distance = ArrayUtils::L2Norm(p1.getX() - particles[index].getX());
-            auto f_ij = (stiffness * (distance - averageBondLength) / distance) * (p1.getX() - particles[index].getX());
+            auto f_ij = (stiffness * (distance - averageBondLength) / distance) * (particles[index].getX() - p1.getX());
             auto f_ji = -1 * f_ij;
             p1.addF(f_ij);
             particles[index].addF(f_ji);
@@ -48,7 +49,7 @@ void LennardJonesForceHarmonic::calculateForce(ParticleContainer &particleContai
         for (int index : p1.getDiagonalNeighbours())
         {
             double distance = ArrayUtils::L2Norm(p1.getX() - particles[index].getX());
-            auto f_ij = (stiffness * (distance - sqrt * averageBondLength) / distance) * (p1.getX() - particles[index].getX());
+            auto f_ij = (stiffness * (distance - sqrt * averageBondLength) / distance) * (particles[index].getX() - p1.getX());
             auto f_ji = -1 * f_ij;
             p1.addF(f_ij);
             particles[index].addF(f_ji);

@@ -118,7 +118,7 @@ const std::vector<int> Particle::getParallelNeighbours() { return this->parallel
 const void Particle::setParallelNeighbours(std::vector<int> parallelNeighbours) { this->parallelNeighbours = parallelNeighbours; }
 
 const std::vector<int> Particle::getDiagonalNeighbours() { return this->diagonalNeighbours; }
-const void Particle::setDiagonalNeighbours(std::vector<int> digaonalNeighbours) { this->diagonalNeighbours = diagonalNeighbours; }
+const void Particle::setDiagonalNeighbours(std::vector<int> diagonalNeighbours) { this->diagonalNeighbours = diagonalNeighbours; }
 
 std::string Particle::toString() const
 {

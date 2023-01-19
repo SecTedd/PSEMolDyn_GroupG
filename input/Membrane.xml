@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <simulation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../src/xsd/Simulation.xsd">
-    <end_time>500</end_time>
+    <end_time>50</end_time>
     <delta_t>0.01</delta_t>
     <cutoff>4.0</cutoff>
     <domain>
@@ -10,10 +10,10 @@
         <z>148</z>
     </domain>
     <boundaries>
-        <xLeft>Periodic</xLeft>
-        <xRight>Periodic</xRight>
-        <yBottom>Reflecting</yBottom>
-        <yTop>Reflecting</yTop>
+        <xLeft>Outflow</xLeft>
+        <xRight>Outflow</xRight>
+        <yBottom>Outflow</yBottom>
+        <yTop>Outflow</yTop>
         <zFront>Reflecting</zFront>
         <zBack>Reflecting</zBack>
     </boundaries>
@@ -25,7 +25,7 @@
     <brownianMotion>false</brownianMotion>
     <n_thermostat>0</n_thermostat>
     <membrane>true</membrane>
-    <writeFrequency>100</writeFrequency>
+    <writeFrequency>1</writeFrequency>
     <baseName>outputVTKMembrane</baseName>
     <cuboid>
         <mass>1</mass>
@@ -33,8 +33,8 @@
         <epsilon>1</epsilon>
         <sigma>1</sigma>
         <type>1</type>
-        <stiffness>2.2</stiffness>
-        <average_bond_length>300</average_bond_length>
+        <stiffness>300</stiffness>
+        <average_bond_length>2.2</average_bond_length>
         <position>
             <x>15</x>
             <y>15</y>

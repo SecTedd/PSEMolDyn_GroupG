@@ -234,7 +234,7 @@ void XMLInputReader::readInput(ProgramParameters &programParameters, const char 
 
             if (i->average_bond_length().present())
             {
-                averageBondLength = i->stiffness().get();
+                averageBondLength = i->average_bond_length().get();
             }
 
             std::unique_ptr<Cuboid> cuboid = std::make_unique<Cuboid>(Cuboid(position, dimensions, h, m, velocity, epsilon, sigma, type, stiffness, averageBondLength));

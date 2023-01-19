@@ -87,17 +87,17 @@ namespace ParticleGenerator
         std::vector<std::array<int, 3>> neighbours3D;
         std::array<int, 3> index3D = index1DTo3D(index, n);
 
-        int minX = 0;
-        int maxX = 1;
-        int minY = 0;
-        int maxY = 1;
+        int minX = index3D[0] - 1;
+        int maxX = index3D[0] + 1;
+        int minY = index3D[1] - 1;
+        int maxY = index3D[1] + 1;
 
-        if (index3D[0] > 0)
-            minX = index3D[0] - 1;
+        if (index3D[0] == 0)
+            minX = 0;
         if (index3D[0] == n[0] - 1)
             maxX = index3D[0];
-        if (index3D[1] > 0)
-            minY = index3D[1] - 1;
+        if (index3D[1] == 0)
+            minY = 0;
         if (index3D[1] == n[1] - 1)
             maxY = index3D[1];
 
@@ -127,17 +127,17 @@ namespace ParticleGenerator
         std::vector<std::array<int, 3>> neighbours3D;
         std::array<int, 3> index3D = index1DTo3D(index, n);
 
-        int minX = 0;
-        int maxX = 1;
-        int minY = 0;
-        int maxY = 1;
+        int minX = index3D[0] - 1;
+        int maxX = index3D[0] + 1;
+        int minY = index3D[1] - 1;
+        int maxY = index3D[1] + 1;
 
-        if (index3D[0] > 0)
-            minX = index3D[0] - 1;
+        if (index3D[0] == 0)
+            minX = 0;
         if (index3D[0] == n[0] - 1)
             maxX = index3D[0];
-        if (index3D[1] > 0)
-            minY = index3D[1] - 1;
+        if (index3D[1] == 0)
+            minY = 0;
         if (index3D[1] == n[1] - 1)
             maxY = index3D[1];
 
