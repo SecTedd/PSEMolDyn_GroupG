@@ -78,7 +78,7 @@ public:
      * @param epsilon The epsilon of the particle
      * @param sigma The sigma of the particle
      */
-    const void addParticle(std::array<double, 3> &x, std::array<double, 3> &v, std::array<double, 3> &f, std::array<double, 3> &old_f, double &m, double &epsilon, double &sigma, int &type);
+    const void addParticle(std::array<double, 3> &x, std::array<double, 3> &v, std::array<double, 3> &f, std::array<double, 3> &old_f, double &m, double &epsilon, double &sigma, int &type) override;
 
     /**
      * @brief Returns the number of particles in the simulation
@@ -97,5 +97,5 @@ public:
      */
     const void reserveMemoryForParticles(int numberOfParticles) override;
 
-    std::vector<Particle> &getActiveParticles();
+    std::vector<Particle> &getActiveParticles() override;
 };
