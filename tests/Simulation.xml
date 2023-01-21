@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <simulation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:noNamespaceSchemaLocation="../src/xsd/Simulation.xsd">
+    xsi:noNamespaceSchemaLocation="../src/xsd/Simulation.xsd">
     <end_time>10</end_time>
     <delta_t>0.00005</delta_t>
     <cutoff>3.0</cutoff>
@@ -30,6 +30,66 @@
     <membrane>true</membrane>
     <writeFrequency>10</writeFrequency>
     <baseName>outputVTK/</baseName>
+    <cuboid>
+        <mass>1</mass>
+        <h>2.2</h>
+        <epsilon>1</epsilon>
+        <sigma>1</sigma>
+        <type>1</type>
+        <stiffness>300</stiffness>
+        <average_bond_length>2.2</average_bond_length>
+        <position>
+            <x>15</x>
+            <y>15</y>
+            <z>1.5</z>
+        </position>
+        <velocity>
+            <x>0</x>
+            <y>0</y>
+            <z>0</z>
+        </velocity>
+        <dimensions>
+            <x>50</x>
+            <y>50</y>
+            <z>1</z>
+        </dimensions>
+        <force>
+            <end_time>150</end_time>
+            <force>
+                <x>0</x>
+                <y>0</y>
+                <z>0.8</z>
+            </force>
+            <particles>
+                <particle_index>
+                    <x>17</x>
+                    <y>24</y>
+                    <z>1</z>
+                </particle_index>
+            </particles>
+            <particles>
+                <particle_index>
+                    <x>17</x>
+                    <y>25</y>
+                    <z>1</z>
+                </particle_index>
+            </particles>
+            <particles>
+                <particle_index>
+                    <x>18</x>
+                    <y>24</y>
+                    <z>1</z>
+                </particle_index>
+            </particles>
+            <particles>
+                <particle_index>
+                    <x>18</x>
+                    <y>25</y>
+                    <z>1</z>
+                </particle_index>
+            </particles>
+        </force>
+    </cuboid>
     <sphere>
         <mass>1.0</mass>
         <h>1.1225</h>

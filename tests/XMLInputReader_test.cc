@@ -22,4 +22,5 @@ TEST(XMLInputReader, XMLSimulation)
     EXPECT_THAT(pp->getNThermostats(), 0);
     EXPECT_THAT(pp->getTempTarget(), 0);
     EXPECT_THAT(pp->getMembrane(), true);
+    EXPECT_THAT(pp->getForces().size(), 1);
 }
