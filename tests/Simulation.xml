@@ -27,6 +27,7 @@
     <n_thermostat>0</n_thermostat>
     <temp_target>0</temp_target>
     <delta_temp>0</delta_temp>
+    <membrane>true</membrane>
     <writeFrequency>10</writeFrequency>
     <baseName>outputVTK/</baseName>
     <sphere>

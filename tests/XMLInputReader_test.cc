@@ -21,4 +21,5 @@ TEST(XMLInputReader, XMLSimulation)
     EXPECT_THAT(pp->getBrownianMotion(), false);
     EXPECT_THAT(pp->getNThermostats(), 0);
     EXPECT_THAT(pp->getTempTarget(), 0);
+    EXPECT_THAT(pp->getMembrane(), true);
 }
