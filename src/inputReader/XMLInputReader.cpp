@@ -158,6 +158,10 @@ void XMLInputReader::readInput(ProgramParameters &programParameters, const char 
             inputFacade->readInput(programParameters, filename.c_str());
         }
 
+        if(xml->parallel().present()){
+            programParameters.setParallel(xml->parallel().get()); 
+        }
+
         for (simulation_t::cuboid_const_iterator i(xml->cuboid().begin()); i != xml->cuboid().end(); i++)
         {
             std::array<double, 3> position;
