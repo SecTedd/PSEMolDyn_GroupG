@@ -23,7 +23,7 @@ ProgramParameters::ProgramParameters()
     end_time = 1;
     delta_t = 0.0005;
     cutoff = 3;
-    parallel = 2;
+    parallel = 1;
     writeFrequency = 50;
     particleContainer.reset(new LinkedCellParticleContainer(cutoff, domain, boundaries, parallel));
     baseName = "outputVTK";
