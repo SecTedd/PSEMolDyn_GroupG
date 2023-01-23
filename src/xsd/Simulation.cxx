@@ -379,6 +379,30 @@ file_name (const file_name_sequence& s)
   this->file_name_ = s;
 }
 
+const simulation_t::parallel_optional& simulation_t::
+parallel () const
+{
+  return this->parallel_;
+}
+
+simulation_t::parallel_optional& simulation_t::
+parallel ()
+{
+  return this->parallel_;
+}
+
+void simulation_t::
+parallel (const parallel_type& x)
+{
+  this->parallel_.set (x);
+}
+
+void simulation_t::
+parallel (const parallel_optional& x)
+{
+  this->parallel_ = x;
+}
+
 const simulation_t::cuboid_sequence& simulation_t::
 cuboid () const
 {
@@ -1208,6 +1232,7 @@ simulation_t (const end_time_type& end_time,
   baseName_ (this),
   createCheckpoint_ (this),
   file_name_ (this),
+  parallel_ (this),
   cuboid_ (this),
   sphere_ (this)
 {
@@ -1236,6 +1261,7 @@ simulation_t (const end_time_type& end_time,
   baseName_ (this),
   createCheckpoint_ (this),
   file_name_ (this),
+  parallel_ (this),
   cuboid_ (this),
   sphere_ (this)
 {
@@ -1261,6 +1287,7 @@ simulation_t (const simulation_t& x,
   baseName_ (x.baseName_, f, this),
   createCheckpoint_ (x.createCheckpoint_, f, this),
   file_name_ (x.file_name_, f, this),
+  parallel_ (x.parallel_, f, this),
   cuboid_ (x.cuboid_, f, this),
   sphere_ (x.sphere_, f, this)
 {
@@ -1286,6 +1313,7 @@ simulation_t (const ::xercesc::DOMElement& e,
   baseName_ (this),
   createCheckpoint_ (this),
   file_name_ (this),
+  parallel_ (this),
   cuboid_ (this),
   sphere_ (this)
 {
@@ -1480,6 +1508,17 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       continue;
     }
 
+    // parallel
+    //
+    if (n.name () == "parallel" && n.namespace_ ().empty ())
+    {
+      if (!this->parallel_)
+      {
+        this->parallel_.set (parallel_traits::create (i, f, this));
+        continue;
+      }
+    }
+
     // cuboid
     //
     if (n.name () == "cuboid" && n.namespace_ ().empty ())
@@ -1576,6 +1615,7 @@ operator= (const simulation_t& x)
     this->baseName_ = x.baseName_;
     this->createCheckpoint_ = x.createCheckpoint_;
     this->file_name_ = x.file_name_;
+    this->parallel_ = x.parallel_;
     this->cuboid_ = x.cuboid_;
     this->sphere_ = x.sphere_;
   }
