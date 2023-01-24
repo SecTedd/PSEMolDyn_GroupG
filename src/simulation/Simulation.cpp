@@ -51,6 +51,8 @@ const void Simulation::simulate()
     if (_programParameters->getDeltaTemp() != -1) {
         t.setTemperatureDelta(_programParameters->getDeltaTemp());
     }
+    t.setApplyTo(_programParameters->getThermostatApplyTo());
+    t.setSubtractMeanV(_programParameters->getThermostatSubtractMeanV());
     // initialize browninan motion if needed
     if (_programParameters->getBrownianMotion()) {
         t.initializeBrownianMotion();

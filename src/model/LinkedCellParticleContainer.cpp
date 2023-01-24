@@ -472,6 +472,8 @@ const void LinkedCellParticleContainer::periodicBoundary(int cellIndex)
         {
             for (auto particleIndex : *cells[cellIndex].getCellParticleIndices())
             {
+                if (activeParticles[particleIndex].getFixed())
+                    continue;
                 Particle &toMirror = activeParticles[particleIndex];
                 std::array<double, 3> newX = toMirror.getX() + mirroringOffset;
                 haloParticles.emplace_back(newX, toMirror.getV(), toMirror.getM(), toMirror.getEpsilon(), toMirror.getSigma());
