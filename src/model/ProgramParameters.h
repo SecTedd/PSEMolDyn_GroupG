@@ -43,7 +43,6 @@ private:
     bool createCheckpoint;                                /// true if a checkpoint should be created, false otherwise
     std::shared_ptr<spdlog::logger> memoryLogger;         /// a speedlog logger which logs construction and destruction of particles
     std::array<int, 3> thermostat_applyTo;                /// indicator array on wich directions the thermostat will be applied
-    std::array<int, 3> thermostat_subtractMeanV;          /// indicator array wich directions don't contribute to temperature
 
 public:
     /**
@@ -101,8 +100,6 @@ public:
 
     const void setThermostatApplyTo(std::array<int, 3> thermostat_applyTo);
 
-    const void setThermostatSubtractMeanV(std::array<int, 3> thermostat_subtractMeanV);
-
     std::shared_ptr<ParticleContainer> getParticleContainer();
 
     const double getEndTime() const;
@@ -140,6 +137,4 @@ public:
     const bool getCreateCheckpoint(); 
 
     const std::array<int, 3> getThermostatApplyTo() const;
-
-    const std::array<int, 3> getThermostatSubtractMeanV() const;
 };

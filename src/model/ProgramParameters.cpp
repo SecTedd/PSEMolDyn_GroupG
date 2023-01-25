@@ -36,7 +36,6 @@ ProgramParameters::ProgramParameters()
     showMenu = false;
     createCheckpoint = false; 
     thermostat_applyTo = {1, 1, 1};
-    thermostat_subtractMeanV = {0, 0, 0};
     memoryLogger = spdlog::get("memory_logger");
     memoryLogger->info("ProgramParameters generated!");
 }
@@ -106,7 +105,6 @@ const void ProgramParameters::setGGrav(double g_grav) { this->g_grav = g_grav; }
 const void ProgramParameters::setShowMenu(bool show_menu) { this->showMenu = show_menu; }
 const void ProgramParameters::setCreateCheckpoint(bool createCheckpoint) { this->createCheckpoint = createCheckpoint; }
 const void ProgramParameters::setThermostatApplyTo(std::array<int, 3> thermostat_applyTo) { this->thermostat_applyTo = thermostat_applyTo; }
-const void ProgramParameters::setThermostatSubtractMeanV(std::array<int, 3> thermostat_subtractMeanv) { this->thermostat_subtractMeanV = thermostat_subtractMeanV; }
 const int ProgramParameters::getBenchmarkIterations() const { return benchmark_iterations; }
 std::shared_ptr<ParticleContainer> ProgramParameters::getParticleContainer() { return particleContainer; }
 const double ProgramParameters::getEndTime() const { return end_time; }
@@ -126,4 +124,3 @@ const std::string ProgramParameters::getBaseName() { return baseName; }
 const bool ProgramParameters::getShowMenu() const { return showMenu; }
 const bool ProgramParameters::getCreateCheckpoint() { return createCheckpoint; }
 const std::array<int, 3> ProgramParameters::getThermostatApplyTo() const { return thermostat_applyTo; }
-const std::array<int, 3> ProgramParameters::getThermostatSubtractMeanV() const { return thermostat_subtractMeanV; }

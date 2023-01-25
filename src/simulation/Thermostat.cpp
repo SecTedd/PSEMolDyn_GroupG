@@ -29,7 +29,6 @@ Thermostat::Thermostat(std::shared_ptr<ParticleContainer> particleContainer, dou
     this->dimension = dimension;
     // default values: thermostat is applied to all 3 dimensions and all 3 dimensions contribute to temperature
     this->applyTo = {1, 1, 1};
-    this->subtractMeanV = {0, 0, 0};
 
     _memoryLogger->info("Thermostat generated!");
 }
@@ -99,7 +98,7 @@ double Thermostat::calculateCurrentTemperature() {
         double dotProduct = 0;
         std::array<double, 3> velocity = p.getV();
         for (int j = 0; j < dimension; j++) {
-            if (subtractMeanV[j] == 1) {
+            if (applyTo[j] == 0) {
                 velocity[j] -= meanVs[j];
             }
         }
@@ -160,10 +159,6 @@ const std::array<int, 3> Thermostat::getApplyTo() {
     return this->applyTo;
 }
 
-const std::array<int, 3> Thermostat::getSubtractMeanV() {
-    return this->subtractMeanV;
-}
-
 // Setters
 
 const void Thermostat::setTargetTemperature(double targetTemperature) {
@@ -186,8 +181,4 @@ const void Thermostat::setTemperatureDelta(double temperatureDelta) {
 
 const void Thermostat::setApplyTo(std::array<int, 3> applyTo) {
     this->applyTo = applyTo;
-}
-
-const void Thermostat::setSubtractMeanV(std::array<int, 3> subtractMeanV) {
-    this->subtractMeanV = subtractMeanV;
 }
