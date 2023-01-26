@@ -96,10 +96,10 @@ const void ProgramParameters::setBoundaries(std::array<BoundaryCondition, 6> bou
 
 const void ProgramParameters::setParallel(int parallel) { 
     this->parallel = parallel; 
-    // if (typeid(*particleContainer) == typeid(LinkedCellParticleContainer))
-    // {
-    //     particleContainer.reset(new LinkedCellParticleContainer(cutoff, domain, boundaries, parallel));
-    // }
+    if (typeid(*particleContainer) == typeid(LinkedCellParticleContainer))
+     {
+         particleContainer.reset(new LinkedCellParticleContainer(cutoff, domain, boundaries, parallel));
+     }
 }
 
 const void ProgramParameters::setDimension(int dimension) { this->dimension = dimension; }

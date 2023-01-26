@@ -37,7 +37,7 @@ private:
 
     std::array<double, 3> cellSize; // cell size in each dimension
 
-    int parallel; //0 for no parallelization, 1 for first parallel strategy, 2 for second parallel strategy
+    int parallel; // 0 for no parallelization, 1 for first parallel strategy, 2 for second parallel strategy
 
     /**
      * @brief compute index of cell the given particle belongs to
@@ -65,30 +65,24 @@ private:
     /**
      * @brief reserves memory for & initializes vector of cell groups according to parallelization strategy
      * @param parallel parallelization strategy which has to be used
-    */
+     */
     void initializeGroups(int parallel);
-    
+
     /**
      * @brief computes group the given cell belongs to according to parallelization strategy
      * @param cellIdx index of cell
-     * @param parallel parallelization strategy 
+     * @param parallel parallelization strategy
      * @return group index of cell
-    */
+     */
     const int computeCellGroup(int cellIdx, int parallel);
 
-    /**
-     * @brief computes group the given cell belongs to according to parallelization strategy 1
-     * @param cellIdx index of cell
-     * @return group index of cell
-    */
-    const int parallelStrategy1(int cellIdx);
+    inline void intraCellInteraction(int i, std::function<void(Particle &, Particle &)> f);
 
-    /**
-     * @brief computes group the given cell belongs to according to parallelization strategy 2
-     * @param cellIdx index of cell
-     * @return group index of cell
-    */
-    const int parallelStrategy2(int cellIdx);
+    inline void interCellInteraction(int i, int j, std::function<void(Particle &, Particle &)> f);
+
+    void forkJoin(std::function<void(Particle &, Particle &)> f);
+
+    void taskModel(std::function<void(Particle &, Particle &)> f);
 
 public:
     LinkedCellParticleContainer(double cutoff, std::array<double, 3> &domain, std::array<BoundaryCondition, 6> &boundaries, int parallel);
@@ -202,4 +196,3 @@ public:
 
     const int getParallel();
 };
-
