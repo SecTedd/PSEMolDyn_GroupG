@@ -3,6 +3,7 @@
 #include "../utils/PContainer.h"
 
 #include <iostream>
+#include <iomanip>
 #include <cmath>
 
 LinkedCellParticleContainer::LinkedCellParticleContainer(double cutoff, std::array<double, 3> &domain, std::array<BoundaryCondition, 6> &domainBoundaries)
@@ -147,7 +148,12 @@ const int LinkedCellParticleContainer::computeCellIdx(Particle &p)
     int cell_idx_x = static_cast<int>(std::floor(p.getX()[0] / cellSize[0])) + 1;
     int cell_idx_y = static_cast<int>(std::floor(p.getX()[1] / cellSize[1])) + 1;
     int cell_idx_z = static_cast<int>(std::floor(p.getX()[2] / cellSize[2])) + 1;
-
+    if (cell_idx_x == numCells[0])
+        cell_idx_x = numCells[0] - 1;
+    if (cell_idx_y == numCells[1])
+        cell_idx_y = numCells[1] - 1;
+    if (cell_idx_z == numCells[2])
+        cell_idx_z = numCells[2] - 1;
     int cellIdx = cell_idx_z * numCells[1] * numCells[0] + cell_idx_y * numCells[0] + cell_idx_x;
 
     return cellIdx;
