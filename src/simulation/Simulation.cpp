@@ -14,6 +14,7 @@
 #include "SingleParticleGravitationalForce.h"
 #include "../model/ProgramParameters.h"
 #include "./Thermostat.h"
+#include "./DVProfileCalculator.h"
 
 #include <iostream>
 
@@ -57,6 +58,8 @@ const void Simulation::simulate()
         t.initializeBrownianMotion();
     }
 
+    DVProfileCalculator dv_calc = DVProfileCalculator(_programParameters->getParticleContainer(), _programParameters->getNumBins(), _programParameters->getDomain());
+
     // calculating force once to initialize force
     _singleParticleForceCalculation->calculateForce(*_programParameters->getParticleContainer(), _programParameters->getGGrav()); 
     _interParticleForceCalculation->calculateForce(*_programParameters->getParticleContainer());
@@ -75,8 +78,6 @@ const void Simulation::simulate()
         // calculate new v
         calculateV();
 
-        iteration++;
-
         // if n_thermostats = 0 the thermostat is off
         if (_programParameters->getNThermostats() != 0 && iteration % _programParameters->getNThermostats() == 0) {
             t.apply();
@@ -86,7 +87,14 @@ const void Simulation::simulate()
         {
             outputFacade.outputVTK(iteration);
         }
+
+        if (_programParameters->getCsvWriteFrequency() != 0 && iteration % _programParameters->getCsvWriteFrequency() == 0 && _programParameters->getBenchmarkIterations() == 0) 
+        {
+            std::vector<int> data = dv_calc.calculate();
+            outputFacade.writeCSV(data, dv_calc.getAvg());
+        }
         _logicLogger->info("Iteration {} finished.", iteration);
+        iteration++;
 
         current_time += _programParameters->getDeltaT();
     }

@@ -21,7 +21,7 @@
     <brownianMotion>false</brownianMotion>
     <n_thermostat>10</n_thermostat>
     <g_grav>-0.8</g_grav>
-    <writeFrequency>1</writeFrequency>
+    <writeFrequency>1000</writeFrequency>
     <baseName>nano-scale-flow</baseName>
     <cuboid>
         <mass>1.0</mass>
