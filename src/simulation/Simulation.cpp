@@ -88,6 +88,7 @@ const void Simulation::simulate()
             outputFacade.outputVTK(iteration);
         }
 
+        // if csv_writeFrequency = 0 no csv output will be written
         if (_programParameters->getCsvWriteFrequency() != 0 && iteration % _programParameters->getCsvWriteFrequency() == 0 && _programParameters->getBenchmarkIterations() == 0) 
         {
             std::vector<int> data = dv_calc.calculate();

@@ -29,7 +29,9 @@ ProgramParameters::ProgramParameters()
     temp_init = 40;
     brownianMotion = true;
     n_thermostats = 1000;
-    temp_target = 40;
+    // has to be -1!
+    temp_target = -1;
+    // has to be -1!
     delta_temp = -1;
     g_grav = -12.44;
     benchmark_iterations = 0;
