@@ -18,15 +18,17 @@ LinkedCellParticleContainer::LinkedCellParticleContainer(double cutoff, std::arr
 
 // use given parallelization strategy if compiled with OpenMP
 // no parallelization otherwise
-#ifdef _OPENMP
+    #ifdef _OPENMP
     this->parallel = parallel;
-#else
+    std::cout << "Inside openmp" << std::endl;
+    #else
     this->parallel = 0;
-#endif
+    std::cout << "Inside no openmp" << std::endl;
+    #endif
 
-    _memoryLogger->debug("Parallel set to " + std::to_string(parallel));
+    _memoryLogger->warn("Parallel set to " + std::to_string(this->parallel));
 
-    initializeCells(domainBoundaries, parallel);
+    initializeCells(domainBoundaries, this->parallel);
 }
 
 LinkedCellParticleContainer::~LinkedCellParticleContainer()
@@ -62,8 +64,8 @@ const void LinkedCellParticleContainer::initializeCells(std::array<BoundaryCondi
 
     cellSize = {sizeX, sizeY, sizeZ};
 
-    _memoryLogger->debug("Cell size: " + std::to_string(sizeX) + ", " + std::to_string(sizeY) + ", " + std::to_string(sizeZ));
-    _memoryLogger->debug("Num cells: " + std::to_string(numCells[0]) + ", " + std::to_string(numCells[1]) + ", " + std::to_string(numCells[2]));
+    _memoryLogger->warn("Cell size: " + std::to_string(sizeX) + ", " + std::to_string(sizeY) + ", " + std::to_string(sizeZ));
+    _memoryLogger->warn("Num cells: " + std::to_string(numCells[0]) + ", " + std::to_string(numCells[1]) + ", " + std::to_string(numCells[2]));
 
     // now we need to initialize the cells
     cells.reserve(numCells[0] * numCells[1] * numCells[2]);
@@ -143,7 +145,7 @@ const void LinkedCellParticleContainer::initializeCells(std::array<BoundaryCondi
             auto domainNeighbours = PContainer::getDomainNeighboursNewton(i, numCells);
             cells[i].setDomainNeighbours(domainNeighbours);
             cellGroups[computeCellGroup(i, parallel)].emplace_back(i);
-            _memoryLogger->debug("Cell " + std::to_string(i) + " in group " + std::to_string(computeCellGroup(i, parallel)));
+            _memoryLogger->warn("Cell " + std::to_string(i) + " in group " + std::to_string(computeCellGroup(i, parallel)));
         }
         if (cells[i].getType() == CellType::BoundaryCell)
         {
@@ -159,6 +161,12 @@ const void LinkedCellParticleContainer::initializeCells(std::array<BoundaryCondi
             cells[i].setPeriodicHaloNeighbours(haloNeighbours);
         }
     }
+
+    for (unsigned int i = 0; i < cellGroups.size(); i++) {
+        std::cout << "Size of group " << i << ": " << cellGroups[0].size() << std::endl;
+    }
+    
+    
 }
 
 void LinkedCellParticleContainer::initializeGroups(int parallel)
@@ -338,7 +346,6 @@ void LinkedCellParticleContainer::forkJoin(std::function<void(Particle &, Partic
 #pragma omp parallel for
         for (int idx : group)
         {
-
             std::vector<int> neighbours = cells[idx].getDomainNeighbours();
             // Boundary cells
             if (cells[idx].getType() == CellType::BoundaryCell)
@@ -395,7 +402,9 @@ void LinkedCellParticleContainer::taskModel(std::function<void(Particle &, Parti
             }
         }
     }
-#pragma omp taskwait
+    #ifdef _OPENMP
+    #pragma omp taskwait
+    #endif
 }
 
 const void LinkedCellParticleContainer::iterateParticleInteractions(std::function<void(Particle &, Particle &)> f)
