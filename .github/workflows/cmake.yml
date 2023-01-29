@@ -11,8 +11,6 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
-    compiler: gcc 
-    gcc: 9.4.0
 
 
     steps:
