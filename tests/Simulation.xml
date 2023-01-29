@@ -17,14 +17,21 @@
         <zFront>Outflow</zFront>
         <zBack>Outflow</zBack>
     </boundaries>
-    <temp_init>0</temp_init>
     <brownianMotion>false</brownianMotion>
-    <n_thermostat>0</n_thermostat>
-    <temp_target>0</temp_target>
-    <delta_temp>0</delta_temp>
     <g_grav>0</g_grav>
     <writeFrequency>10</writeFrequency>
     <baseName>outputVTK/</baseName>
+    <thermostat>
+        <n_thermostat>0</n_thermostat>
+        <apply_to>
+            <x>0</x>
+            <y>0</y>
+            <z>0</z>
+        </apply_to>
+        <temp_init>0</temp_init>
+        <temp_target>0</temp_target>
+        <delta_temp>0</delta_temp>
+    </thermostat>
     <sphere>
         <mass>1.0</mass>
         <h>1.1225</h>

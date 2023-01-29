@@ -17,12 +17,18 @@
         <zFront>Periodic</zFront>
         <zBack>Periodic</zBack>
     </boundaries>
-    <temp_init>40</temp_init>
     <brownianMotion>false</brownianMotion>
-    <n_thermostat>10</n_thermostat>
     <g_grav>-0.8</g_grav>
     <writeFrequency>1000</writeFrequency>
     <baseName>nano-scale-flow</baseName>
+    <thermostat>
+        <n_thermostat>10</n_thermostat>
+        <apply_to>
+            <x>0</x>
+            <y>0</y>
+            <z>0</z>
+        </apply_to>
+    </thermostat>
     <cuboid>
         <mass>1.0</mass>
         <h>1.0</h>

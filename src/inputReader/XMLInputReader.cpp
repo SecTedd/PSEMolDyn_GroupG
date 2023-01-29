@@ -92,8 +92,7 @@ void XMLInputReader::readInput(ProgramParameters &programParameters, const char 
         programParameters.setEndTime(xml->end_time());
         programParameters.setDeltaT(xml->delta_t());
         programParameters.setCutoff(xml->cutoff());
-        if (xml->temp_init().present())
-            programParameters.setTempInit(xml->temp_init().get());
+
         if (xml->brownianMotion().present())
             programParameters.setBrownianMotion(xml->brownianMotion().get());
 
@@ -123,18 +122,6 @@ void XMLInputReader::readInput(ProgramParameters &programParameters, const char 
         boundaries[5] = getBoundaryCondition(boundary);
         programParameters.setBoundaries(boundaries);
 
-        programParameters.setNThermostats(xml->n_thermostat());
-
-        if (xml->temp_target().present())
-        {
-            programParameters.setTempTarget(xml->temp_target().get());
-        }
-
-        if (xml->delta_temp().present())
-        {
-            programParameters.setDeltaTemp(xml->delta_temp().get());
-        }
-
         if (xml->g_grav().present())
         {
             programParameters.setGGrav(xml->g_grav().get());
@@ -159,6 +146,40 @@ void XMLInputReader::readInput(ProgramParameters &programParameters, const char 
         {
             std::string filename = i->substr(0, i->length());
             inputFacade->readInput(programParameters, filename.c_str());
+        }
+
+        if(xml->csvWriteFrequency().present()){
+            programParameters.setCsvWriteFrequency(xml->csvWriteFrequency().get()); 
+        }
+
+        if(xml->numBins().present()){
+            programParameters.setNumBins(xml->numBins().get()); 
+        }
+
+        if (xml->thermostat().present())
+        {
+            auto thermostat = xml->thermostat().get();
+
+            programParameters.setNThermostats(thermostat.n_thermostat());
+
+            std::array<int, 3> applyTo;
+
+            applyTo[0] = thermostat.apply_to().x();
+            applyTo[1] = thermostat.apply_to().y();
+            applyTo[2] = thermostat.apply_to().z();
+
+            if (thermostat.temp_init().present())
+                programParameters.setTempInit(thermostat.temp_init().get());
+
+            if (thermostat.temp_target().present())
+            {
+                programParameters.setTempTarget(thermostat.temp_target().get());
+            }
+
+            if (thermostat.delta_temp().present())
+            {
+                programParameters.setDeltaTemp(thermostat.delta_temp().get());
+            }
         }
 
         for (simulation_t::cuboid_const_iterator i(xml->cuboid().begin()); i != xml->cuboid().end(); i++)
