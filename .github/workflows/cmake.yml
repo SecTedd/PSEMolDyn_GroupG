@@ -21,7 +21,7 @@ jobs:
     
     - name: Install gcc 
       working-directory: ${{github.workspace}}/
-      run:  sudo apt update; sudo apt install gcc-9.4.0 g++-9.4.0
+      run:  sudo apt update; sudo apt install gcc-9.4 g++-9.4
 
     - name: Configure CMake
       # Configure Cmake with Release and address and leak sanitizers
@@ -34,8 +34,8 @@ jobs:
       run: cmake --build ./ --config ${{env.BUILD_TYPE}}
       shell: bash 
       env: 
-        CC: gcc-10
-        CXX: g++-9.4.0
+        CC: gcc-9.4
+        CXX: g++-9.4
 
     - name: Run Program
       # run the program so the address and leak sanitizers can kick in
