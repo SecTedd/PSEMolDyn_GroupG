@@ -24,10 +24,21 @@ jobs:
       working-directory: ${{github.workspace}}/build
       run: cmake .. -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_CXX_FLAGS="-fsanitize=address  -fsanitize=leak" -DCMAKE_C_FLAGS="-fsanitize=address  -fsanitize=leak"
 
+    - name: Install gcc 
+      run:   |
+         sudo apt update
+         sudo apt install gcc-9.4.0 g++-9.4.0
+      shell: bash
+      # install compiler version 
+
     - name: Build
       # Build your program with the given configuration
       working-directory: ${{github.workspace}}/build
       run: cmake --build ./ --config ${{env.BUILD_TYPE}}
+      shell: bash 
+      env: 
+        CC: gcc-10
+        CXX: g++-9.4.0
 
     - name: Run Program
       # run the program so the address and leak sanitizers can kick in
