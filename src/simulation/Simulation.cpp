@@ -10,6 +10,7 @@
 #include "../utils/ArrayUtils.h"
 #include "../outputWriter/OutputFacade.h"
 #include "LennardJonesForce.h"
+#include "LennardJonesForceHarmonic.h"
 #include "InterParticleGravitationalForce.h"
 #include "SingleParticleGravitationalForce.h"
 #include "../model/ProgramParameters.h"
@@ -20,8 +21,14 @@
 Simulation::Simulation(ProgramParameters *programParameters)
 {
     _programParameters = programParameters;
-    _interParticleForceCalculation.reset(new LennardJonesForce());
-    _singleParticleForceCalculation.reset(new SingleParticleGravitationalForce());
+    if (programParameters->getMembrane())
+        _interParticleForceCalculation.reset(new LennardJonesForceHarmonic());
+    else
+        _interParticleForceCalculation.reset(new LennardJonesForce());
+    _singleParticleForceCalculations = programParameters->getForces();
+    std::shared_ptr<SingleParticleForce> force; 
+    force.reset(new SingleParticleGravitationalForce(programParameters->getGGrav()));
+    _singleParticleForceCalculations.emplace_back(force);
     _logicLogger = spdlog::get("simulation_logger");
     _memoryLogger = spdlog::get("memory_logger");
     _memoryLogger->info("Simulation generated!");
@@ -44,21 +51,28 @@ const void Simulation::simulate()
     // initialize Thermostat
     Thermostat t = Thermostat(_programParameters->getParticleContainer(), _programParameters->getTempInit());
     // target temperature provided
-    if (_programParameters->getTempTarget() != -1) {
+    if (_programParameters->getTempTarget() != -1)
+    {
         t.setTargetTemperature(_programParameters->getTempTarget());
     }
     // temperature delta provided
-    if (_programParameters->getDeltaTemp() != -1) {
+    if (_programParameters->getDeltaTemp() != -1)
+    {
         t.setTemperatureDelta(_programParameters->getDeltaTemp());
     }
     // initialize browninan motion if needed
-    if (_programParameters->getBrownianMotion()) {
+    if (_programParameters->getBrownianMotion())
+    {
         t.initializeBrownianMotion();
     }
 
     // calculating force once to initialize force
-    _singleParticleForceCalculation->calculateForce(*_programParameters->getParticleContainer(), _programParameters->getGGrav()); 
     _interParticleForceCalculation->calculateForce(*_programParameters->getParticleContainer());
+    for (auto force : _singleParticleForceCalculations)
+    {
+        force->calculateForce(*_programParameters->getParticleContainer(), current_time);
+    }
+
     outputFacade.outputVTK(iteration);
 
     // for this loop, we assume: current x, current f and current v are known
@@ -69,15 +83,18 @@ const void Simulation::simulate()
 
         // calculate new f
         _interParticleForceCalculation->calculateForce(*_programParameters->getParticleContainer());
-        _singleParticleForceCalculation->calculateForce(*_programParameters->getParticleContainer(), _programParameters->getGGrav()); 
-
+        for (auto force : _singleParticleForceCalculations)
+        {
+            force->calculateForce(*_programParameters->getParticleContainer(), current_time);
+        }
         // calculate new v
         calculateV();
 
         iteration++;
 
         // if n_thermostats = 0 the thermostat is off
-        if (_programParameters->getNThermostats() != 0 && iteration % _programParameters->getNThermostats() == 0) {
+        if (_programParameters->getNThermostats() != 0 && iteration % _programParameters->getNThermostats() == 0)
+        {
             t.apply();
         }
 
@@ -100,10 +117,11 @@ void Simulation::calculateX()
     std::shared_ptr<ParticleContainer> particleContainer = _programParameters->getParticleContainer();
 
     // creating lambda to calculate new position based on the Velocity-Störmer-Verlet algortihm
-    std::function<void(Particle &)> f = [delta_t = _programParameters->getDeltaT(), logicLogger= _logicLogger](Particle &p1)
+    std::function<void(Particle &)> f = [delta_t = _programParameters->getDeltaT(), logicLogger = _logicLogger](Particle &p1)
     {
         std::array<double, 3> x_new = p1.getX() + delta_t * p1.getV() + (delta_t * delta_t / (2 * p1.getM())) * p1.getF();
-        if (p1.getF()[0] >= 10e9 || p1.getF()[0]  <= -10e9) {
+        if (p1.getF()[0] >= 10e9 || p1.getF()[0] <= -10e9)
+        {
             logicLogger->debug("High force: " + p1.toString());
             logicLogger->debug("New X: " + std::to_string(x_new[0]) + ", " + std::to_string(x_new[1]) + ", " + std::to_string(x_new[2]));
         }

@@ -46,22 +46,22 @@ const void DirectSumParticleContainer::resetParticles()
     particles.clear();
 }
 
-const void DirectSumParticleContainer::addParticle(std::array<double, 3> &x, std::array<double, 3> &v, double &m, double &epsilon, double &sigma)
-{
-    // using the std function to create the new particle so it does not need to be copied to the right memory address
-    particles.emplace_back(x, v, m, epsilon, sigma);
-}
-
 const void DirectSumParticleContainer::addParticle(std::array<double, 3> &x, std::array<double, 3> &v, double &m, double &epsilon, double &sigma, int &type)
 {
     // using the std function to create the new particle so it does not need to be copied to the right memory address
     particles.emplace_back(x, v, m, epsilon, sigma, type);
 }
 
-const void DirectSumParticleContainer::addParticle(std::array<double, 3> &x, std::array<double, 3> &v, std::array<double, 3> &f, std::array<double, 3> &old_f, double &m, double &epsilon, double &sigma, int &type)
+const void DirectSumParticleContainer::addParticle(std::array<double, 3> &x, std::array<double, 3> &v, double &m, double &epsilon, double &sigma, int &type, double &stiffness, double &averageBondLength)
 {
 
-    particles.emplace_back(x, v, f, old_f, m, epsilon, sigma, type);
+    particles.emplace_back(x, v, m, epsilon, sigma, type, stiffness, averageBondLength);
+}
+
+const void DirectSumParticleContainer::addParticle(std::array<double, 3> &x, std::array<double, 3> &v, std::array<double, 3> &f, std::array<double, 3> &old_f, double &m, double &epsilon, double &sigma, int &type, double &stiffness, double &averageBondLength)
+{
+
+    particles.emplace_back(x, v, f, old_f, m, epsilon, sigma, type, stiffness, averageBondLength);
 }
 
 const void DirectSumParticleContainer::reserveMemoryForParticles(int numberOfParticles)

@@ -8,8 +8,10 @@
 #pragma once
 
 #include "spdlog/spdlog.h"
+#include "../simulation/SingleParticleForce.h"
 
 #include <array>
+#include <list>
 
 /**
  * @brief Cuboid data class, which holds all the information about a cuboid
@@ -42,6 +44,16 @@ private:
     double sigma;
 
     /**
+     * Stiffness of molecule
+     */
+    double stiffness;
+
+    /**
+     * Average Bond Length of molecule
+     */
+    double averageBondLength;
+
+    /**
      * a speedlog logger which logs construction and destruction of particles
      */
     std::shared_ptr<spdlog::logger> _memoryLogger;
@@ -58,8 +70,10 @@ public:
      * @param sigma The sigma value of the particles
      * @param epsilon The epsilon value of the particles in the cuboid
      * @param type The type of the particles in the cuboid
+     * @param stiffness The stiffness of the molecule
+     * @param averageBondLength The average Bond Length of the molecule
      */
-    Cuboid(std::array<double, 3> x, std::array<int, 3> n, double h, double m, std::array<double, 3> v, double epsilon, double sigma, int type);
+    Cuboid(std::array<double, 3> x, std::array<int, 3> n, double h, double m, std::array<double, 3> v, double epsilon, double sigma, int type, double stiffness_arg = 1, double averageBondLength_arg = 1);
 
     ~Cuboid();
 
@@ -83,6 +97,10 @@ public:
 
     const int getType();
 
+    const double getStiffness();
+
+    const double getAverageBondLength();
+
     /*
      * Setters
      */
@@ -98,4 +116,8 @@ public:
     const void setV(std::array<double, 3> &v);
 
     const void setType(int type);
+
+    const void setStiffness(double stiffness_arg);
+
+    const void setAverageBondLength(double averageBondLength_arg);
 };

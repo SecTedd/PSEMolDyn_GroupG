@@ -20,8 +20,10 @@ private:
      */
     std::shared_ptr<spdlog::logger> _memoryLogger;
 
+    std::array<double, 3> force;
+
 public:
-    SingleParticleForce();
+    SingleParticleForce(std::array<double, 3> force);
 
     virtual ~SingleParticleForce() = 0;
 
@@ -29,7 +31,9 @@ public:
      * @brief calculates the force acting on a single particle
      *
      * @param particleContainer container for the particles for which the force will be calculated
-     * @param external_force the force acting on a single particle from the outside
+     * @param time the current time when the function is called
      */
-    virtual void calculateForce(ParticleContainer &particleContainer, double external_force) = 0;
+    virtual void calculateForce(ParticleContainer &particleContainer, double time) = 0;
+
+    const std::array<double, 3> getForce() const { return force; }
 };
