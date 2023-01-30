@@ -56,4 +56,6 @@ namespace outputWriter {
         count++;
         file.close();
     }
+
+    std::string CSVWriter::getOutputPath() { return this->output_path; }
 }

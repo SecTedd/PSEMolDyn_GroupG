@@ -45,5 +45,8 @@ namespace outputWriter {
          * @param avg the total sum of all particles ever measured in a bin
          */
         void writeData(std::vector<int> data, std::vector<int> avg);
+
+        // Getters
+        std::string getOutputPath();
     };
 }
