@@ -38,7 +38,7 @@ ProgramParameters::ProgramParameters()
     showMenu = false;
     createCheckpoint = false; 
     thermostat_applyTo = {1, 1, 1};
-    csv_writeFrequency = 1000;
+    csv_writeFrequency = 0;
     num_bins = 50;
     memoryLogger = spdlog::get("memory_logger");
     memoryLogger->info("ProgramParameters generated!");

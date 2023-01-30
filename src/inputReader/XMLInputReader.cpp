@@ -168,6 +168,8 @@ void XMLInputReader::readInput(ProgramParameters &programParameters, const char 
             applyTo[1] = thermostat.apply_to().y();
             applyTo[2] = thermostat.apply_to().z();
 
+            programParameters.setThermostatApplyTo(applyTo);
+
             if (thermostat.temp_init().present())
                 programParameters.setTempInit(thermostat.temp_init().get());
 

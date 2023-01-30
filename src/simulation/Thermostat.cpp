@@ -61,7 +61,7 @@ void Thermostat::apply() {
         p.setV(velocity);
     }
 
-    _logicLogger->info("Temperature set to {}", newTemperature);
+    _logicLogger->info("Temperature set to {} on directions {} {} {}", newTemperature, applyTo[0], applyTo[1], applyTo[2]);
 }
 
 void Thermostat::initializeBrownianMotion() {
