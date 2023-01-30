@@ -175,14 +175,14 @@ void LinkedCellParticleContainer::initializeGroups(int parallel)
     int maxCellsPerGroup = (numCells[0] - 2) * (numCells[1] - 2) * (numCells[2] - 2);
 
     // constant number of groups with varying number of cells per group
-    if (parallel == 1)
+    if (parallel == 1 || parallel == 2)
     {
 
         // distinguish 2D and 3D cases
         numGroups = numCells[2] > 1 ? 18 : 6;
         int offsetX = (numCells[0] - 2) % 3 > 0 ? 1 : 0;
         int offsetY = (numCells[1] - 2) % 3 > 0 ? 1 : 0;
-        maxCellsPerGroup = numCells[2] > 1
+        maxCellsPerGroup = (numCells[2] - 2) > 1
                                ? ((numCells[0] - 2) / 3 + offsetX) * ((numCells[1] - 2) / 3 + offsetY) * ((numCells[2] - 2) / 2 + (numCells[2] - 2) % 2)
                                : ((numCells[0] - 2) / 3 + offsetX) * ((numCells[1] - 2) / 2 + (numCells[1] - 2) % 2);
     }
@@ -200,13 +200,13 @@ void LinkedCellParticleContainer::initializeGroups(int parallel)
 
 const int LinkedCellParticleContainer::computeCellGroup(int cellIdx, int parallel)
 {
-    if (parallel == 1)
+    if (parallel == 1 || parallel == 2)
     {
         int numGroupsX = 3;
 
         // distinguish 2D and 3D case
-        int numGroupsY = domain[2] > 1 ? 3 : 2;
-        int numGroupsZ = domain[2] > 1 ? 2 : 1;
+        int numGroupsY = (numCells[2] - 2) > 1 ? 3 : 2;
+        int numGroupsZ = (numCells[2] - 2) > 1 ? 2 : 1;
 
         std::array<int, 3> index3D = PContainer::convert1DTo3D(cellIdx, numCells);
         int groupX = (index3D[0] - 1) % numGroupsX;
@@ -362,8 +362,10 @@ void LinkedCellParticleContainer::forkJoin(std::function<void(Particle &, Partic
 void LinkedCellParticleContainer::taskModel(std::function<void(Particle &, Particle &)> f)
 {
 #pragma omp parallel
-#pragma omp single
-    {
+#pragma omp single 
+{
+//#pragma omp single
+    //{
         // for (unsigned int i = 0; i < cells.size(); i++)
         // {
         //     ParticleCell* cell = &cells[i];
@@ -377,8 +379,10 @@ void LinkedCellParticleContainer::taskModel(std::function<void(Particle &, Parti
         //         }
         //     }
         // }
+    for (auto &group : cellGroups) {
 
-        for (unsigned int i = 0; i < cells.size(); i++) {
+        
+        for (auto i : group) {
 
             ParticleCell *cell = &cells[i];
 
@@ -409,6 +413,7 @@ void LinkedCellParticleContainer::taskModel(std::function<void(Particle &, Parti
             }
         }
     }
+}
     #ifdef _OPENMP
     #pragma omp taskwait
     #endif
