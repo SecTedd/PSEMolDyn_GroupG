@@ -74,8 +74,8 @@ namespace ParticleGenerator
             {
                 for (int y = 0; y < n[1]; y++)
                 {
-                    particles[index].setParallelNeighbours(getParallelNeighbourIndices(cuboid.getN(), index));
-                    particles[index].setDiagonalNeighbours(getDiagonalNeighbourIndices(cuboid.getN(), index));
+                    particles.at(index).setParallelNeighbours(getParallelNeighbourIndices(cuboid.getN(), index));
+                    particles.at(index).setDiagonalNeighbours(getDiagonalNeighbourIndices(cuboid.getN(), index));
                     index++;
                 }
             }
@@ -106,7 +106,7 @@ namespace ParticleGenerator
             for (int y = minY; y <= maxY; y++)
             {
                 if (y == index3D[1] || x == index3D[0])
-                    neighbours3D.emplace_back(std::array<int, 3>{x, y, index3D[2]});
+                    neighbours3D.push_back(std::array<int, 3>{x, y, index3D[2]});
             }
         }
 
@@ -146,7 +146,7 @@ namespace ParticleGenerator
             for (int y = minY; y <= maxY; y++)
             {
                 if (y != index3D[1] && x != index3D[0])
-                    neighbours3D.emplace_back(std::array<int, 3>{x, y, index3D[2]});
+                    neighbours3D.push_back(std::array<int, 3>{x, y, index3D[2]});
             }
         }
 

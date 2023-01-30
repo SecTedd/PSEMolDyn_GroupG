@@ -5,9 +5,9 @@
     <delta_t>0.00005</delta_t>
     <cutoff>3.0</cutoff>
     <domain>
-        <x>120</x>
-        <y>50</y>
-        <z>1</z>
+        <x>130</x>
+        <y>130</y>
+        <z>10</z>
     </domain>
     <boundaries>
         <xLeft>Outflow</xLeft>

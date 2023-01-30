@@ -35,6 +35,7 @@ ProgramParameters::ProgramParameters()
     showMenu = false;
     createCheckpoint = false;
     membrane = false;
+    forces = std::list<std::shared_ptr<SingleParticleForce>>();
     memoryLogger = spdlog::get("memory_logger");
     memoryLogger->info("ProgramParameters generated!");
 }
