@@ -361,28 +361,26 @@ void LinkedCellParticleContainer::forkJoin(std::function<void(Particle &, Partic
 
 void LinkedCellParticleContainer::taskModel(std::function<void(Particle &, Particle &)> f)
 {
-#pragma omp parallel
-#pragma omp single 
-{
-//#pragma omp single
-    //{
-        // for (unsigned int i = 0; i < cells.size(); i++)
-        // {
-        //     ParticleCell* cell = &cells[i];
-        //     if (cell->getType() == CellType::BoundaryCell || cell->getType() == CellType::InnerCell)
-        //     {
-        //         // task for interaction within one cell
-        //         #pragma omp task depend(inout: cell)
-        //         {
-        //             //_simulationLogger->debug("Inner task " + std::to_string(i) + " executed by thread " + std::to_string(omp_get_thread_num()));
-        //             intraCellInteraction(i, f);
-        //         }
-        //     }
-        // }
-    for (auto &group : cellGroups) {
-
-        
-        for (auto i : group) {
+    #pragma omp parallel
+    #pragma omp single 
+    {
+        //interactions within one cell
+        for (unsigned int i = 0; i < cells.size(); i++)
+        {
+            ParticleCell* cell = &cells[i];
+            if (cell->getType() == CellType::BoundaryCell || cell->getType() == CellType::InnerCell)
+            {
+                //intracell interaction only dependent on one cell
+                #pragma omp task depend(inout: cell)
+                {
+                    //_simulationLogger->debug("Inner task " + std::to_string(i) + " executed by thread " + std::to_string(omp_get_thread_num()));
+                    intraCellInteraction(i, f);
+                }
+            }
+        }
+   
+        //interactions between neighbouring cells
+        for (unsigned int i = 0; i < cells.size(); i++) {
 
             ParticleCell *cell = &cells[i];
 
@@ -395,15 +393,15 @@ void LinkedCellParticleContainer::taskModel(std::function<void(Particle &, Parti
                     dependencies[j] = &cells[cell->getDomainNeighbours()[j]];
                 }
 
-                // task for interaction between cells
-                #pragma omp task firstprivate(cell) depend(inout: cell, dependencies[0:numDependencies])
+                //intercell interactions dependent on cell & its domain neighbours
+                //interactions with halo neighbours are calculated but halo cells don't have to be locked
+                #pragma omp task depend(inout: cell, dependencies[0:numDependencies])
                 {
-                    intraCellInteraction(i, f);
                     //_simulationLogger->debug("Inter task " + std::to_string(i) + ", " + std::to_string(j) + " executed by thread " + std::to_string(omp_get_thread_num()) );
                     std::vector<int> neighbours = cell->getDomainNeighbours();
-                    // Boundary cells
                     if (cell->getType() == CellType::BoundaryCell)
                     {
+                        //boundary cells might have to interact with their halo neighbours
                         neighbours.insert(neighbours.end(), cell->getPeriodicHaloNeighbours().begin(), cell->getPeriodicHaloNeighbours().end());
                     }
                     for (auto j : neighbours) {
@@ -413,7 +411,7 @@ void LinkedCellParticleContainer::taskModel(std::function<void(Particle &, Parti
             }
         }
     }
-}
+    
     #ifdef _OPENMP
     #pragma omp taskwait
     #endif
