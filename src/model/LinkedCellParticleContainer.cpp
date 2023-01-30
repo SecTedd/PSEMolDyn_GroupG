@@ -175,7 +175,7 @@ void LinkedCellParticleContainer::initializeGroups(int parallel)
     int maxCellsPerGroup = (numCells[0] - 2) * (numCells[1] - 2) * (numCells[2] - 2);
 
     // constant number of groups with varying number of cells per group
-    if (parallel == 1 || parallel == 2)
+    if (parallel == 1)
     {
 
         // distinguish 2D and 3D cases
@@ -200,7 +200,7 @@ void LinkedCellParticleContainer::initializeGroups(int parallel)
 
 const int LinkedCellParticleContainer::computeCellGroup(int cellIdx, int parallel)
 {
-    if (parallel == 1 || parallel == 2)
+    if (parallel == 1)
     {
         int numGroupsX = 3;
 
