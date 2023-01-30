@@ -19,8 +19,7 @@ TEST(SingleParticleGravitationalForce, GravitationalForce)
     pc.addParticle(x1, v, m, epsilon, sigma, type);
 
     // calculating new forces according to Lennard-Jones potential with hardcoded values epsilon=5 and sigma=1
-    std::unique_ptr<SingleParticleGravitationalForce> calculation; 
-    calculation.reset(new SingleParticleGravitationalForce(g_grav));
+    std::unique_ptr<SingleParticleGravitationalForce> calculation = std::make_unique<SingleParticleGravitationalForce>(g_grav);
 
     calculation->calculateForce(pc, 0);
 
