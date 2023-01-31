@@ -20,10 +20,8 @@ LinkedCellParticleContainer::LinkedCellParticleContainer(double cutoff, std::arr
 // no parallelization otherwise
     #ifdef _OPENMP
     this->parallel = parallel;
-    //std::cout << "Inside openmp" << std::endl;
     #else
     this->parallel = 0;
-    //std::cout << "Inside no openmp" << std::endl;
     #endif
 
     _memoryLogger->warn("Parallel set to " + std::to_string(this->parallel));
@@ -76,7 +74,6 @@ const void LinkedCellParticleContainer::initializeCells(std::array<BoundaryCondi
 
     // now we need to initialize the cells
     cells.reserve(numCells[0] * numCells[1] * numCells[2]);
-    reserveGroups();
     
     for (int i = 0; i < numCells[0] * numCells[1] * numCells[2]; i++)
     {
@@ -166,15 +163,9 @@ const void LinkedCellParticleContainer::initializeCells(std::array<BoundaryCondi
             cells[i].setPeriodicHaloNeighbours(haloNeighbours);
         }
     }
-
+    //Initialization needed for parallelism
+    reserveGroups();
     initializeParallelGroups();
-
-    for (unsigned int i = 0; i < cellGroups.size(); i++) {
-        std::cout << "Group " << i << ": " << cellGroups[i] << std::endl;
-    }
-    for (unsigned int i = 0; i < superCells.size(); i++) {
-        std::cout << "Supercell " << i << ": " << superCells[i] << std::endl;
-    }
 }
 
 void LinkedCellParticleContainer::initializeParallelGroups() {
@@ -259,36 +250,34 @@ const int LinkedCellParticleContainer::computeSupercellGroup(int cellIdx) {
 
 const int LinkedCellParticleContainer::computeCellGroup(int cellIdx)
 {
+    int groupX = 0, groupY = 0, groupZ = 0;
+    int numGroupsX = 0, numGroupsY = 0;
+
     if (parallel == 1)
     {
-        int numGroupsX = 3;
+        numGroupsX = 3;
 
         // distinguish 2D and 3D case
-        int numGroupsY = (numCells[2] - 2) > 1 ? 3 : 2;
+        numGroupsY = (numCells[2] - 2) > 1 ? 3 : 2;
         int numGroupsZ = (numCells[2] - 2) > 1 ? 2 : 1;
 
         std::array<int, 3> index3D = PContainer::convert1DTo3D(cellIdx, numCells);
-        int groupX = (index3D[0] - 1) % numGroupsX;
-        int groupY = (index3D[1] - 1) % numGroupsY;
-        int groupZ = (index3D[2] - 1) % numGroupsZ;
-
-        return groupX + numGroupsX * groupY + numGroupsX * numGroupsY * groupZ;
+        groupX = (index3D[0] - 1) % numGroupsX;
+        groupY = (index3D[1] - 1) % numGroupsY;
+        groupZ = (index3D[2] - 1) % numGroupsZ;
     }
 
     else if (parallel == 2 || parallel == 3) {
-        int numGroupsX = (numCells[0] - 1) / 2;
-        int numGroupsY = (numCells[1] - 1) / 2;
-        int numGroupsZ = (numCells[2] - 1) / 2;
+        numGroupsX = (numCells[0] - 1) / 2;
+        numGroupsY = (numCells[1] - 1) / 2;
         std::array<int, 3> index3D = PContainer::convert1DTo3D(cellIdx, numCells);
 
-        int groupX = (index3D[0] - 1) / 2;
-        int groupY = (index3D[1] - 1) / 2;
-        int groupZ = (index3D[2] - 1) / 2;
-
-        return groupX + numGroupsX * groupY + numGroupsX * numGroupsY * groupZ;
+        groupX = (index3D[0] - 1) / 2;
+        groupY = (index3D[1] - 1) / 2;
+        groupZ = (index3D[2] - 1) / 2;
     }
 
-    return 0;
+    return groupX + numGroupsX * groupY + numGroupsX * numGroupsY * groupZ;
 }
 
 const int LinkedCellParticleContainer::computeCellIdx(Particle &p)
@@ -425,7 +414,6 @@ void LinkedCellParticleContainer::nestedCellInteraction(std::function<void(Parti
             }
         }
     }
-
 }
 
 void LinkedCellParticleContainer::forkJoin(std::function<void(Particle &, Particle &)> f)
@@ -448,11 +436,9 @@ void LinkedCellParticleContainer::forkJoin(std::function<void(Particle &, Partic
         nestedCellInteraction(f);
     else
         directCellInteraction(f);
-
-    
 }
 
-void LinkedCellParticleContainer::taskModelNew(std::function<void(Particle &, Particle &)> f) {
+void LinkedCellParticleContainer::taskModel(std::function<void(Particle &, Particle &)> f) {
     #pragma omp parallel
     #pragma omp single
     {
@@ -462,14 +448,12 @@ void LinkedCellParticleContainer::taskModelNew(std::function<void(Particle &, Pa
         std::array<int, 3> numGroups = {((numCells[0] - 1) / 2), ((numCells[1] - 1) / 2), ((numCells[2] - 1) / 2)};
         std::vector<int> neighbouringGroupIdx = PContainer::getNeigbhourGroupsNewton(groupIdx, numGroups);
         
-        unsigned int numDependencies = neighbouringGroupIdx.size();
-        //std::cout << "Num Dependencies: " <<  numDependencies << std::endl;
+        int numDependencies = neighbouringGroupIdx.size();
         std::vector<int> *dependencies[numDependencies];
-        for (unsigned int j = 0; j < numDependencies; j++) {
+        for (int j = 0; j < numDependencies; j++) {
             dependencies[j] = &cellGroups[neighbouringGroupIdx[j]];
         }
         std::vector<int> *group = &cellGroups[groupIdx];
-        //std::cout << "Dependencies of group " << i << ": " << *dependencies << std::endl;
 
         #pragma omp task depend(inout: group, dependencies[0:numDependencies]) 
         {
@@ -494,64 +478,6 @@ void LinkedCellParticleContainer::taskModelNew(std::function<void(Particle &, Pa
     #pragma omp taskwait
 }
 
-void LinkedCellParticleContainer::taskModel(std::function<void(Particle &, Particle &)> f)
-{
-    #pragma omp parallel
-    #pragma omp single 
-    {
-        //interactions within one cell
-        for (unsigned int i = 0; i < cells.size(); i++)
-        {
-            ParticleCell* cell = &cells[i];
-            if (cell->getType() == CellType::BoundaryCell || cell->getType() == CellType::InnerCell)
-            {
-                //intracell interaction only dependent on one cell
-                #pragma omp task depend(inout: cell)
-                {
-                    //_simulationLogger->debug("Inner task " + std::to_string(i) + " executed by thread " + std::to_string(omp_get_thread_num()));
-                    intraCellInteraction(i, f);
-                }
-            }
-        }
-   
-        //interactions between neighbouring cells
-        for (unsigned int i = 0; i < cells.size(); i++) {
-
-            ParticleCell *cell = &cells[i];
-
-            if (cell->getType() == CellType::BoundaryCell || cell->getType() == CellType::InnerCell)
-            {
-
-                unsigned int numDependencies = cell->getDomainNeighbours().size();
-                ParticleCell *dependencies[numDependencies];
-                for (unsigned int j = 0; j < numDependencies; j++) {
-                    dependencies[j] = &cells[cell->getDomainNeighbours()[j]];
-                }
-
-                //intercell interactions dependent on cell & its domain neighbours
-                //interactions with halo neighbours are calculated but halo cells don't have to be locked
-                #pragma omp task depend(inout: cell, dependencies[0:numDependencies])
-                {
-                    //_simulationLogger->debug("Inter task " + std::to_string(i) + ", " + std::to_string(j) + " executed by thread " + std::to_string(omp_get_thread_num()) );
-                    std::vector<int> neighbours = cell->getDomainNeighbours();
-                    if (cell->getType() == CellType::BoundaryCell)
-                    {
-                        //boundary cells might have to interact with their halo neighbours
-                        neighbours.insert(neighbours.end(), cell->getPeriodicHaloNeighbours().begin(), cell->getPeriodicHaloNeighbours().end());
-                    }
-                    for (auto j : neighbours) {
-                        interCellInteraction(i, j, f);
-                    }
-                }
-            }
-        }
-    }
-    
-    #ifdef _OPENMP
-    #pragma omp taskwait
-    #endif
-}
-
 const void LinkedCellParticleContainer::iterateParticleInteractions(std::function<void(Particle &, Particle &)> f)
 {
     // first we need to clear the halo
@@ -568,10 +494,8 @@ const void LinkedCellParticleContainer::iterateParticleInteractions(std::functio
         }
     }
 
-    _simulationLogger->warn("Before tasks");
-
     if (parallel == 3)
-        taskModelNew(f);
+        taskModel(f);
     else
         forkJoin(f);
 }
