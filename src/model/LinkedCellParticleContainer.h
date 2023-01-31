@@ -29,6 +29,8 @@ private:
 
     std::vector<std::vector<int>> cellGroups; // stores indices of grouped cells
 
+    std::vector<std::vector<int>> superCells; // clusters together a batch of 4 (2D) or 8 (3D) neighbouring cells
+
     std::array<double, 3> domain; // domain size in each dimension
 
     double cutoff; // max. distance of particles where force calculation is applied
@@ -36,6 +38,8 @@ private:
     std::array<int, 3> numCells; // number of cells in each dimension
 
     std::array<double, 3> cellSize; // cell size in each dimension
+
+    std::array<int, 3> numInteractingCells; // number of cells in each dimension relevant for grouping
 
     int parallel; // 0 for no parallelization, 1 for first parallel strategy, 2 for second parallel strategy
 
@@ -66,7 +70,13 @@ private:
      * @brief reserves memory for & initializes vector of cell groups according to parallelization strategy
      * @param parallel parallelization strategy which has to be used
      */
-    void initializeGroups(int parallel);
+    void reserveGroups();
+
+    void reserveSuperCells();
+
+    void initializeParallelGroups();
+
+    const int computeSupercellGroup(int cellIdx);
 
     /**
      * @brief computes group the given cell belongs to according to parallelization strategy
@@ -74,13 +84,17 @@ private:
      * @param parallel parallelization strategy
      * @return group index of cell
      */
-    const int computeCellGroup(int cellIdx, int parallel);
+    const int computeCellGroup(int cellIdx);
 
     inline void intraCellInteraction(int i, std::function<void(Particle &, Particle &)> f);
 
     inline void interCellInteraction(int i, int j, std::function<void(Particle &, Particle &)> f);
 
     void forkJoin(std::function<void(Particle &, Particle &)> f);
+
+    void directCellInteraction(std::function<void(Particle &, Particle &)> f);
+
+    void nestedCellInteraction(std::function<void(Particle &, Particle &)> f);
 
     void taskModel(std::function<void(Particle &, Particle &)> f);
 
@@ -143,7 +157,7 @@ public:
      * @param domainBoundaries the boundaries of the domain
      * @param parallel parallelization strategy which should be used in particleInteractions
      */
-    const void initializeCells(std::array<BoundaryCondition, 6> &domainBoundaries, int parallel);
+    const void initializeCells(std::array<BoundaryCondition, 6> &domainBoundaries);
 
     /**
      * @brief adds reflection force to particles near to the reflecting boundary
