@@ -19,7 +19,7 @@ ProgramParameters::ProgramParameters()
     domain = {3, 3, 1};
     BoundaryCondition o = BoundaryCondition::Outflow;
     boundaries = {o, o, o, o, o, o};
-    dimension = 3;
+    dimension = 2;
     end_time = 1;
     delta_t = 0.0005;
     cutoff = 3;
@@ -27,7 +27,7 @@ ProgramParameters::ProgramParameters()
     particleContainer.reset(new LinkedCellParticleContainer(cutoff, domain, boundaries));
     baseName = "outputVTK";
     temp_init = 40;
-    brownianMotion = true;
+    brownianMotion = false;
     n_thermostats = 1000;
     // has to be -1!
     temp_target = -1;
