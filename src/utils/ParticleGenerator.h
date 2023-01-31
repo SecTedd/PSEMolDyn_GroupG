@@ -17,22 +17,28 @@
 namespace ParticleGenerator
 {
 
+    int index3DTo1D(std::array<int, 3> index, std::array<int, 3> n);
+    std::array<int, 3> index1DTo3D(int index, std::array<int, 3> n);
+    std::vector<int> getDiagonalNeighbourIndices(std::array<int, 3> n, double index);
+    std::vector<int> getParallelNeighbourIndices(std::array<int, 3> n, double index);
+
     /**
      * @brief generates all particles of a cuboid and adds them to the particle container
      * @param particleContainer contains all particles for the simulation
      * @param cuboid contains all necessary parameters for the construction of the cuboid
      */
-    inline void generateCuboid(ParticleContainer &particleContainer, Cuboid &cuboid)
+    inline void generateCuboid(ParticleContainer &particleContainer, Cuboid &cuboid, bool membrane)
     {
         // Variable init
         std::array<double, 3> lowerLeftCorner = cuboid.getX();
         std::array<double, 3> initV = cuboid.getV();
         double m = cuboid.getM();
-        double epsilon = cuboid.getEpsilon(); 
-        double sigma = cuboid.getSigma(); 
+        double epsilon = cuboid.getEpsilon();
+        double sigma = cuboid.getSigma();
         int type = cuboid.getType();
         bool fixed = cuboid.getFixed();
-
+        double stiffness = cuboid.getStiffness(); 
+        double averageBondLength = cuboid.getAverageBondLength();
         std::array<int, 3> n = cuboid.getN();
         int numParticles = n[0] * n[1] * n[2];
 
@@ -54,10 +60,124 @@ namespace ParticleGenerator
                     position[0] = lowerLeftCorner[0] + (x * meshWidth);
                     position[1] = lowerLeftCorner[1] + (y * meshWidth);
                     position[2] = lowerLeftCorner[2] + (z * meshWidth);
-                    particleContainer.addParticle(position, initV, m, epsilon, sigma, fixed, type);
+                    particleContainer.addParticle(position, initV, m, epsilon, sigma, type, stiffness, averageBondLength, fixed);
                 }
             }
         }
+
+        if (membrane)
+        {
+            auto &particles = particleContainer.getActiveParticles();
+            int index = 0;
+            for (int x = 0; x < n[0]; x++)
+            {
+                for (int y = 0; y < n[1]; y++)
+                {
+                    particles.at(index).setParallelNeighbours(getParallelNeighbourIndices(cuboid.getN(), index));
+                    particles.at(index).setDiagonalNeighbours(getDiagonalNeighbourIndices(cuboid.getN(), index));
+                    index++;
+                }
+            }
+        }
+    }
+
+    inline std::vector<int> getParallelNeighbourIndices(std::array<int, 3> n, double index)
+    {
+        std::vector<std::array<int, 3>> neighbours3D;
+        std::array<int, 3> index3D = index1DTo3D(index, n);
+
+        int minX = index3D[0] - 1;
+        int maxX = index3D[0] + 1;
+        int minY = index3D[1] - 1;
+        int maxY = index3D[1] + 1;
+
+        if (index3D[0] == 0)
+            minX = 0;
+        if (index3D[0] == n[0] - 1)
+            maxX = index3D[0];
+        if (index3D[1] == 0)
+            minY = 0;
+        if (index3D[1] == n[1] - 1)
+            maxY = index3D[1];
+
+        for (int x = minX; x <= maxX; x++)
+        {
+            for (int y = minY; y <= maxY; y++)
+            {
+                if (y == index3D[1] || x == index3D[0])
+                    neighbours3D.push_back(std::array<int, 3>{x, y, index3D[2]});
+            }
+        }
+
+        std::vector<int> neighbours1D;
+
+        for (auto i : neighbours3D)
+        {
+            int currentIndex = index3DTo1D(i, n);
+            if (currentIndex > index)
+                neighbours1D.emplace_back(currentIndex);
+        }
+
+        return neighbours1D;
+    }
+
+    inline std::vector<int> getDiagonalNeighbourIndices(std::array<int, 3> n, double index)
+    {
+        std::vector<std::array<int, 3>> neighbours3D;
+        std::array<int, 3> index3D = index1DTo3D(index, n);
+
+        int minX = index3D[0] - 1;
+        int maxX = index3D[0] + 1;
+        int minY = index3D[1] - 1;
+        int maxY = index3D[1] + 1;
+
+        if (index3D[0] == 0)
+            minX = 0;
+        if (index3D[0] == n[0] - 1)
+            maxX = index3D[0];
+        if (index3D[1] == 0)
+            minY = 0;
+        if (index3D[1] == n[1] - 1)
+            maxY = index3D[1];
+
+        for (int x = minX; x <= maxX; x++)
+        {
+            for (int y = minY; y <= maxY; y++)
+            {
+                if (y != index3D[1] && x != index3D[0])
+                    neighbours3D.push_back(std::array<int, 3>{x, y, index3D[2]});
+            }
+        }
+
+        std::vector<int> neighbours1D;
+
+        for (auto i : neighbours3D)
+        {
+            int currentIndex = index3DTo1D(i, n);
+            if (currentIndex > index)
+                neighbours1D.emplace_back(currentIndex);
+        }
+
+        return neighbours1D;
+    }
+
+    inline std::array<int, 3> index1DTo3D(int index, std::array<int, 3> n)
+    {
+        std::array<int, 3> result;
+
+        // x
+        result[0] = index % n[0];
+        // y
+        result[1] = (index / n[0]) % n[1];
+        // z
+        result[2] = 1;
+
+        return result;
+    }
+
+    inline int index3DTo1D(std::array<int, 3> index, std::array<int, 3> n)
+    {
+        return index[0] + (index[1] * n[0]);
     }
 
     /**
@@ -73,8 +193,8 @@ namespace ParticleGenerator
         int r = sphere.getR();
         double meshWidth = sphere.getH();
         std::array<double, 3> initV = sphere.getV();
-        double epsilon = sphere.getEpsilon(); 
-        double sigma = sphere.getSigma(); 
+        double epsilon = sphere.getEpsilon();
+        double sigma = sphere.getSigma();
         int type = sphere.getType();
         bool fixed = sphere.getFixed();
 

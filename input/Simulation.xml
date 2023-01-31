@@ -18,7 +18,11 @@
         <zBack>Outflow</zBack>
     </boundaries>
     <brownianMotion>true</brownianMotion>
-    <g_grav>-12.44</g_grav>
+    <g_grav>
+        <x>0</x>
+        <y>-12.44</y>
+        <z>0</z>
+    </g_grav>
     <writeFrequency>100</writeFrequency>
     <baseName>outputVTK</baseName>
     <thermostat>

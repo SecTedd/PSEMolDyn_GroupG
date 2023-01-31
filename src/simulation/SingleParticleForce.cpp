@@ -7,8 +7,9 @@
 
 #include "SingleParticleForce.h"
 
-SingleParticleForce::SingleParticleForce()
+SingleParticleForce::SingleParticleForce(std::array<double, 3> force)
 {
+    this->force = force;
     _memoryLogger = spdlog::get("memory_logger");
     _memoryLogger->info("ForceCalculation generated!");
 }

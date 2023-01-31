@@ -131,5 +131,6 @@ void CuboidInputReader::readInput(ProgramParameters &programParameters, const ch
     }
 
     std::unique_ptr<Cuboid> cuboid = std::make_unique<Cuboid>(Cuboid(x, n, h, m, v, epsilon, sigma, type, fixed_bool));
-    ParticleGenerator::generateCuboid(*particleContainer.get(), *cuboid);
+    ParticleGenerator::generateCuboid(*particleContainer.get(), *cuboid, programParameters.getMembrane());
+
 }

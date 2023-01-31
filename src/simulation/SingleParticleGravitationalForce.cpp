@@ -11,13 +11,16 @@
 
 #include <vector>
 
-void SingleParticleGravitationalForce::calculateForce(ParticleContainer &particleContainer, double g_grav)
+SingleParticleGravitationalForce::SingleParticleGravitationalForce(std::array<double, 3> force) : SingleParticleForce(force) {}
+
+
+void SingleParticleGravitationalForce::calculateForce(ParticleContainer &particleContainer, double time)
 {
     // we iterate over each particle once and then apply the gravitational force
-    std::function<void(Particle &)> forceCalculation = [g_grav](Particle &p1)
+    std::function<void(Particle &)> forceCalculation = [&](Particle &p1)
     {
-        double force = p1.getM() * g_grav; 
-        p1.addF({0,force,0});
+        auto force = p1.getM() * getForce(); 
+        p1.addF(force);
     };
 
     particleContainer.iterateParticles(forceCalculation, false);

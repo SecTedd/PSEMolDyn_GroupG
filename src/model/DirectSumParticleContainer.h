@@ -51,10 +51,11 @@ public:
      * @param x The position array of the particle
      * @param v The velocity array of the particle
      * @param m The mass of the particle
+     * @param type The type of the particle
      * @param epsilon The epsilon of the particle
      * @param sigma The sigma of the particle
      */
-    const void addParticle(std::array<double, 3> &x, std::array<double, 3> &v, double &m, double &epsilon, double &sigma) override;
+    const void addParticle(std::array<double, 3> &x, std::array<double, 3> &v, double &m, double &epsilon, double &sigma, int &type) override;
 
     /**
      * @brief Creates a new particle and adds it to the vector
@@ -64,8 +65,10 @@ public:
      * @param type The type of the particle
      * @param epsilon The epsilon of the particle
      * @param sigma The sigma of the particle
+     * @param stiffness The stiffness of the molecule
+     * @param averageBondLength The average Bond Length of the molecule
      */
-    const void addParticle(std::array<double, 3> &x, std::array<double, 3> &v, double &m, double &epsilon, double &sigma, int &type) override;
+    const void addParticle(std::array<double, 3> &x, std::array<double, 3> &v, double &m, double &epsilon, double &sigma, int &type, double &stiffness, double &averageBondLength);
 
     /**
      * @brief Creates a new particle and adds it to the vector
@@ -90,8 +93,10 @@ public:
      * @param type The type of the particle
      * @param epsilon The epsilon of the particle
      * @param sigma The sigma of the particle
+     * @param stiffness The stiffness of the molecule
+     * @param averageBondLength The average Bond Length of the molecule
      */
-    const void addParticle(std::array<double, 3> &x, std::array<double, 3> &v, std::array<double, 3> &f, std::array<double, 3> &old_f, double &m, double &epsilon, double &sigma, int &type);
+    const void addParticle(std::array<double, 3> &x, std::array<double, 3> &v, std::array<double, 3> &f, std::array<double, 3> &old_f, double &m, double &epsilon, double &sigma, int &type, double &stiffness, double &averageBondLength);
 
     /**
      * @brief Returns the number of particles in the simulation

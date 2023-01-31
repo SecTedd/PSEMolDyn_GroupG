@@ -10,6 +10,7 @@
 #include "../model/ParticleContainer.h"
 #include "../model/DirectSumParticleContainer.h"
 #include "../model/ParticleCell.h"
+#include "../simulation/SingleParticleForce.h"
 #include "spdlog/sinks/basic_file_sink.h"
 #include "spdlog/spdlog.h"
 
@@ -37,7 +38,7 @@ private:
     int n_thermostats;                                    /// the number of iterations after which the thermostat is applied
     double temp_target;                                   /// the target temperature of the simulation
     double delta_temp;                                    /// the maximum increase in the temperature per iteration
-    double g_grav;                                        /// the gravitational constant for the simulation
+    std::array<double, 3> g_grav;                         /// the gravitational constant for the simulation
     int benchmark_iterations;                             /// number of runs in benchmark mode, 0 for normal simulations
     bool showMenu;                                        /// true if menu should be shown, false otherwise
     bool createCheckpoint;                                /// true if a checkpoint should be created, false otherwise
@@ -45,6 +46,8 @@ private:
     std::array<int, 3> thermostat_applyTo;                /// indicator array on wich directions the thermostat will be applied
     int csv_writeFrequency;                               /// the number of iterations after wich a csv file is written (0 means never)
     int num_bins;                                         /// number of bins in x direction for density and velocity calculation
+    bool membrane;                                          /// true if the simulation should calculate force according to a membrane
+    std::list<std::shared_ptr<SingleParticleForce>> forces; /// list of forces that are applied
 
 public:
     /**
@@ -94,7 +97,7 @@ public:
 
     const void setDeltaTemp(double delta_temp);
 
-    const void setGGrav(double g_grav);
+    const void setGGrav(std::array<double, 3> g_grav);
 
     const void setShowMenu(bool show_menu);
 
@@ -105,6 +108,10 @@ public:
     const void setCsvWriteFrequency(int csv_writeFrequency);
 
     const void setNumBins(int num_bins);
+    
+    const void setMembrane(bool membrane);
+
+    const void addForce(std::shared_ptr<SingleParticleForce> force); 
 
     std::shared_ptr<ParticleContainer> getParticleContainer();
 
@@ -136,7 +143,7 @@ public:
 
     const double getDeltaTemp() const;
 
-    const double getGGrav() const;
+    const std::array<double, 3> getGGrav() const;
 
     const bool getShowMenu() const;
 
@@ -147,4 +154,8 @@ public:
     const int getCsvWriteFrequency() const;
 
     const int getNumBins() const;
+
+    const bool getMembrane();
+
+    const std::list<std::shared_ptr<SingleParticleForce>> getForces(); 
 };

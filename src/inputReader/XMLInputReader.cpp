@@ -8,6 +8,7 @@
 #include "./XMLInputReader.h"
 #include "./InputFacade.h"
 #include "../model/Sphere.h"
+#include "../simulation/TemporalSingleParticleForce.h"
 #include "../utils/MaxwellBoltzmannDistribution.h"
 #include "../utils/ArrayUtils.h"
 #include "../utils/ParticleGenerator.h"
@@ -68,8 +69,10 @@ void XMLInputReader::readInput(ProgramParameters &programParameters, const char 
             old_f[2] = old_f_xml.z();
 
             int type = i->type();
+            double stiffness = i->stiffness(); 
+            double averageBondLength = i->averageBondLength();
 
-            programParameters.getParticleContainer()->addParticle(position, velocity, f, old_f, m, epsilon, sigma, type);
+            programParameters.getParticleContainer()->addParticle(position, velocity, f, old_f, m, epsilon, sigma, type, stiffness, averageBondLength);
         }
         return;
     }
@@ -103,9 +106,6 @@ void XMLInputReader::readInput(ProgramParameters &programParameters, const char 
         domain[2] = d.z();
         programParameters.setDomain(domain);
 
-        // TODO: Read in dimension from xml file and set here
-        // programparameters.setDimension(xml->dimension());
-
         std::array<BoundaryCondition, 6> boundaries = std::array<BoundaryCondition, 6>();
         simulation_t::boundaries_type b = xml->boundaries();
         std::string boundary = b.xLeft();
@@ -122,9 +122,16 @@ void XMLInputReader::readInput(ProgramParameters &programParameters, const char 
         boundaries[5] = getBoundaryCondition(boundary);
         programParameters.setBoundaries(boundaries);
 
-        if (xml->g_grav().present())
+        std::array<double, 3> gGrav;
+        simulation_t::g_grav_type g = xml->g_grav();
+        gGrav[0] = g.x();
+        gGrav[1] = g.y();
+        gGrav[2] = g.z();
+        programParameters.setGGrav(gGrav);
+
+        if (xml->membrane().present())
         {
-            programParameters.setGGrav(xml->g_grav().get());
+            programParameters.setMembrane(xml->membrane().get());
         }
 
         if (xml->writeFrequency().present())
@@ -207,6 +214,34 @@ void XMLInputReader::readInput(ProgramParameters &programParameters, const char 
             dimensions[1] = dim.y();
             dimensions[2] = dim.z();
 
+            for (simulation_t::cuboid_type::force_const_iterator j(i->force().begin()); j != i->force().end(); j++)
+            {
+                std::array<double, 3> force;
+                simulation_t::cuboid_type::force_type::force1_type f1 = j->force1();
+                force[0] = f1.x();
+                force[1] = f1.y();
+                force[2] = f1.z();
+
+                double end_time = j->end_time();
+
+                std::vector<int> indices;
+                int numberOfParticles = programParameters.getParticleContainer()->size();
+
+                for (simulation_t::cuboid_type::force_type::particles_const_iterator k(j->particles().begin()); k != j->particles().end(); k++)
+                {
+                    std::array<int, 3> index3D;
+                    simulation_t::cuboid_type::force_type::particles_type::particle_index_type pIndex = k->particle_index();
+                    index3D[0] = pIndex.x();
+                    index3D[1] = pIndex.y();
+                    index3D[2] = pIndex.z();
+
+                    indices.push_back(ParticleGenerator::index3DTo1D(index3D, dimensions) + numberOfParticles);
+                }
+                std::shared_ptr<SingleParticleForce> spForce;
+                spForce.reset(new TemporalSingleParticleForce(force, end_time, indices));
+                programParameters.addForce(spForce);
+            }
+
             double h = i->h();
             double m = i->mass();
             double epsilon = i->epsilon();
@@ -219,8 +254,21 @@ void XMLInputReader::readInput(ProgramParameters &programParameters, const char 
                 fixed = i->fixed().get();
             }
 
-            std::unique_ptr<Cuboid> cuboid = std::make_unique<Cuboid>(Cuboid(position, dimensions, h, m, velocity, epsilon, sigma, type, fixed));
-            ParticleGenerator::generateCuboid(*programParameters.getParticleContainer(), *cuboid);
+            double stiffness = 1;
+            double averageBondLength = 1;
+
+            if (i->stiffness().present())
+            {
+                stiffness = i->stiffness().get();
+            }
+
+            if (i->average_bond_length().present())
+            {
+                averageBondLength = i->average_bond_length().get();
+            }
+
+            std::unique_ptr<Cuboid> cuboid = std::make_unique<Cuboid>(Cuboid(position, dimensions, h, m, velocity, epsilon, sigma, type, stiffness, averageBondLength, fixed));
+            ParticleGenerator::generateCuboid(*programParameters.getParticleContainer(), *cuboid, programParameters.getMembrane());
         }
 
         for (simulation_t::sphere_const_iterator i(xml->sphere().begin()); i != xml->sphere().end(); i++)

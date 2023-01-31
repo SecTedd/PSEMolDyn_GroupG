@@ -7,7 +7,8 @@
 
 #include "./Cuboid.h"
 
-Cuboid::Cuboid(std::array<double, 3> x, std::array<int, 3> n, double h, double m, std::array<double, 3> v, double epsilon, double sigma, int type, bool fixed)
+
+Cuboid::Cuboid(std::array<double, 3> x, std::array<int, 3> n, double h, double m, std::array<double, 3> v, double epsilon, double sigma, int type, double stiffness, double averageBondLength, bool fixed)
 {
     this->x = x;
     this->n = n;
@@ -17,7 +18,10 @@ Cuboid::Cuboid(std::array<double, 3> x, std::array<int, 3> n, double h, double m
     this->epsilon = epsilon;
     this->sigma = sigma;
     this->type = type;
+    this->stiffness = stiffness;
+    this->averageBondLength = averageBondLength;
     this->fixed = fixed;
+    
     _memoryLogger = spdlog::get("memory_logger");
     _memoryLogger->info("Cuboid generated!");
 }
@@ -76,6 +80,16 @@ const bool Cuboid::getFixed()
     return this->fixed;
 }
 
+const double Cuboid::getStiffness() 
+{ 
+    return this->stiffness;
+}
+
+const double Cuboid::getAverageBondLength() 
+{
+    return this->averageBondLength;
+}
+
 /*
  * Setters
  */
@@ -114,3 +128,14 @@ const void Cuboid::setFixed(bool fixed)
 {
     this->fixed = fixed;
 }
+
+const void Cuboid::setStiffness(double stiffness_arg) 
+{ 
+    this->stiffness = stiffness_arg;
+}
+
+const void Cuboid::setAverageBondLength(double averageBondLength_arg) 
+{
+    this->averageBondLength = averageBondLength_arg;
+}
+
