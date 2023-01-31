@@ -84,6 +84,8 @@ private:
 
     void taskModel(std::function<void(Particle &, Particle &)> f);
 
+    void taskModelNew(std::function<void(Particle &, Particle &)> f);
+
 public:
     LinkedCellParticleContainer(double cutoff, std::array<double, 3> &domain, std::array<BoundaryCondition, 6> &boundaries, int parallel);
 

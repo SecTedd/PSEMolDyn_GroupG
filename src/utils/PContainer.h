@@ -10,6 +10,7 @@
 #include <vector>
 #include <array>
 #include "ArrayUtils.h"
+#include <iostream>
 
 /**
  * @brief namespace that includes utils for the particle container
@@ -536,6 +537,30 @@ namespace PContainer
         if (currentCellIndex == numCell - 2)
             return 0;
         else
-            return numCell - 1;
+           return numCell - 1;
+    }
+
+    inline std::vector<int> getNeigbhourGroupsNewton(int groupIdx, std::array<int, 3> &numGroups) {
+    
+        std::vector<int> result;
+        std::array<int,3> index3D = convert1DTo3D(groupIdx, numGroups);
+
+        for (int z = index3D[2]; z <= index3D[2]+1; z++) {
+            if (z < 0 || z >= numGroups[2])
+                continue;
+            for (int y = index3D[1]-1; y <= index3D[1]+1; y++) {
+                if (y < 0 || y >= numGroups[1])
+                    continue;
+                for (int x = index3D[0]-1; x <= index3D[0]+1; x++) {
+                    if (x < 0 || x >= numGroups[0]) 
+                        continue;
+                    int neighbourIdx = convert3DTo1D({x, y, z}, numGroups);
+                    if (neighbourIdx > groupIdx)
+                        result.push_back(neighbourIdx);
+                }
+            }
+        }
+        return result;
     }
 }
+
