@@ -189,7 +189,7 @@ void LinkedCellParticleContainer::initializeGroups(int parallel)
 
     else if (parallel == 2) {
         numGroups = ((numCells[0] - 1) / 2) * ((numCells[1] - 1) / 2) * ((numCells[2] - 1) / 2);
-        maxCellsPerGroup = 4;
+        maxCellsPerGroup = numCells[2]-2 > 1? 8 : 4;
         std::cout << "Num Groups at init: " << numGroups << std::endl;
     }
 
