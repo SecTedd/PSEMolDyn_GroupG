@@ -4,6 +4,7 @@
     <end_time>10</end_time>
     <delta_t>0.00005</delta_t>
     <cutoff>3.0</cutoff>
+    <dimension>3</dimension>
     <domain>
         <x>130</x>
         <y>130</y>
@@ -22,14 +23,23 @@
         <y>0</y>
         <z>0</z>
     </g_grav>
-    <temp_init>0</temp_init>
-    <brownianMotion>false</brownianMotion>
-    <n_thermostat>0</n_thermostat>
-    <temp_target>0</temp_target>
-    <delta_temp>0</delta_temp>
     <membrane>true</membrane>
+    <brownianMotion>false</brownianMotion>
     <writeFrequency>10</writeFrequency>
     <baseName>outputVTK/</baseName>
+    <csvWriteFrequency>10000</csvWriteFrequency>
+    <numBins>30</numBins>
+    <thermostat>
+        <n_thermostat>0</n_thermostat>
+        <apply_to>
+            <x>0</x>
+            <y>0</y>
+            <z>0</z>
+        </apply_to>
+        <temp_init>0</temp_init>
+        <temp_target>0</temp_target>
+        <delta_temp>0</delta_temp>
+    </thermostat>
     <cuboid>
         <mass>1</mass>
         <h>2.2</h>

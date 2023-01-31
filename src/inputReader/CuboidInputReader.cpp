@@ -6,7 +6,6 @@
  */
 
 #include "./CuboidInputReader.h"
-#include "../utils/MaxwellBoltzmannDistribution.h"
 #include "../utils/ArrayUtils.h"
 #include "../utils/ParticleGenerator.h"
 
@@ -25,6 +24,8 @@ void CuboidInputReader::readInput(ProgramParameters &programParameters, const ch
     double epsilon;
     double sigma;
     int type;
+    int fixed_int;
+    bool fixed_bool;
 
     std::ifstream input_file(filename);
     std::string tmp_string;
@@ -108,6 +109,20 @@ void CuboidInputReader::readInput(ProgramParameters &programParameters, const ch
 
         datastream >> type;
         datastream.clear();
+
+        // get next line wich contains the fixed bool
+        getline(input_file, tmp_string);
+        getLogicLogger()->info("Read line: {}", tmp_string);
+        datastream.str(tmp_string);
+
+        datastream >> fixed_int;
+        datastream.clear();
+
+        if (fixed_int == 1) {
+            fixed_bool = true;
+        } else {
+            fixed_bool = false;
+        }
     }
     else
     {
@@ -115,6 +130,9 @@ void CuboidInputReader::readInput(ProgramParameters &programParameters, const ch
         exit(-1);
     }
 
-    std::unique_ptr<Cuboid> cuboid = std::make_unique<Cuboid>(Cuboid(x, n, h, m, v, epsilon, sigma, type));
+    // the membrane simulation only works through xml
+    // so hardcoded stiffness and averageBondlength
+    std::unique_ptr<Cuboid> cuboid = std::make_unique<Cuboid>(Cuboid(x, n, h, m, v, epsilon, sigma, type, 1, 1, fixed_bool));
     ParticleGenerator::generateCuboid(*particleContainer.get(), *cuboid, programParameters.getMembrane());
+
 }

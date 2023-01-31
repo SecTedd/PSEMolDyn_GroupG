@@ -25,6 +25,14 @@ private:
     // init temperature of the system
     double initTemperature;
 
+    // dimensions of the observed system
+    int dimension;
+
+    // an array with either 1's or 0's indicating the directions where the velocity scaling will be applied to (e.g. only in x direction) 
+    // this also indicates wich directions will not contribute to the temperature (1 0 1) will leave out the y direction scaling and 
+    // subtract the mean veclocity in y direction in the kinetic energy calculation
+    std::array<int, 3> applyTo;
+
     // particles of the observed system
     std::shared_ptr<ParticleContainer> particleContainer;
     
@@ -41,8 +49,9 @@ public:
      * 
      * @param particleContainer particles of the observed system
      * @param initTemperature init temperature of the system the thermostat is watching
+     * @param dimension dimensions of the observed system
      */
-    Thermostat(std::shared_ptr<ParticleContainer> particleContainer, double initTemperature);
+    Thermostat(std::shared_ptr<ParticleContainer> particleContainer, double initTemperature, int dimension);
 
     ~Thermostat();
     
@@ -79,9 +88,13 @@ public:
 
     const double getInitTemperature();
 
+    const std::array<int, 3> getApplyTo();
+
     // Setters
 
     const void setTargetTemperature(double targetTemperature);
 
     const void setTemperatureDelta(double temperatureDelta);
+
+    const void setApplyTo(std::array<int, 3> applyTo);
 };

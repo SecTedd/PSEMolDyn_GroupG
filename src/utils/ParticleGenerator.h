@@ -10,7 +10,6 @@
 #include "../model/ParticleContainer.h"
 #include "../model/Cuboid.h"
 #include "../model/Sphere.h"
-#include "./MaxwellBoltzmannDistribution.h"
 #include "./ArrayUtils.h"
 
 #include <iostream>
@@ -37,9 +36,9 @@ namespace ParticleGenerator
         double epsilon = cuboid.getEpsilon();
         double sigma = cuboid.getSigma();
         int type = cuboid.getType();
+        bool fixed = cuboid.getFixed();
         double stiffness = cuboid.getStiffness(); 
         double averageBondLength = cuboid.getAverageBondLength();
-
         std::array<int, 3> n = cuboid.getN();
         int numParticles = n[0] * n[1] * n[2];
 
@@ -61,7 +60,7 @@ namespace ParticleGenerator
                     position[0] = lowerLeftCorner[0] + (x * meshWidth);
                     position[1] = lowerLeftCorner[1] + (y * meshWidth);
                     position[2] = lowerLeftCorner[2] + (z * meshWidth);
-                    particleContainer.addParticle(position, initV, m, epsilon, sigma, type, stiffness, averageBondLength);
+                    particleContainer.addParticle(position, initV, m, epsilon, sigma, type, stiffness, averageBondLength, fixed);
                 }
             }
         }
@@ -185,12 +184,10 @@ namespace ParticleGenerator
      * @brief generates all particles of a sphere and adds them to the particle container, if radius is 0, there is still
      * @param particleContainer contains all particles for the simulation
      * @param sphere contains all necessary parameters for the construction of the sphere
+     * @param dimension 2D or 3D Sphere
      */
-    inline void generateSphere(ParticleContainer &particleContainer, Sphere &sphere)
+    inline void generateSphere(ParticleContainer &particleContainer, Sphere &sphere, int dimension)
     {
-        // Dimension
-        int dimension = 2;
-
         std::array<double, 3> center = sphere.getCenter();
         double m = sphere.getM();
         int r = sphere.getR();
@@ -199,6 +196,7 @@ namespace ParticleGenerator
         double epsilon = sphere.getEpsilon();
         double sigma = sphere.getSigma();
         int type = sphere.getType();
+        bool fixed = sphere.getFixed();
 
         // number of particles which are later allocated
         int numParticles = 0;
@@ -254,7 +252,7 @@ namespace ParticleGenerator
                 // normally r-0.5 * mesh width but we want to include a bit more particles
                 if (ArrayUtils::L2Norm(position - center) <= r * meshWidth)
                 {
-                    particleContainer.addParticle(position, initV, m, epsilon, sigma, type);
+                    particleContainer.addParticle(position, initV, m, epsilon, sigma, fixed, type);
                 }
 
                 // if three dimensions, we need to do this for every z
@@ -267,7 +265,7 @@ namespace ParticleGenerator
                     position[2] = startingPoint[2] + (z * meshWidth);
                     if (ArrayUtils::L2Norm(position - center) <= r * meshWidth)
                     {
-                        particleContainer.addParticle(position, initV, m, epsilon, sigma, type);
+                        particleContainer.addParticle(position, initV, m, epsilon, sigma, fixed, type);
                     }
                 }
             }

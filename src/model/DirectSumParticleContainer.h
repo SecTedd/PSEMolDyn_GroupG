@@ -74,6 +74,34 @@ public:
      * @brief Creates a new particle and adds it to the vector
      * @param x The position array of the particle
      * @param v The velocity array of the particle
+     * @param m The mass of the particle
+     * @param type The type of the particle
+     * @param epsilon The epsilon of the particle
+     * @param sigma The sigma of the particle
+     * @param stiffness The stiffness of the molecule
+     * @param averageBondLength The average Bond Length of the molecule
+     * @param fixed The stationary indicator
+     */
+    const void addParticle(std::array<double, 3> &x, std::array<double, 3> &v, double &m, double &epsilon, double &sigma, int &type, double &stiffness, double &averageBondLength, bool &fixed);
+
+
+    /**
+     * @brief Creates a new particle and adds it to the vector
+     * @param x The position array of the particle
+     * @param v The velocity array of the particle
+     * @param m The mass of the particle
+     * @param type The type of the particle
+     * @param epsilon The epsilon of the particle
+     * @param sigma The sigma of the particle
+     * @param fixed The stationary indicator
+     */
+    const void addParticle(std::array<double, 3> &x, std::array<double, 3> &v, double &m, double &epsilon, double &sigma, bool &fixed, int &type) override;
+
+
+    /**
+     * @brief Creates a new particle and adds it to the vector
+     * @param x The position array of the particle
+     * @param v The velocity array of the particle
      * @param f The force acting on the particle
      * @param old_f The previous force acting on the particle
      * @param m The mass of the particle

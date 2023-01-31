@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
+#include <cstdio>
 #include "../src/model/LinkedCellParticleContainer.h"
 #include "../src/inputReader/XMLInputReader.h"
 #include "../src/outputWriter/CheckpointWriter.h"
@@ -74,4 +75,5 @@ TEST(Checkpoints, WriteAndReadCheckpoint)
     EXPECT_THAT(p.getV(), testing::ElementsAre(-1, -2, -3));
     EXPECT_THAT(p.getF(), testing::ElementsAre(-4, -5, -6));
     EXPECT_THAT(p.getOldF(), testing::ElementsAre(-7, -8, -9));
+    std::remove(filename.c_str());
 }

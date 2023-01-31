@@ -27,7 +27,7 @@ ParticleCell::~ParticleCell()
 
 const void ParticleCell::insertParticleIndex(int index)
 {
-    particleIndices->push_back(index);
+    particleIndices->emplace_back(index);   
 }
 
 const void ParticleCell::clearCell() { particleIndices->clear(); }

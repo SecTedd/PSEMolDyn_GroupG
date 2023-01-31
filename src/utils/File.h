@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include <sstream>
 #include <string>
 #include <ctime>
 #include <iostream>

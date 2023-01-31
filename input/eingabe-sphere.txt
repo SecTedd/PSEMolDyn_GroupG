@@ -17,6 +17,7 @@ $Sph
 # 6. epsilon value for the Lennard Jones force
 # 7. sigma value for the Lennard Jones force
 # 8. Type for the particles, used for displaying different colors (1 int value)
+# 9. Indicator for stationary sphere (1 int value where 0 means false and 1 means true)
 #
 60.0 25.0 0.0
 15
@@ -25,4 +26,5 @@ $Sph
 0.0 -10.0 0.0
 1.0
 1.0
+1
 1

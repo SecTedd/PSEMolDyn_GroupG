@@ -10,6 +10,7 @@
 #include "./XYZWriter.h"
 #include "./VTKWriter.h"
 #include "./CheckpointWriter.h"
+#include "./CSVWriter.h"
 #include "../model/ProgramParameters.h"
 #include "spdlog/spdlog.h"
 
@@ -24,6 +25,7 @@ private:
     outputWriter::XYZWriter xyzWriter;
     outputWriter::VTKWriter vtkWriter;
     outputWriter::CheckpointWriter checkpointWriter;
+    outputWriter::CSVWriter csvWriter = outputWriter::CSVWriter("../csv");
 
     /**
      * A spdlog logger, which logs the logic of the program flow
@@ -72,4 +74,12 @@ public:
      * @brief creates a checkpoint with the state of all particles
      */
     void createCheckpoint();
+
+    /**
+     * @brief writes the data to csv file (append)
+     * 
+     * @param data the data to write
+     * @param avg the total sum of all particles ever measured in a bin
+     */
+    void writeCSV(std::vector<int> data, std::vector<int> avg);
 };

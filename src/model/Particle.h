@@ -72,8 +72,8 @@ private:
      * True if particle is out of domain bounds
      */
     bool halo;
-
-    /**
+    
+    /**    
      * The direct parallel neighbours of the particle
      */
     std::vector<int> parallelNeighbours;
@@ -92,6 +92,11 @@ private:
      * Average Bond Length of molecule
     */
     double averageBondLength;
+
+    /**
+     * True if the particle is stationary and should not move or experience any force
+     */
+    bool fixed;
 
     /**
      * a speedlog logger which logs construction and destruction of particles
@@ -127,11 +132,43 @@ public:
      * @param type_arg The type of the particle
      * @param epsilon_arg The epsilon of the particle
      * @param sigma_arg The sigma of the particle
+     * @param stiffness The stiffness of the molecule
+     * @param averageBondLength The average Bond Length of the olecule
+     * @param fixed_arg The stationary indicator
+     */
+    Particle(
+        // for visualization, we need always 3 coordinates
+        // -> in case of 2d, we use only the first and the second
+        std::array<double, 3> x_arg, std::array<double, 3> v_arg, double m_arg, double epsilon_arg, double sigma_arg, int type_arg, double stiffness_arg, double averageBondLength_arg, bool fixed_arg);
+
+    /**
+     * @brief Creates a new particle and adds it to the vector
+     * @param x_arg The position array of the particle
+     * @param v_arg The velocity array of the particle
+     * @param m_arg The mass of the particle
+     * @param type_arg The type of the particle
+     * @param epsilon_arg The epsilon of the particle
+     * @param sigma_arg The sigma of the particle
      */
     Particle(
         // for visualization, we need always 3 coordinates
         // -> in case of 2d, we use only the first and the second
         std::array<double, 3> x_arg, std::array<double, 3> v_arg, double m_arg, double epsilon_arg, double sigma_arg, int type_arg);
+
+    /**
+     * @brief Creates a new particle and adds it to the vector
+     * @param x_arg The position array of the particle
+     * @param v_arg The velocity array of the particle
+     * @param m_arg The mass of the particle
+     * @param type_arg The type of the particle
+     * @param epsilon_arg The epsilon of the particle
+     * @param sigma_arg The sigma of the particle
+     * @param fixed_arg The stationary indicator
+     */
+    Particle(
+        // for visualization, we need always 3 coordinates
+        // -> in case of 2d, we use only the first and the second
+        std::array<double, 3> x_arg, std::array<double, 3> v_arg, double m_arg, double epsilon_arg, double sigma_arg, bool fixed_arg, int type_arg = 0);
 
     /**
      * @brief Creates a new particle and adds it to the vector
@@ -173,6 +210,9 @@ public:
     double getM() const;
 
     int getType() const;
+
+    const void setFixed(bool fixed);
+    const bool getFixed();
 
     const int getCellIdx();
     const void setCellIdx(int cell_idx_arg);

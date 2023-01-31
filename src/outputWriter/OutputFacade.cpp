@@ -56,6 +56,10 @@ void OutputFacade::createCheckpoint()
     checkpointWriter.writeCheckpoint(programParameters->getParticleContainer().get(), &filename, &scheme);
 }
 
+void OutputFacade::writeCSV(std::vector<int> data, std::vector<int> avg) {
+    csvWriter.writeData(data, avg);
+}
+
 void OutputFacade::createDirectory(std::string path)
 {
     // Unix command for creating folders

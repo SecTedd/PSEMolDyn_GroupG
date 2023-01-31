@@ -95,8 +95,7 @@ void XMLInputReader::readInput(ProgramParameters &programParameters, const char 
         programParameters.setEndTime(xml->end_time());
         programParameters.setDeltaT(xml->delta_t());
         programParameters.setCutoff(xml->cutoff());
-        if (xml->temp_init().present())
-            programParameters.setTempInit(xml->temp_init().get());
+
         if (xml->brownianMotion().present())
             programParameters.setBrownianMotion(xml->brownianMotion().get());
 
@@ -106,6 +105,9 @@ void XMLInputReader::readInput(ProgramParameters &programParameters, const char 
         domain[1] = d.y();
         domain[2] = d.z();
         programParameters.setDomain(domain);
+
+        if (xml->dimension().present())
+            programParameters.setDimension(xml->dimension().get());
 
         std::array<BoundaryCondition, 6> boundaries = std::array<BoundaryCondition, 6>();
         simulation_t::boundaries_type b = xml->boundaries();
@@ -129,18 +131,6 @@ void XMLInputReader::readInput(ProgramParameters &programParameters, const char 
         gGrav[1] = g.y();
         gGrav[2] = g.z();
         programParameters.setGGrav(gGrav);
-
-        programParameters.setNThermostats(xml->n_thermostat());
-
-        if (xml->temp_target().present())
-        {
-            programParameters.setTempTarget(xml->temp_target().get());
-        }
-
-        if (xml->delta_temp().present())
-        {
-            programParameters.setDeltaTemp(xml->delta_temp().get());
-        }
 
         if (xml->membrane().present())
         {
@@ -166,6 +156,42 @@ void XMLInputReader::readInput(ProgramParameters &programParameters, const char 
         {
             std::string filename = i->substr(0, i->length());
             inputFacade->readInput(programParameters, filename.c_str());
+        }
+
+        if(xml->csvWriteFrequency().present()){
+            programParameters.setCsvWriteFrequency(xml->csvWriteFrequency().get()); 
+        }
+
+        if(xml->numBins().present()){
+            programParameters.setNumBins(xml->numBins().get()); 
+        }
+
+        if (xml->thermostat().present())
+        {
+            auto thermostat = xml->thermostat().get();
+
+            programParameters.setNThermostats(thermostat.n_thermostat());
+
+            std::array<int, 3> applyTo;
+
+            applyTo[0] = thermostat.apply_to().x();
+            applyTo[1] = thermostat.apply_to().y();
+            applyTo[2] = thermostat.apply_to().z();
+
+            programParameters.setThermostatApplyTo(applyTo);
+
+            if (thermostat.temp_init().present())
+                programParameters.setTempInit(thermostat.temp_init().get());
+
+            if (thermostat.temp_target().present())
+            {
+                programParameters.setTempTarget(thermostat.temp_target().get());
+            }
+
+            if (thermostat.delta_temp().present())
+            {
+                programParameters.setDeltaTemp(thermostat.delta_temp().get());
+            }
         }
 
         for (simulation_t::cuboid_const_iterator i(xml->cuboid().begin()); i != xml->cuboid().end(); i++)
@@ -224,6 +250,13 @@ void XMLInputReader::readInput(ProgramParameters &programParameters, const char 
             double epsilon = i->epsilon();
             double sigma = i->sigma();
             int type = i->type();
+            bool fixed = false;
+
+            if (i->fixed().present())
+            {
+                fixed = i->fixed().get();
+            }
+
             double stiffness = 1;
             double averageBondLength = 1;
 
@@ -237,7 +270,7 @@ void XMLInputReader::readInput(ProgramParameters &programParameters, const char 
                 averageBondLength = i->average_bond_length().get();
             }
 
-            std::unique_ptr<Cuboid> cuboid = std::make_unique<Cuboid>(Cuboid(position, dimensions, h, m, velocity, epsilon, sigma, type, stiffness, averageBondLength));
+            std::unique_ptr<Cuboid> cuboid = std::make_unique<Cuboid>(Cuboid(position, dimensions, h, m, velocity, epsilon, sigma, type, stiffness, averageBondLength, fixed));
             ParticleGenerator::generateCuboid(*programParameters.getParticleContainer(), *cuboid, programParameters.getMembrane());
         }
 
@@ -261,9 +294,15 @@ void XMLInputReader::readInput(ProgramParameters &programParameters, const char 
             double epsilon = i->epsilon();
             double sigma = i->sigma();
             int type = i->type();
+            bool fixed = false;
 
-            std::unique_ptr<Sphere> sphere = std::make_unique<Sphere>(Sphere(center, r, h, m, velocity, epsilon, sigma, type));
-            ParticleGenerator::generateSphere(*programParameters.getParticleContainer(), *sphere);
+            if (i->fixed().present())
+            {
+                fixed = i->fixed().get();
+            }
+
+            std::unique_ptr<Sphere> sphere = std::make_unique<Sphere>(Sphere(center, r, h, m, velocity, epsilon, sigma, type, fixed));
+            ParticleGenerator::generateSphere(*programParameters.getParticleContainer(), *sphere, programParameters.getDimension());
         }
     }
     catch (const xml_schema::exception &e)

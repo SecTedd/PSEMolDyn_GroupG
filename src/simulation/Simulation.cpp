@@ -15,6 +15,7 @@
 #include "SingleParticleGravitationalForce.h"
 #include "../model/ProgramParameters.h"
 #include "./Thermostat.h"
+#include "./DVProfileCalculator.h"
 
 #include <iostream>
 
@@ -49,7 +50,7 @@ const void Simulation::simulate()
     OutputFacade outputFacade = OutputFacade(_programParameters);
 
     // initialize Thermostat
-    Thermostat t = Thermostat(_programParameters->getParticleContainer(), _programParameters->getTempInit());
+    Thermostat t = Thermostat(_programParameters->getParticleContainer(), _programParameters->getTempInit(), _programParameters->getDimension());
     // target temperature provided
     if (_programParameters->getTempTarget() != -1)
     {
@@ -60,11 +61,14 @@ const void Simulation::simulate()
     {
         t.setTemperatureDelta(_programParameters->getDeltaTemp());
     }
+    t.setApplyTo(_programParameters->getThermostatApplyTo());
     // initialize browninan motion if needed
     if (_programParameters->getBrownianMotion())
     {
         t.initializeBrownianMotion();
     }
+
+    DVProfileCalculator dv_calc = DVProfileCalculator(_programParameters->getParticleContainer(), _programParameters->getNumBins(), _programParameters->getDomain());
 
     // calculating force once to initialize force
     _interParticleForceCalculation->calculateForce(*_programParameters->getParticleContainer());
@@ -90,8 +94,6 @@ const void Simulation::simulate()
         // calculate new v
         calculateV();
 
-        iteration++;
-
         // if n_thermostats = 0 the thermostat is off
         if (_programParameters->getNThermostats() != 0 && iteration % _programParameters->getNThermostats() == 0)
         {
@@ -102,7 +104,15 @@ const void Simulation::simulate()
         {
             outputFacade.outputVTK(iteration);
         }
+
+        // if csv_writeFrequency = 0 no csv output will be written
+        if (_programParameters->getCsvWriteFrequency() != 0 && iteration % _programParameters->getCsvWriteFrequency() == 0 && _programParameters->getBenchmarkIterations() == 0) 
+        {
+            std::vector<int> data = dv_calc.calculate();
+            outputFacade.writeCSV(data, dv_calc.getAvg());
+        }
         _logicLogger->info("Iteration {} finished.", iteration);
+        iteration++;
 
         current_time += _programParameters->getDeltaT();
     }

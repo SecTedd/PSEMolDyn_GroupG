@@ -43,6 +43,9 @@ private:
     // Variable for the Lennard Jones force
     double sigma;
 
+    // indicates whether particles of the cuboid should be stationary
+    bool fixed;
+
     /**
      * Stiffness of molecule
      */
@@ -72,8 +75,9 @@ public:
      * @param type The type of the particles in the cuboid
      * @param stiffness The stiffness of the molecule
      * @param averageBondLength The average Bond Length of the molecule
+     * @param fixed Indicates whether particles of the cuboid should be stationary
      */
-    Cuboid(std::array<double, 3> x, std::array<int, 3> n, double h, double m, std::array<double, 3> v, double epsilon, double sigma, int type, double stiffness_arg = 1, double averageBondLength_arg = 1);
+    Cuboid(std::array<double, 3> x, std::array<int, 3> n, double h, double m, std::array<double, 3> v, double epsilon, double sigma, int type, double stiffness_arg, double averageBondLength_arg, bool fixed);
 
     ~Cuboid();
 
@@ -97,6 +101,8 @@ public:
 
     const int getType();
 
+    const bool getFixed();
+
     const double getStiffness();
 
     const double getAverageBondLength();
@@ -116,6 +122,8 @@ public:
     const void setV(std::array<double, 3> &v);
 
     const void setType(int type);
+
+    const void setFixed(bool fixed);
 
     const void setStiffness(double stiffness_arg);
 

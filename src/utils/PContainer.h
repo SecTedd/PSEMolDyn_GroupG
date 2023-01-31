@@ -527,13 +527,13 @@ namespace PContainer
     /**
      * @brief calculates where  in the halo the cell should be mirrored to
      *
-     * @param currentCellIndex3D the cell index of the current cell in 3D
-     * @param numCell the number of cells in each dimension
+     * @param currentCellIndex the cell index of the current cell in one of the 3 dimensions
+     * @param numCell the number of cells in one of the 3 dimensions
      * @returns the index of the mirrored cell
      */
-    inline int getMirroredHaloIndex(int currentCellIndex3D, int numCell)
+    inline int getMirroredHaloIndex(int currentCellIndex, int numCell)
     {
-        if (currentCellIndex3D == numCell - 2)
+        if (currentCellIndex == numCell - 2)
             return 0;
         else
             return numCell - 1;
