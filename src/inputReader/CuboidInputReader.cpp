@@ -130,7 +130,9 @@ void CuboidInputReader::readInput(ProgramParameters &programParameters, const ch
         exit(-1);
     }
 
-    std::unique_ptr<Cuboid> cuboid = std::make_unique<Cuboid>(Cuboid(x, n, h, m, v, epsilon, sigma, type, fixed_bool));
+    // the membrane simulation only works through xml
+    // so hardcoded stiffness and averageBondlength
+    std::unique_ptr<Cuboid> cuboid = std::make_unique<Cuboid>(Cuboid(x, n, h, m, v, epsilon, sigma, type, 1, 1, fixed_bool));
     ParticleGenerator::generateCuboid(*particleContainer.get(), *cuboid, programParameters.getMembrane());
 
 }

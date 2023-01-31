@@ -19,9 +19,10 @@ TEST(DVCalculator, ParticlesPerBin)
     double m = 1;
     double sigma = 1;
     double epsilon = 5;
+    int type = 1;
     
-    pc->addParticle(x1, v, m, epsilon, sigma);
-    pc->addParticle(x2, v, m, epsilon, sigma);
+    pc->addParticle(x1, v, m, epsilon, sigma, type);
+    pc->addParticle(x2, v, m, epsilon, sigma, type);
 
     auto dv_calc = std::make_shared<DVProfileCalculator>(pc, 2, domain);
     auto result = dv_calc->calculate();
@@ -45,9 +46,10 @@ TEST(DVCalculator, AverageParticlesPerBin)
     double m = 1;
     double sigma = 1;
     double epsilon = 5;
-    
-    pc->addParticle(x1, v, m, epsilon, sigma);
-    pc->addParticle(x2, v, m, epsilon, sigma);
+    int type = 1;
+
+    pc->addParticle(x1, v, m, epsilon, sigma, type);
+    pc->addParticle(x2, v, m, epsilon, sigma, type);
 
     auto dv_calc = std::make_shared<DVProfileCalculator>(pc, 2, domain);
     auto result = dv_calc->calculate();

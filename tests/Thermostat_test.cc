@@ -149,8 +149,9 @@ TEST(Thermostat, OnlyXDirection)
     double m = 1;
     double sigma = 1;
     double epsilon = 5;
+    int type = 1;
     
-    pc->addParticle(x, v, m, epsilon, sigma);
+    pc->addParticle(x, v, m, epsilon, sigma, type);
 
     Thermostat t = Thermostat(pc, 100.0, 2);
     t.setTargetTemperature(40.0);

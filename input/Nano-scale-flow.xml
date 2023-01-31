@@ -4,6 +4,7 @@
     <end_time>50</end_time>
     <delta_t>0.0005</delta_t>
     <cutoff>2.75</cutoff>
+    <dimension>3</dimension>
     <domain>
         <x>30</x>
         <y>30</y>
@@ -17,8 +18,12 @@
         <zFront>Periodic</zFront>
         <zBack>Periodic</zBack>
     </boundaries>
+    <g_grav>
+        <x>0</x>
+        <y>-0.8</y>
+        <z>0</z>
+    </g_grav>
     <brownianMotion>false</brownianMotion>
-    <g_grav>-0.8</g_grav>
     <writeFrequency>1000</writeFrequency>
     <baseName>nano-scale-flow</baseName>
     <csvWriteFrequency>10000</csvWriteFrequency>

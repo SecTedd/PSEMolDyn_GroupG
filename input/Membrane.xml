@@ -4,6 +4,7 @@
     <end_time>500</end_time>
     <delta_t>0.01</delta_t>
     <cutoff>4.0</cutoff>
+    <dimension>2</dimension>
     <domain>
         <x>148</x>
         <y>148</y>
@@ -22,11 +23,19 @@
         <y>0</y>
         <z>-0.001</z>
     </g_grav>
-    <brownianMotion>false</brownianMotion>
-    <n_thermostat>0</n_thermostat>
     <membrane>true</membrane>
+    <brownianMotion>false</brownianMotion>
     <writeFrequency>100</writeFrequency>
-    <baseName>outputVTKMembrane</baseName>
+    <baseName>Membrane</baseName>
+    <thermostat>
+        <n_thermostat>0</n_thermostat>
+        <apply_to>
+            <x>1</x>
+            <y>1</y>
+            <z>1</z>
+        </apply_to>
+        <temp_init>40</temp_init>
+    </thermostat>
     <cuboid>
         <mass>1</mass>
         <h>2.2</h>

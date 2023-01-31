@@ -58,6 +58,12 @@ const void DirectSumParticleContainer::addParticle(std::array<double, 3> &x, std
     particles.emplace_back(x, v, m, epsilon, sigma, type, stiffness, averageBondLength);
 }
 
+const void DirectSumParticleContainer::addParticle(std::array<double, 3> &x, std::array<double, 3> &v, double &m, double &epsilon, double &sigma, int &type, double &stiffness, double &averageBondLength, bool &fixed)
+{
+
+    particles.emplace_back(x, v, m, epsilon, sigma, type, stiffness, averageBondLength, fixed);
+}
+
 const void DirectSumParticleContainer::addParticle(std::array<double, 3> &x, std::array<double, 3> &v, double &m, double &epsilon, double &sigma, bool &fixed, int &type)
 {
     // using the std function to create the new particle so it does not need to be copied to the right memory address

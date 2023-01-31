@@ -61,6 +61,18 @@ Particle::Particle(std::array<double, 3> x_arg, std::array<double, 3> v_arg,
 }
 
 Particle::Particle(std::array<double, 3> x_arg, std::array<double, 3> v_arg,
+                   double m_arg, double epsilon_arg, double sigma_arg, int type_arg, double stiffness_arg, double averageBondLength_arg, bool fixed_arg) : x(x_arg), v(v_arg), m(m_arg), epsilon(epsilon_arg), sigma(sigma_arg), type(type_arg), stiffness(stiffness_arg), averageBondLength(averageBondLength_arg), fixed(fixed_arg)
+{
+    f = {0., 0., 0.};
+    old_f = {0., 0., 0.};
+    cell_idx = 0;
+    invalid = false;
+    halo = false;
+    _memoryLogger = spdlog::get("memory_logger");
+    _memoryLogger->info("Particle generated!");
+}
+
+Particle::Particle(std::array<double, 3> x_arg, std::array<double, 3> v_arg,
                    double m_arg, double epsilon_arg, double sigma_arg, int type_arg) : x(x_arg), v(v_arg), m(m_arg), epsilon(epsilon_arg), sigma(sigma_arg), type(type_arg)
 {
     f = {0., 0., 0.};

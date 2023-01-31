@@ -3,6 +3,7 @@
        xsi:noNamespaceSchemaLocation="../src/xsd/Simulation.xsd">
     <end_time>20</end_time>
     <delta_t>0.0005</delta_t>
+    <dimension>2</dimension>
     <cutoff>3</cutoff>
     <domain>
         <x>300</x>
@@ -17,15 +18,19 @@
         <zFront>Outflow</zFront>
         <zBack>Outflow</zBack>
     </boundaries>
-    <g_grav>-12.44</g_grav>
+    <g_grav>
+        <x>0</x>
+        <y>-12.44</y>
+        <z>0</z>
+    </g_grav>
     <writeFrequency>100</writeFrequency>
-    <baseName>outputVTKB/</baseName>
+    <baseName>Benchmark/</baseName>
     <thermostat>
         <n_thermostat>100</n_thermostat>
         <apply_to>
-            <x>0</x>
-            <y>0</y>
-            <z>0</z>
+            <x>1</x>
+            <y>1</y>
+            <z>1</z>
         </apply_to>
         <temp_init>40</temp_init>
     </thermostat>

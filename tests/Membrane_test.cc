@@ -111,7 +111,7 @@ TEST(Membrane, ParticleNeighbours)
     double sigma = 1;
     double epsilon = 5;
     int type = 0;
-    auto cuboid = Cuboid(x, n, h, m, v, epsilon, sigma, type);
+    auto cuboid = Cuboid(x, n, h, m, v, epsilon, sigma, type, 1, 1, false);
 
     ParticleGenerator::generateCuboid(pc, cuboid, true);
 

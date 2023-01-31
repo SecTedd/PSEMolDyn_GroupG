@@ -106,6 +106,9 @@ void XMLInputReader::readInput(ProgramParameters &programParameters, const char 
         domain[2] = d.z();
         programParameters.setDomain(domain);
 
+        if (xml->dimension().present())
+            programParameters.setDimension(xml->dimension().get());
+
         std::array<BoundaryCondition, 6> boundaries = std::array<BoundaryCondition, 6>();
         simulation_t::boundaries_type b = xml->boundaries();
         std::string boundary = b.xLeft();
