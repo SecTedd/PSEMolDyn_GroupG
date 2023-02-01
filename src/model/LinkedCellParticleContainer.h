@@ -41,7 +41,7 @@ private:
 
     std::array<int, 3> numInteractingCells; // number of cells in each dimension relevant for grouping
 
-    int parallel; // 0 for no parallelization, 1 for first parallel strategy, 2 for second parallel strategy
+    int parallel; // 0 for no parallelization, 1 for fork join with cell grouping, 2 for fork join with supercell grouping, 3 for tasks
 
     /**
      * @brief compute index of cell the given particle belongs to
@@ -67,35 +67,71 @@ private:
     std::array<double, 3> mirroredPosition(std::array<double, 3> position);
 
     /**
-     * @brief reserves memory for & initializes vector of cell groups according to parallelization strategy
-     * @param parallel parallelization strategy which has to be used
+     * @brief reserves memory for cell groups according to parallelization strategy
      */
     void reserveGroups();
 
+    /**
+     * @brief reserves memory for vector of supercells, only called if parallel = 2
+     */
     void reserveSuperCells();
 
+    /**
+     * @brief fills group & supercell vectors according to parallelization strategy
+     */
     void initializeParallelGroups();
 
+    /**
+     * @brief computes group given supercell belongs to
+     * @param cellIdx index of supercell
+     * @return group index of supercell
+     */
     const int computeSupercellGroup(int cellIdx);
 
     /**
-     * @brief computes group the given cell belongs to according to parallelization strategy
+     * @brief computes group or supercell (if parallel = 2) the given cell belongs to according to parallelization strategy
      * @param cellIdx index of cell
-     * @param parallel parallelization strategy
-     * @return group index of cell
+     * @return group or supercell index of cell
      */
     const int computeCellGroup(int cellIdx);
 
+    /**
+     * @brief computes particle interactions within one cell implementing Newton's 3rd law
+     * @param i index of cell
+     * @param f particle interaction function
+     */
     inline void intraCellInteraction(int i, std::function<void(Particle &, Particle &)> f);
 
+    /**
+     * @brief computes particle interactions between particles of two cells
+     * @param i index of first cell
+     * @param j index of second cell
+     * @param f particle interaction function
+     */
     inline void interCellInteraction(int i, int j, std::function<void(Particle &, Particle &)> f);
 
+    /**
+     * @brief parallelizes particle interactions according to fork join model
+     * @param f particle interaction function
+     */
     void forkJoin(std::function<void(Particle &, Particle &)> f);
 
+    /**
+     * @brief parallelizes neighbouring cell interactions through sequential groups
+     * @param f particle interaction function
+     */
     void directCellInteraction(std::function<void(Particle &, Particle &)> f);
 
+    /**
+     * @brief parallelizes neighbouring cell interactions through supercells and sequential groups
+     * @param f particle interaction function
+     */
     void nestedCellInteraction(std::function<void(Particle &, Particle &)> f);
 
+    /**
+     * @brief parallelizes particle interactions according to task model
+     * @param f particle interaction function
+     */
     void taskModel(std::function<void(Particle &, Particle &)> f);
 
 public:
@@ -153,7 +189,6 @@ public:
     /**
      * @brief computes number of cells and their size in each dimension, initializes them according to domain boundary conditions
      * @param domainBoundaries the boundaries of the domain
-     * @param parallel parallelization strategy which should be used in particleInteractions
      */
     const void initializeCells(std::array<BoundaryCondition, 6> &domainBoundaries);
 
