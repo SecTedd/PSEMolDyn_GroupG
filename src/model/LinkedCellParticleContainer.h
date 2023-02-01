@@ -241,6 +241,8 @@ public:
 
     std::vector<std::vector<int>> &getCellGroups();
 
+    std::vector<std::vector<int>> &getSuperCells();
+
     void setParallel(int parallel);
 
     const int getParallel();
