@@ -77,8 +77,12 @@ const void Simulation::simulate()
         force->calculateForce(*_programParameters->getParticleContainer(), current_time);
     }
 
-    outputFacade.outputVTK(iteration);
-
+    //only write 0th file if not in benchmark mode
+    if (_programParameters->getBenchmarkIterations() == 0)
+    {
+        outputFacade.outputVTK(iteration);
+    }
+        
     // for this loop, we assume: current x, current f and current v are known
     while (current_time < _programParameters->getEndTime())
     {

@@ -18,12 +18,16 @@ OutputFacade::OutputFacade(ProgramParameters* programParameters)
     _memoryLogger = spdlog::get("memory_logger");
     _memoryLogger->info("OutputFacade generated!");
 
-    // deleting folders and recreating them, so they are empty for every run of the simulation
-    // deleting the folders
-    removeDirectory(programParameters->getBaseName());
+    //only create output folders if not in benchmark mode
+    if (programParameters->getBenchmarkIterations() == 0) 
+    {
+        // deleting folders and recreating them, so they are empty for every run of the simulation
+        // deleting the folders
+        removeDirectory(programParameters->getBaseName());
 
-    // creating folders which are needed for output
-    createDirectory(programParameters->getBaseName());
+        // creating folders which are needed for output
+        createDirectory(programParameters->getBaseName());
+    }
 }
 
 OutputFacade::~OutputFacade()

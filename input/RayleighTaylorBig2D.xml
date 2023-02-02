@@ -23,7 +23,7 @@
         <y>-12.44</y>
         <z>0</z>
     </g_grav>
-    <writeFrequency>1</writeFrequency>
+    <writeFrequency>100</writeFrequency>
     <baseName>outputRTBig2D</baseName>
     <parallel>1</parallel>
     <thermostat>
