@@ -80,13 +80,13 @@ Memory logs on the other hand document the construction and destruction of objec
 
 ## Contest 2 (Parallel)
 
-Ran with OMP_NUM_THREADS=28 on cm2_tiny <br />
+Ran with OMP_NUM_THREADS=28 on cm2_tiny and 1 benchmark iteration <br />
 GCC: <br />
 - 2D 38 sec; 2,61 * 10^6 MUPS <br />
-- 3D 1.381 sec; 723787 MUPS <br />
+- 3D 1381 sec; 723787 MUPS <br />
 ICPX: <br />
 - 2D: 42 sec; 2,38 * 10^6 MUPS <br />
-- 3D: 1.351 sec; 740192 MUPS <br />
+- 3D: 1534 sec; 651890 MUPS <br />
 
 ## Structure: 
 ```
