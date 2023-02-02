@@ -3,73 +3,151 @@
 
     <xs:complexType name="simulation_t">
         <xs:sequence>
-            <xs:element name="end_time" type="xs:double" maxOccurs="1" minOccurs="1"/>
-            <xs:element name="delta_t" type="xs:double" maxOccurs="1" minOccurs="1"/>
-            <xs:element name="cutoff" type="xs:double" maxOccurs="1" minOccurs="1"/>
+            <xs:element name="end_time" type="xs:double" maxOccurs="1" minOccurs="1" />
+            <xs:element name="delta_t" type="xs:double" maxOccurs="1" minOccurs="1" />
+            <xs:element name="cutoff" type="xs:double" maxOccurs="1" minOccurs="1" />
+            <xs:element name="dimension" type="xs:int" maxOccurs="1" minOccurs="0" />
             <xs:element name="domain" maxOccurs="1" minOccurs="1">
-                <xs:complexType >
+                <xs:complexType>
                     <xs:sequence>
-                        <xs:element name="x" type="xs:double" maxOccurs="1" minOccurs="1"/>
-                        <xs:element name="y" type="xs:double" maxOccurs="1" minOccurs="1"/>
-                        <xs:element name="z" type="xs:double" maxOccurs="1" minOccurs="1"/>
+                        <xs:element name="x" type="xs:double" maxOccurs="1" minOccurs="1" />
+                        <xs:element name="y" type="xs:double" maxOccurs="1" minOccurs="1" />
+                        <xs:element name="z" type="xs:double" maxOccurs="1" minOccurs="1" />
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="boundaries" maxOccurs="1" minOccurs="1">
-                <xs:complexType >
+                <xs:complexType>
                     <xs:sequence>
-                        <xs:element name="xLeft" type="xs:string" maxOccurs="1" minOccurs="1"/>
-                        <xs:element name="xRight" type="xs:string" maxOccurs="1" minOccurs="1"/>
-                        <xs:element name="yBottom" type="xs:string" maxOccurs="1" minOccurs="1"/>
-                        <xs:element name="yTop" type="xs:string" maxOccurs="1" minOccurs="1"/>
-                        <xs:element name="zFront" type="xs:string" maxOccurs="1" minOccurs="1"/>
-                        <xs:element name="zBack" type="xs:string" maxOccurs="1" minOccurs="1"/>
+                        <xs:element name="xLeft" type="xs:string" maxOccurs="1" minOccurs="1" />
+                        <xs:element name="xRight" type="xs:string" maxOccurs="1" minOccurs="1" />
+                        <xs:element name="yBottom" type="xs:string" maxOccurs="1" minOccurs="1" />
+                        <xs:element name="yTop" type="xs:string" maxOccurs="1" minOccurs="1" />
+                        <xs:element name="zFront" type="xs:string" maxOccurs="1" minOccurs="1" />
+                        <xs:element name="zBack" type="xs:string" maxOccurs="1" minOccurs="1" />
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
-            <xs:element name="temp_init" type="xs:double" maxOccurs="1" minOccurs="0"/>
+            <xs:element name="g_grav" maxOccurs="1" minOccurs="1">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="x" type="xs:double" maxOccurs="1" minOccurs="1" />
+                        <xs:element name="y" type="xs:double" maxOccurs="1" minOccurs="1" />
+                        <xs:element name="z" type="xs:double" maxOccurs="1" minOccurs="1" />
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="membrane" type="xs:boolean" maxOccurs="1" minOccurs="0" />
             <xs:element name="brownianMotion" type="xs:boolean" maxOccurs="1" minOccurs="0"/>
-            <xs:element name="n_thermostat" type="xs:int" maxOccurs="1" minOccurs="1"/>
-            <xs:element name="temp_target" type="xs:double" maxOccurs="1" minOccurs="0"/>
-            <xs:element name="delta_temp" type="xs:double" maxOccurs="1" minOccurs="0"/>
-            <xs:element name="g_grav" type="xs:double" maxOccurs="1" minOccurs="0"/>
             <xs:element name="writeFrequency" type="xs:int" maxOccurs="1" minOccurs="0"/>
             <xs:element name="baseName" type="xs:string" maxOccurs="1" minOccurs="0"/>
             <xs:element name="createCheckpoint" type="xs:boolean" maxOccurs="1" minOccurs="0"/>
             <xs:element name="file_name" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="csvWriteFrequency" type="xs:int" maxOccurs="1" minOccurs="0"/>
+            <xs:element name="numBins" type="xs:int" maxOccurs="1" minOccurs="0"/>
+            <xs:element name="thermostat" minOccurs="0" maxOccurs="1">
             <xs:element name="parallel" type="xs:int" minOccurs="0" maxOccurs="1"/>
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="n_thermostat" type="xs:int" maxOccurs="1" minOccurs="1"/>
+                        <xs:element name="apply_to" maxOccurs="1" minOccurs="1">
+                            <xs:complexType>
+                                <xs:sequence>
+                                    <xs:element name="x" type="xs:int" maxOccurs="1" minOccurs="1"/>
+                                    <xs:element name="y" type="xs:int" maxOccurs="1" minOccurs="1"/>
+                                    <xs:element name="z" type="xs:int" maxOccurs="1" minOccurs="1"/>
+                                </xs:sequence>
+                            </xs:complexType>
+                        </xs:element>
+                        <xs:element name="temp_init" type="xs:double" maxOccurs="1" minOccurs="0"/>
+                        <xs:element name="temp_target" type="xs:double" maxOccurs="1" minOccurs="0"/>
+                        <xs:element name="delta_temp" type="xs:double" maxOccurs="1" minOccurs="0"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
             <xs:element name="cuboid" minOccurs="0" maxOccurs="unbounded">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element name="mass" type="xs:double" maxOccurs="1" minOccurs="1"/>
-                        <xs:element name="h" type="xs:double" maxOccurs="1" minOccurs="1"/>
-                        <xs:element name="epsilon" type="xs:double" maxOccurs="1" minOccurs="1"/>
-                        <xs:element name="sigma" type="xs:double" maxOccurs="1" minOccurs="1"/>
-                        <xs:element name="type" type="xs:int" maxOccurs="1" minOccurs="1"/>
+                        <xs:element name="mass" type="xs:double" maxOccurs="1" minOccurs="1" />
+                        <xs:element name="h" type="xs:double" maxOccurs="1" minOccurs="1" />
+                        <xs:element name="epsilon" type="xs:double" maxOccurs="1" minOccurs="1" />
+                        <xs:element name="sigma" type="xs:double" maxOccurs="1" minOccurs="1" />
+                        <xs:element name="type" type="xs:int" maxOccurs="1" minOccurs="1" />
+                        <xs:element name="fixed" type="xs:boolean" maxOccurs="1" minOccurs="0"/>     
+                        <xs:element name="stiffness" type="xs:double" maxOccurs="1" minOccurs="0" />
+                        <xs:element name="average_bond_length" type="xs:double" maxOccurs="1"
+                            minOccurs="0" />
                         <xs:element name="position">
                             <xs:complexType>
                                 <xs:sequence>
-                                    <xs:element name="x" type="xs:double" maxOccurs="1" minOccurs="1"/>
-                                    <xs:element name="y" type="xs:double" maxOccurs="1" minOccurs="1"/>
-                                    <xs:element name="z" type="xs:double" maxOccurs="1" minOccurs="1"/>
+                                    <xs:element name="x" type="xs:double" maxOccurs="1"
+                                        minOccurs="1" />
+                                    <xs:element name="y" type="xs:double" maxOccurs="1"
+                                        minOccurs="1" />
+                                    <xs:element name="z" type="xs:double" maxOccurs="1"
+                                        minOccurs="1" />
                                 </xs:sequence>
                             </xs:complexType>
                         </xs:element>
                         <xs:element name="velocity">
                             <xs:complexType>
                                 <xs:sequence>
-                                    <xs:element name="x" type="xs:double" maxOccurs="1" minOccurs="1"/>
-                                    <xs:element name="y" type="xs:double" maxOccurs="1" minOccurs="1"/>
-                                    <xs:element name="z" type="xs:double" maxOccurs="1" minOccurs="1"/>
+                                    <xs:element name="x" type="xs:double" maxOccurs="1"
+                                        minOccurs="1" />
+                                    <xs:element name="y" type="xs:double" maxOccurs="1"
+                                        minOccurs="1" />
+                                    <xs:element name="z" type="xs:double" maxOccurs="1"
+                                        minOccurs="1" />
                                 </xs:sequence>
                             </xs:complexType>
                         </xs:element>
                         <xs:element name="dimensions">
                             <xs:complexType>
                                 <xs:sequence>
-                                    <xs:element name="x" type="xs:int" maxOccurs="1" minOccurs="1"/>
-                                    <xs:element name="y" type="xs:int" maxOccurs="1" minOccurs="1"/>
-                                    <xs:element name="z" type="xs:int" maxOccurs="1" minOccurs="1"/>
+                                    <xs:element name="x" type="xs:int" maxOccurs="1" minOccurs="1" />
+                                    <xs:element name="y" type="xs:int" maxOccurs="1" minOccurs="1" />
+                                    <xs:element name="z" type="xs:int" maxOccurs="1" minOccurs="1" />
+                                </xs:sequence>
+                            </xs:complexType>
+                        </xs:element>
+                        <xs:element name="force" minOccurs="0" maxOccurs="unbounded">
+                            <xs:complexType>
+                                <xs:sequence>
+                                    <xs:element name="end_time" type="xs:double" maxOccurs="1"
+                                        minOccurs="1" />
+                                    <xs:element name="force">
+                                        <xs:complexType>
+                                            <xs:sequence>
+                                                <xs:element name="x" type="xs:double" maxOccurs="1"
+                                                    minOccurs="1" />
+                                                <xs:element name="y" type="xs:double" maxOccurs="1"
+                                                    minOccurs="1" />
+                                                <xs:element name="z" type="xs:double" maxOccurs="1"
+                                                    minOccurs="1" />
+                                            </xs:sequence>
+                                        </xs:complexType>
+                                    </xs:element>
+                                    <xs:element name="particles" minOccurs="0" maxOccurs="unbounded">
+                                        <xs:complexType>
+                                            <xs:sequence>
+                                                <xs:element name="particle_index">
+                                                    <xs:complexType>
+                                                        <xs:sequence>
+                                                            <xs:element name="x" type="xs:int"
+                                                                maxOccurs="1"
+                                                                minOccurs="1" />
+                                                            <xs:element name="y" type="xs:int"
+                                                                maxOccurs="1"
+                                                                minOccurs="1" />
+                                                            <xs:element name="z" type="xs:int"
+                                                                maxOccurs="1"
+                                                                minOccurs="1" />
+                                                        </xs:sequence>
+                                                    </xs:complexType>
+                                                </xs:element>
+                                            </xs:sequence>
+                                        </xs:complexType>
+                                    </xs:element>
                                 </xs:sequence>
                             </xs:complexType>
                         </xs:element>
@@ -84,22 +162,29 @@
                         <xs:element name="r" type="xs:int" maxOccurs="1" minOccurs="1"/>   
                         <xs:element name="epsilon" type="xs:double" maxOccurs="1" minOccurs="1"/>
                         <xs:element name="sigma" type="xs:double" maxOccurs="1" minOccurs="1"/> 
-                        <xs:element name="type" type="xs:int" maxOccurs="1" minOccurs="1"/>                        
+                        <xs:element name="type" type="xs:int" maxOccurs="1" minOccurs="1"/>           
+                        <xs:element name="fixed" type="xs:boolean" maxOccurs="1" minOccurs="0"/>                    
                         <xs:element name="center">
                             <xs:complexType>
                                 <xs:sequence>
-                                    <xs:element name="x" type="xs:double" maxOccurs="1" minOccurs="1"/>
-                                    <xs:element name="y" type="xs:double" maxOccurs="1" minOccurs="1"/>
-                                    <xs:element name="z" type="xs:double" maxOccurs="1" minOccurs="1"/>
+                                    <xs:element name="x" type="xs:double" maxOccurs="1"
+                                        minOccurs="1" />
+                                    <xs:element name="y" type="xs:double" maxOccurs="1"
+                                        minOccurs="1" />
+                                    <xs:element name="z" type="xs:double" maxOccurs="1"
+                                        minOccurs="1" />
                                 </xs:sequence>
                             </xs:complexType>
                         </xs:element>
                         <xs:element name="velocity">
                             <xs:complexType>
                                 <xs:sequence>
-                                    <xs:element name="x" type="xs:double" maxOccurs="1" minOccurs="1"/>
-                                    <xs:element name="y" type="xs:double" maxOccurs="1" minOccurs="1"/>
-                                    <xs:element name="z" type="xs:double" maxOccurs="1" minOccurs="1"/>
+                                    <xs:element name="x" type="xs:double" maxOccurs="1"
+                                        minOccurs="1" />
+                                    <xs:element name="y" type="xs:double" maxOccurs="1"
+                                        minOccurs="1" />
+                                    <xs:element name="z" type="xs:double" maxOccurs="1"
+                                        minOccurs="1" />
                                 </xs:sequence>
                             </xs:complexType>
                         </xs:element>
@@ -108,5 +193,5 @@
             </xs:element>
         </xs:sequence>
     </xs:complexType>
-    <xs:element name="simulation" type="simulation_t"/>
+    <xs:element name="simulation" type="simulation_t" />
 </xs:schema>
