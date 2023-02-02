@@ -94,7 +94,6 @@ ICPX: <br />
 ├── CMakeLists.txt
 ├── Doxyfile
 ├── README.md
-├── Thread_Benchmark.txt
 ├── build
 ├── checkpoints
 ├── cmake
