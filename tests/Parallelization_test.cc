@@ -180,13 +180,14 @@ TEST(ParallelParticleInteractions, Strategy1) {
     double m = 1;
     double epsilon = 1;
     double sigma = 1;
+    int type = 1; 
 
     pc.reserveMemoryForParticles(5);
-    pc.addParticle(x1, v, m, epsilon, sigma);
-    pc.addParticle(x2, v, m, epsilon, sigma);
-    pc.addParticle(x3, v, m, epsilon, sigma);
-    pc.addParticle(x4, v, m, epsilon, sigma);
-    pc.addParticle(x5, v, m, epsilon, sigma);
+    pc.addParticle(x1, v, m, epsilon, sigma, type);
+    pc.addParticle(x2, v, m, epsilon, sigma, type);
+    pc.addParticle(x3, v, m, epsilon, sigma, type);
+    pc.addParticle(x4, v, m, epsilon, sigma, type);
+    pc.addParticle(x5, v, m, epsilon, sigma, type);
 
     // force calculation function
     std::function<void(Particle &, Particle &)> forceCalculationIteration = [](Particle &p1, Particle &p2)
@@ -247,13 +248,14 @@ TEST(ParallelParticleInteractions, Strategy2) {
     double m = 1;
     double epsilon = 1;
     double sigma = 1;
+    int type = 1; 
 
     pc.reserveMemoryForParticles(5);
-    pc.addParticle(x1, v, m, epsilon, sigma);
-    pc.addParticle(x2, v, m, epsilon, sigma);
-    pc.addParticle(x3, v, m, epsilon, sigma);
-    pc.addParticle(x4, v, m, epsilon, sigma);
-    pc.addParticle(x5, v, m, epsilon, sigma);
+    pc.addParticle(x1, v, m, epsilon, sigma, type);
+    pc.addParticle(x2, v, m, epsilon, sigma, type);
+    pc.addParticle(x3, v, m, epsilon, sigma, type);
+    pc.addParticle(x4, v, m, epsilon, sigma, type);
+    pc.addParticle(x5, v, m, epsilon, sigma, type);
 
     // force calculation function
     std::function<void(Particle &, Particle &)> forceCalculationIteration = [](Particle &p1, Particle &p2)
