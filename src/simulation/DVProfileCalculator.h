@@ -41,6 +41,7 @@ public:
      * 
      * @param particleContainer particles of the observed system
      * @param n number of bins the x axis will be divided into
+     * @param domain domain of simulation in each dimension
      */
     DVProfileCalculator(std::shared_ptr<ParticleContainer> particleContainer, int n, std::array<double, 3> domain);
 

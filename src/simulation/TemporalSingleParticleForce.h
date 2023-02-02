@@ -28,7 +28,7 @@ public:
      * @brief calculates the gravitational force acting on a single particle
      *
      * @param particleContainer container for the particles for which the force will be calculated
-     * @param g_grav the gravitational force acting on a single particle
+     * @param time the end time of the acting force
      */
     void calculateForce(ParticleContainer &particleContainer, double time) override;
 };

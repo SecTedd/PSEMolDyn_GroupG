@@ -62,7 +62,7 @@ private:
 
     /**
      * @brief computes position of ghost particle in halo
-     * @param p particle which has to be mirrored
+     * @param position position of particle that is mirrored
      */
     std::array<double, 3> mirroredPosition(std::array<double, 3> position);
 

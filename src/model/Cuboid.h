@@ -73,8 +73,8 @@ public:
      * @param sigma The sigma value of the particles
      * @param epsilon The epsilon value of the particles in the cuboid
      * @param type The type of the particles in the cuboid
-     * @param stiffness The stiffness of the molecule
-     * @param averageBondLength The average Bond Length of the molecule
+     * @param stiffness_arg The stiffness of the molecule
+     * @param averageBondLength_arg The average Bond Length of the molecule
      * @param fixed Indicates whether particles of the cuboid should be stationary
      */
     Cuboid(std::array<double, 3> x, std::array<int, 3> n, double h, double m, std::array<double, 3> v, double epsilon, double sigma, int type, double stiffness_arg, double averageBondLength_arg, bool fixed);
