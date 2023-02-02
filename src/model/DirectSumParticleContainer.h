@@ -36,6 +36,7 @@ public:
     /**
      * @brief Iterates over all particles and applies the function f
      * @param f A lambda function applied for every particle
+     * @param calcX Specifies if positional updates are necessary after loop
      */
     const void iterateParticles(std::function<void(Particle &)> f, bool calcX) override;
 
@@ -130,5 +131,5 @@ public:
      */
     const void reserveMemoryForParticles(int numberOfParticles) override;
 
-    std::vector<Particle> &getActiveParticles();
+    std::vector<Particle> &getActiveParticles() override;
 };

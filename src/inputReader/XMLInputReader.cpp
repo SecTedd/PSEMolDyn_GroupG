@@ -69,7 +69,7 @@ void XMLInputReader::readInput(ProgramParameters &programParameters, const char 
             old_f[2] = old_f_xml.z();
 
             int type = i->type();
-            double stiffness = i->stiffness(); 
+            double stiffness = i->stiffness();
             double averageBondLength = i->averageBondLength();
 
             programParameters.getParticleContainer()->addParticle(position, velocity, f, old_f, m, epsilon, sigma, type, stiffness, averageBondLength);
@@ -158,12 +158,18 @@ void XMLInputReader::readInput(ProgramParameters &programParameters, const char 
             inputFacade->readInput(programParameters, filename.c_str());
         }
 
-        if(xml->csvWriteFrequency().present()){
-            programParameters.setCsvWriteFrequency(xml->csvWriteFrequency().get()); 
+        if (xml->parallel().present())
+        {
+            programParameters.setParallel(xml->parallel().get());
+        }
+        if (xml->csvWriteFrequency().present())
+        {
+            programParameters.setCsvWriteFrequency(xml->csvWriteFrequency().get());
         }
 
-        if(xml->numBins().present()){
-            programParameters.setNumBins(xml->numBins().get()); 
+        if (xml->numBins().present())
+        {
+            programParameters.setNumBins(xml->numBins().get());
         }
 
         if (xml->thermostat().present())

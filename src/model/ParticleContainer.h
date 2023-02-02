@@ -32,6 +32,7 @@ public:
     /**
      * @brief Iterates over all active particles (inside domain) and applies the function f
      * @param f A lambda function applied for every particle
+     * @param calcX Specifies if position needs to be updated
      */
     virtual const void iterateParticles(std::function<void(Particle &)> f, bool calcX) = 0;
 

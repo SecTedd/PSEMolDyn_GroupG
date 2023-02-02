@@ -27,19 +27,21 @@ private:
 
     std::vector<ParticleCell> cells; // stores all cells
 
+    std::vector<std::vector<int>> cellGroups; // stores indices of grouped cells
+
+    std::vector<std::vector<int>> superCells; // clusters together a batch of 4 (2D) or 8 (3D) neighbouring cells
+
     std::array<double, 3> domain; // domain size in each dimension
 
-    double cutoff; // max. rdistance of particles where force calculation is applied
+    double cutoff; // max. distance of particles where force calculation is applied
 
     std::array<int, 3> numCells; // number of cells in each dimension
 
     std::array<double, 3> cellSize; // cell size in each dimension
 
-    /**
-     * @brief computes number of cells and their size in each dimension, initializes them according to domain boundary conditions
-     * @param domainBoundaries the boundaries of the domain
-     */
-    const void initializeCells(std::array<BoundaryCondition, 6> &domainBoundaries);
+    std::array<int, 3> numInteractingCells; // number of cells in each dimension relevant for grouping
+
+    int parallel; // 0 for no parallelization, 1 for fork join with cell grouping, 2 for fork join with supercell grouping, 3 for tasks
 
     /**
      * @brief compute index of cell the given particle belongs to
@@ -60,12 +62,80 @@ private:
 
     /**
      * @brief computes position of ghost particle in halo
-     * @param p particle which has to be mirrored
+     * @param position position of particle that is mirrored
      */
     std::array<double, 3> mirroredPosition(std::array<double, 3> position);
 
+    /**
+     * @brief reserves memory for cell groups according to parallelization strategy
+     */
+    void reserveGroups();
+
+    /**
+     * @brief reserves memory for vector of supercells, only called if parallel = 2
+     */
+    void reserveSuperCells();
+
+    /**
+     * @brief fills group & supercell vectors according to parallelization strategy
+     */
+    void initializeParallelGroups();
+
+    /**
+     * @brief computes group given supercell belongs to
+     * @param cellIdx index of supercell
+     * @return group index of supercell
+     */
+    const int computeSupercellGroup(int cellIdx);
+
+    /**
+     * @brief computes group or supercell (if parallel = 2) the given cell belongs to according to parallelization strategy
+     * @param cellIdx index of cell
+     * @return group or supercell index of cell
+     */
+    const int computeCellGroup(int cellIdx);
+
+    /**
+     * @brief computes particle interactions within one cell implementing Newton's 3rd law
+     * @param i index of cell
+     * @param f particle interaction function
+     */
+    inline void intraCellInteraction(int i, std::function<void(Particle &, Particle &)> f);
+
+    /**
+     * @brief computes particle interactions between particles of two cells
+     * @param i index of first cell
+     * @param j index of second cell
+     * @param f particle interaction function
+     */
+    inline void interCellInteraction(int i, int j, std::function<void(Particle &, Particle &)> f);
+
+    /**
+     * @brief parallelizes particle interactions according to fork join model
+     * @param f particle interaction function
+     */
+    void forkJoin(std::function<void(Particle &, Particle &)> f);
+
+    /**
+     * @brief parallelizes neighbouring cell interactions through sequential groups
+     * @param f particle interaction function
+     */
+    void directCellInteraction(std::function<void(Particle &, Particle &)> f);
+
+    /**
+     * @brief parallelizes neighbouring cell interactions through supercells and sequential groups
+     * @param f particle interaction function
+     */
+    void nestedCellInteraction(std::function<void(Particle &, Particle &)> f);
+
+    /**
+     * @brief parallelizes particle interactions according to task model
+     * @param f particle interaction function
+     */
+    void taskModel(std::function<void(Particle &, Particle &)> f);
+
 public:
-    LinkedCellParticleContainer(double cutoff, std::array<double, 3> &domain, std::array<BoundaryCondition, 6> &boundaries);
+    LinkedCellParticleContainer(double cutoff, std::array<double, 3> &domain, std::array<BoundaryCondition, 6> &boundaries, int parallel);
 
     ~LinkedCellParticleContainer() override;
 
@@ -150,6 +220,12 @@ public:
     const void addParticle(std::array<double, 3> &x, std::array<double, 3> &v, std::array<double, 3> &f, std::array<double, 3> &old_f, double &m, double &epsilon, double &sigma, int &type, double &stiffness, double &averageBondLength);
 
     /**
+     * @brief computes number of cells and their size in each dimension, initializes them according to domain boundary conditions
+     * @param domainBoundaries the boundaries of the domain
+     */
+    const void initializeCells(std::array<BoundaryCondition, 6> &domainBoundaries);
+
+    /**
      * @brief adds reflection force to particles near to the reflecting boundary
      * @param cellIndex the index of the current cell
      * @param f force calculation function which has to be applied at the reflecting boundary
@@ -195,4 +271,12 @@ public:
     std::vector<Particle> &getHaloParticles();
 
     std::vector<Particle> &getActiveParticles() override;
+
+    std::vector<std::vector<int>> &getCellGroups();
+
+    std::vector<std::vector<int>> &getSuperCells();
+
+    void setParallel(int parallel);
+
+    const int getParallel();
 };

@@ -42,6 +42,7 @@ private:
     int benchmark_iterations;                             /// number of runs in benchmark mode, 0 for normal simulations
     bool showMenu;                                        /// true if menu should be shown, false otherwise
     bool createCheckpoint;                                /// true if a checkpoint should be created, false otherwise
+    int parallel;                                         /// 0 for no parallelization, 1 for first parallel strategy, 2 for the other
     std::shared_ptr<spdlog::logger> memoryLogger;         /// a speedlog logger which logs construction and destruction of particles
     std::array<int, 3> thermostat_applyTo;                /// indicator array on wich directions the thermostat will be applied
     int csv_writeFrequency;                               /// the number of iterations after wich a csv file is written (0 means never)
@@ -103,6 +104,8 @@ public:
 
     const void setCreateCheckpoint(bool createCheckpoint);
 
+    const void setParallel(int parallel);
+ 
     const void setThermostatApplyTo(std::array<int, 3> thermostat_applyTo);
 
     const void setCsvWriteFrequency(int csv_writeFrequency);
@@ -149,6 +152,8 @@ public:
 
     const bool getCreateCheckpoint(); 
 
+    const int getParallel();
+    
     const std::array<int, 3> getThermostatApplyTo() const;
 
     const int getCsvWriteFrequency() const;

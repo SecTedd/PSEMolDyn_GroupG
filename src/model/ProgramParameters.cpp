@@ -23,11 +23,12 @@ ProgramParameters::ProgramParameters()
     end_time = 1;
     delta_t = 0.0005;
     cutoff = 3;
+    parallel = 1;
     writeFrequency = 50;
-    particleContainer.reset(new LinkedCellParticleContainer(cutoff, domain, boundaries));
+    particleContainer.reset(new LinkedCellParticleContainer(cutoff, domain, boundaries, parallel));
     baseName = "outputVTK";
     temp_init = 40;
-    brownianMotion = false;
+    brownianMotion = true;
     n_thermostats = 1000;
     // has to be -1!
     temp_target = -1;
@@ -64,7 +65,7 @@ const void ProgramParameters::setCutoff(double cutoff)
     this->cutoff = cutoff;
     if (typeid(*particleContainer) == typeid(LinkedCellParticleContainer))
     {
-        particleContainer.reset(new LinkedCellParticleContainer(cutoff, domain, boundaries));
+        particleContainer.reset(new LinkedCellParticleContainer(cutoff, domain, boundaries, parallel));
     }
 }
 const void ProgramParameters::setDomain(std::array<double, 3> domain)
@@ -72,7 +73,7 @@ const void ProgramParameters::setDomain(std::array<double, 3> domain)
     this->domain = domain;
     if (typeid(*particleContainer) == typeid(LinkedCellParticleContainer))
     {
-        particleContainer.reset(new LinkedCellParticleContainer(cutoff, domain, boundaries));
+        particleContainer.reset(new LinkedCellParticleContainer(cutoff, domain, boundaries, parallel));
     }
 }
 const void ProgramParameters::setBoundaries(std::array<BoundaryCondition, 6> boundaries)
@@ -94,9 +95,18 @@ const void ProgramParameters::setBoundaries(std::array<BoundaryCondition, 6> bou
 
     if (typeid(*particleContainer) == typeid(LinkedCellParticleContainer))
     {
-        particleContainer.reset(new LinkedCellParticleContainer(cutoff, domain, boundaries));
+        particleContainer.reset(new LinkedCellParticleContainer(cutoff, domain, boundaries, parallel));
     }
 }
+
+const void ProgramParameters::setParallel(int parallel) { 
+    this->parallel = parallel; 
+    if (typeid(*particleContainer) == typeid(LinkedCellParticleContainer))
+     {
+         particleContainer.reset(new LinkedCellParticleContainer(cutoff, domain, boundaries, parallel));
+     }
+}
+
 const void ProgramParameters::setDimension(int dimension) { this->dimension = dimension; }
 const void ProgramParameters::setWriteFrequency(int writeFrequency) { this->writeFrequency = writeFrequency; }
 const void ProgramParameters::setBaseName(std::string baseName) { this->baseName = baseName; }
@@ -131,6 +141,7 @@ const std::array<double, 3> ProgramParameters::getGGrav() const { return g_grav;
 const std::string ProgramParameters::getBaseName() { return baseName; }
 const bool ProgramParameters::getShowMenu() const { return showMenu; }
 const bool ProgramParameters::getCreateCheckpoint() { return createCheckpoint; }
+const int ProgramParameters::getParallel() { return parallel; }
 const std::array<int, 3> ProgramParameters::getThermostatApplyTo() const { return thermostat_applyTo; }
 const int ProgramParameters::getCsvWriteFrequency() const { return this->csv_writeFrequency; }
 const int ProgramParameters::getNumBins() const { return this->num_bins; }

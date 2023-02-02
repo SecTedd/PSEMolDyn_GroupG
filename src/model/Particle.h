@@ -116,8 +116,8 @@ public:
      * @param type_arg The type of the particle
      * @param epsilon_arg The epsilon of the particle
      * @param sigma_arg The sigma of the particle
-     * @param stiffness The stiffness of the molecule
-     * @param averageBondLength The average Bond Length of the olecule
+     * @param stiffness_arg The stiffness of the molecule
+     * @param averageBondLength_arg The average Bond Length of the olecule
      */
     Particle(
         // for visualization, we need always 3 coordinates
@@ -132,8 +132,8 @@ public:
      * @param type_arg The type of the particle
      * @param epsilon_arg The epsilon of the particle
      * @param sigma_arg The sigma of the particle
-     * @param stiffness The stiffness of the molecule
-     * @param averageBondLength The average Bond Length of the olecule
+     * @param stiffness_arg The stiffness of the molecule
+     * @param averageBondLength_arg The average Bond Length of the olecule
      * @param fixed_arg The stationary indicator
      */
     Particle(
@@ -180,8 +180,8 @@ public:
      * @param epsilon_arg The epsilon of the particle
      * @param sigma_arg The sigma of the particle
      * @param type_arg The type of the particle
-     * @param stiffness The stiffness of the molecule
-     * @param averageBondLength The average Bond Length of the molecule
+     * @param stiffness_arg The stiffness of the molecule
+     * @param averageBondLength_arg The average Bond Length of the molecule
      */
     Particle(
         // for visualization, we need always 3 coordinates

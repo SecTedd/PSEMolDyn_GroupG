@@ -23,6 +23,11 @@ private:
     std::array<double, 3> force;
 
 public:
+    /**
+     * @brief calculates the force acting on every single particle
+     *
+     * @param force the force that acts on each particle
+     */
     SingleParticleForce(std::array<double, 3> force);
 
     virtual ~SingleParticleForce() = 0;

@@ -45,13 +45,24 @@ target_link_libraries(MolSim
             PkgConfig::XERCESC
 )
 
+set(MP_OPT_GCC "")
+set(MP_OPT_INTEL "")
+
+find_package(OpenMP)
+#set(OpenMP_CXX_FOUND 0) #for testing if it works without OpenMP
+if(OpenMP_CXX_FOUND)
+    target_link_libraries(MolSim PUBLIC OpenMP::OpenMP_CXX)
+    set(MP_OPT_GCC -fopenmp)
+    set(MP_OPT_INTEL -qopenmp)
+endif()
+
 # activate all compiler warnings. Clean up your code :P
 # depending on the compiler different flags are used
 target_compile_options(MolSim
         PRIVATE
-            $<$<CXX_COMPILER_ID:GNU>:-Wall>
+            $<$<CXX_COMPILER_ID:GNU>: -Wall ${MP_OPT_GCC}> 
             # disable some spam warnings for icpc...
-            $<$<CXX_COMPILER_ID:Intel>:-w3 -wd383,981,1418,1572,2259>
+            $<$<CXX_COMPILER_ID:Intel>: -w3 -wd383,981,1418,1572,225 ${MP_OPT_INTEL}>
 )
 
 list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/modules)

@@ -9,6 +9,7 @@
 #include "../utils/ArrayUtils.h"
 
 #include <iostream>
+#include <omp.h>
 
 Particle::Particle(int type_arg)
 {

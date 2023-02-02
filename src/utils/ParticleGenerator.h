@@ -26,6 +26,7 @@ namespace ParticleGenerator
      * @brief generates all particles of a cuboid and adds them to the particle container
      * @param particleContainer contains all particles for the simulation
      * @param cuboid contains all necessary parameters for the construction of the cuboid
+     * @param membrane specifies if particles should be connected to a membrane
      */
     inline void generateCuboid(ParticleContainer &particleContainer, Cuboid &cuboid, bool membrane)
     {
@@ -81,6 +82,12 @@ namespace ParticleGenerator
         }
     }
 
+    /**
+     * @brief Calculates all parallel neighbours of a particle
+     * @param n the dimensions of the cuboid
+     * @param index the index of the particle
+     * @returns a list of neighbours
+     */
     inline std::vector<int> getParallelNeighbourIndices(std::array<int, 3> n, double index)
     {
         std::vector<std::array<int, 3>> neighbours3D;
@@ -121,6 +128,12 @@ namespace ParticleGenerator
         return neighbours1D;
     }
 
+    /**
+     * @brief Calculates all diagonal neighbours of a particle
+     * @param n the dimensions of the cuboid
+     * @param index the index of the particle
+     * @returns a list of neighbours
+     */
     inline std::vector<int> getDiagonalNeighbourIndices(std::array<int, 3> n, double index)
     {
         std::vector<std::array<int, 3>> neighbours3D;
@@ -161,6 +174,12 @@ namespace ParticleGenerator
         return neighbours1D;
     }
 
+    /**
+     * @brief converts the 1D index to a 3D index
+     * @param n the dimensions of the cuboid
+     * @param index the index of the particle in the cuboid
+     * @returns the 3D index
+     */
     inline std::array<int, 3> index1DTo3D(int index, std::array<int, 3> n)
     {
         std::array<int, 3> result;
@@ -175,6 +194,12 @@ namespace ParticleGenerator
         return result;
     }
 
+    /**
+     * @brief converts the 3D index to a 1D index
+     * @param n the dimensions of the cuboid
+     * @param index the index of the particle in the cuboid
+     * @returns the 1D index
+     */
     inline int index3DTo1D(std::array<int, 3> index, std::array<int, 3> n)
     {
         return index[0] + (index[1] * n[0]);

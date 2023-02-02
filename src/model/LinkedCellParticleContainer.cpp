@@ -1,12 +1,14 @@
 
 #include "LinkedCellParticleContainer.h"
 #include "../utils/PContainer.h"
+#include "../utils/ArrayUtils.h"
 
 #include <iostream>
 #include <iomanip>
 #include <cmath>
+#include <omp.h>
 
-LinkedCellParticleContainer::LinkedCellParticleContainer(double cutoff, std::array<double, 3> &domain, std::array<BoundaryCondition, 6> &domainBoundaries)
+LinkedCellParticleContainer::LinkedCellParticleContainer(double cutoff, std::array<double, 3> &domain, std::array<BoundaryCondition, 6> &domainBoundaries, int parallel)
 {
     _memoryLogger = spdlog::get("memory_logger");
     _memoryLogger->info("LinkedCellParticleContainer generated!");
@@ -14,6 +16,16 @@ LinkedCellParticleContainer::LinkedCellParticleContainer(double cutoff, std::arr
 
     this->domain = domain;
     this->cutoff = cutoff;
+
+// use given parallelization strategy if compiled with OpenMP
+// no parallelization otherwise
+    #ifdef _OPENMP
+    this->parallel = parallel;
+    #else
+    this->parallel = 0;
+    #endif
+
+    _memoryLogger->warn("Parallel set to " + std::to_string(this->parallel));
 
     initializeCells(domainBoundaries);
 }
@@ -25,6 +37,11 @@ LinkedCellParticleContainer::~LinkedCellParticleContainer()
 
 const void LinkedCellParticleContainer::initializeCells(std::array<BoundaryCondition, 6> &domainBoundaries)
 {
+    //make sure to start from empty vectors
+    cells.clear();
+    cellGroups.clear();
+    superCells.clear();
+
     // smallest cellsize bigger than cutoff plus boundaries
     int numberOfXCells = static_cast<int>(std::floor(domain[0] / cutoff));
     int numberOfYCells = static_cast<int>(std::floor(domain[1] / cutoff));
@@ -37,6 +54,12 @@ const void LinkedCellParticleContainer::initializeCells(std::array<BoundaryCondi
     // add surrounding halo cells
     numCells = {numberOfXCells + 2, numberOfYCells + 2, numberOfZCells + 2};
 
+    //if parallel = 2 use clustered supercells
+    if (parallel == 2)
+        numInteractingCells = {(numberOfXCells + 1) / 2, (numberOfYCells + 1) / 2, (numberOfZCells + 1) / 2};
+    else
+        numInteractingCells = {numberOfXCells, numberOfYCells, numberOfZCells};
+
     double sizeX = domain[0] / numberOfXCells;
     double sizeY = domain[1] / numberOfYCells;
     double sizeZ = domain[2] / numberOfZCells;
@@ -47,9 +70,13 @@ const void LinkedCellParticleContainer::initializeCells(std::array<BoundaryCondi
 
     cellSize = {sizeX, sizeY, sizeZ};
 
+    _memoryLogger->warn("Cell size: " + std::to_string(sizeX) + ", " + std::to_string(sizeY) + ", " + std::to_string(sizeZ));
+    _memoryLogger->warn("Num cells: " + std::to_string(numCells[0]) + ", " + std::to_string(numCells[1]) + ", " + std::to_string(numCells[2]));
+    _memoryLogger->warn("Num supercells: " + std::to_string(numInteractingCells[0]) + ", " + std::to_string(numInteractingCells[1]) + ", " + std::to_string(numInteractingCells[2]));
+
     // now we need to initialize the cells
     cells.reserve(numCells[0] * numCells[1] * numCells[2]);
-
+    
     for (int i = 0; i < numCells[0] * numCells[1] * numCells[2]; i++)
     {
         CellType ct = CellType::InnerCell;
@@ -138,8 +165,115 @@ const void LinkedCellParticleContainer::initializeCells(std::array<BoundaryCondi
             cells[i].setPeriodicHaloNeighbours(haloNeighbours);
         }
     }
-    _memoryLogger->debug("Cell size: " + std::to_string(sizeX) + ", " + std::to_string(sizeY) + ", " + std::to_string(sizeZ));
-    _memoryLogger->debug("Num cells: " + std::to_string(numCells[0]) + ", " + std::to_string(numCells[1]) + ", " + std::to_string(numCells[2]));
+    //Initialization needed for parallelism
+    reserveGroups();
+    initializeParallelGroups();
+}
+
+void LinkedCellParticleContainer::initializeParallelGroups() {
+    for (unsigned int i = 0; i < cells.size(); i++) {
+        if (cells[i].getType() == CellType::InnerCell || cells[i].getType() == CellType::BoundaryCell) {
+            if (parallel == 2) {
+                superCells[computeCellGroup(i)].emplace_back(i);
+            }
+            else {
+                cellGroups[computeCellGroup(i)].emplace_back(i);
+            }
+        }
+    }
+    if (parallel == 2) {
+        for (unsigned int i = 0; i < superCells.size(); i++) {
+            cellGroups[computeSupercellGroup(i)].emplace_back(i);
+        }
+    }
+}
+
+
+void LinkedCellParticleContainer::reserveGroups()
+{
+    // default values if no parallelization is applied
+    // code is not compiled with OpenMP so cells can be all in one group
+    // if tasks are used parallelization doesn't need groups
+    int numGroups = 1;
+    int maxCellsPerGroup = numInteractingCells[0] * numInteractingCells[1] * numInteractingCells[2];
+
+    // constant number of groups holding either supercells (parallel = 2) or cells directly (parallel = 1)
+    if (parallel == 1 || parallel == 2)
+    {
+        // distinguish 2D and 3D cases
+        numGroups = numInteractingCells[2] > 1 ? 18 : 6;
+        int offsetX = numInteractingCells[0] % 3 > 0 ? 1 : 0;
+        int offsetY = numInteractingCells[1] % 3 > 0 ? 1 : 0;
+        maxCellsPerGroup = numInteractingCells[2] > 1
+                               ? (numInteractingCells[0] / 3 + offsetX) * (numInteractingCells[1] / 3 + offsetY) * (numInteractingCells[2] / 2 + numInteractingCells[2] % 2)
+                               : (numInteractingCells[0] / 3 + offsetX) * (numInteractingCells[1] / 2 + numInteractingCells[1] % 2);
+    }
+
+    // reserve memory for groups & cells in groups
+    // initialize group vectors
+    cellGroups.reserve(numGroups);
+    for (int i = 0; i < numGroups; i++)
+    {
+        std::vector<int> group;
+        cellGroups.push_back(group);
+        cellGroups[i].reserve(maxCellsPerGroup);
+    }
+
+    if (parallel == 2) {
+        int maxInnerCells = numInteractingCells[2] > 1 ? 8 : 4;
+        int totalSuperCells = numInteractingCells[0] * numInteractingCells[1] * numInteractingCells[2];
+        superCells.reserve(totalSuperCells);
+        for (int i = 0; i < totalSuperCells; i++) {
+            std::vector<int> superCell;
+            superCells.push_back(superCell);
+            superCells[i].reserve(maxInnerCells);
+        }
+    }
+}
+
+const int LinkedCellParticleContainer::computeSupercellGroup(int cellIdx) {
+    int numGroupsX = 3;
+    //distinguish 2D and 3D cas
+    int numGroupsY = numInteractingCells[2] > 1 ? 3 : 2;
+    int numGroupsZ = numInteractingCells[2] > 1 ? 2 : 1;
+    std::array<int, 3> index3D = PContainer::convert1DTo3D(cellIdx, numInteractingCells);
+    int groupX = index3D[0] % numGroupsX;
+    int groupY = index3D[1] % numGroupsY;
+    int groupZ = index3D[2] % numGroupsZ;
+
+    return groupX + numGroupsX * groupY + numGroupsX * numGroupsY * groupZ;
+}
+
+const int LinkedCellParticleContainer::computeCellGroup(int cellIdx)
+{
+    int groupX = 0, groupY = 0, groupZ = 0;
+    int numGroupsX = 0, numGroupsY = 0;
+
+    if (parallel == 1)
+    {
+        numGroupsX = 3;
+
+        // distinguish 2D and 3D case
+        numGroupsY = (numCells[2] - 2) > 1 ? 3 : 2;
+        int numGroupsZ = (numCells[2] - 2) > 1 ? 2 : 1;
+
+        std::array<int, 3> index3D = PContainer::convert1DTo3D(cellIdx, numCells);
+        groupX = (index3D[0] - 1) % numGroupsX;
+        groupY = (index3D[1] - 1) % numGroupsY;
+        groupZ = (index3D[2] - 1) % numGroupsZ;
+    }
+
+    else if (parallel == 2) {
+        numGroupsX = (numCells[0] - 1) / 2;
+        numGroupsY = (numCells[1] - 1) / 2;
+        std::array<int, 3> index3D = PContainer::convert1DTo3D(cellIdx, numCells);
+
+        groupX = (index3D[0] - 1) / 2;
+        groupY = (index3D[1] - 1) / 2;
+        groupZ = (index3D[2] - 1) / 2;
+    }
+
+    return groupX + numGroupsX * groupY + numGroupsX * numGroupsY * groupZ;
 }
 
 const int LinkedCellParticleContainer::computeCellIdx(Particle &p)
@@ -206,12 +340,162 @@ std::array<double, 3> LinkedCellParticleContainer::mirroredPosition(std::array<d
     return {fmod(position[0] + domain[0], domain[0]), fmod(position[1] + domain[1], domain[1]), fmod(position[2] + domain[2], domain[2])};
 }
 
+inline void LinkedCellParticleContainer::intraCellInteraction(int cellIndex, std::function<void(Particle &, Particle &)> f)
+{
+    std::vector<int> *particleIndices = cells[cellIndex].getCellParticleIndices();
+    for (long unsigned int i = 0; i < particleIndices->size(); i++)
+    {
+        for (long unsigned int j = i + 1; j < particleIndices->size(); j++)
+        {
+            Particle &p1 = activeParticles[particleIndices->at(i)];
+            Particle &p2 = activeParticles[particleIndices->at(j)];
+            if (ArrayUtils::L2Norm(p1.getX() - p2.getX()) <= cutoff)
+            {
+                f(p1, p2);
+            }
+        }
+    }
+}
+
+inline void LinkedCellParticleContainer::interCellInteraction(int i, int j, std::function<void(Particle &, Particle &)> f)
+{
+    //std::cout << "Neighbour interaction between " << i << " and " << j << std::endl;
+    // particle interactions between different cells
+    for (auto particleIndex : *cells[i].getCellParticleIndices())
+    {
+        for (auto interactingParticleIndex : *cells[j].getCellParticleIndices())
+        {
+            // current particle is always within domain
+            Particle *currentParticle = &activeParticles[particleIndex];
+
+            // interacting particle can also be in halo
+            Particle *interactingParticle;
+            if (cells[j].getType() == CellType::HaloCell || cells[j].getType() == CellType::PeriodicHaloCell)
+            {
+                interactingParticle = &haloParticles[interactingParticleIndex];
+            }
+            else
+            {
+                interactingParticle = &activeParticles[interactingParticleIndex];
+            }
+            if (ArrayUtils::L2Norm(currentParticle->getX() - interactingParticle->getX()) <= cutoff)
+            {
+                f(*currentParticle, *interactingParticle);
+            }
+        }
+    }
+}
+
+void LinkedCellParticleContainer::directCellInteraction(std::function<void(Particle &, Particle &)> f) {
+    // interaction between different cells
+    // if compiled without OpenMP no parallelization of cell interactions
+    for (auto &group : cellGroups)
+    {
+        // interactions of cells in one group can be executed in parallel
+        // no parallelization if not compiled with openMP
+        #ifdef _OPENMP
+        #pragma omp parallel for
+        #endif 
+        for (int idx : group)
+        {
+            for (auto neighbour : cells[idx].getDomainNeighbours())
+            {
+                interCellInteraction(idx, neighbour, f);
+            }
+        }
+    }
+}
+
+void LinkedCellParticleContainer::nestedCellInteraction(std::function<void(Particle &, Particle &)> f) {
+    for (auto &group : cellGroups) {
+        #ifdef _OPENMP
+        #pragma omp parallel for
+        #endif
+        for (int superCellIdx : group) {
+            for (int cellIdx : superCells[superCellIdx]) {
+                for (int neighbour : cells[cellIdx].getDomainNeighbours()) {
+                    interCellInteraction(cellIdx, neighbour, f);
+                }
+            }
+        }
+    }
+}
+
+void LinkedCellParticleContainer::forkJoin(std::function<void(Particle &, Particle &)> f)
+{
+    #ifdef _OPENMP
+    #pragma omp parallel for
+    #endif
+    for (long unsigned int i = 0; i < cells.size(); i++)
+    {
+        if (cells[i].getType() == CellType::BoundaryCell || cells[i].getType() == CellType::InnerCell) {
+            //interaction within cell
+            intraCellInteraction(i, f);
+
+            //interaction with halo neighbours 
+            //race conditions in halo particle forces don't matter
+            for (auto j : cells[i].getPeriodicHaloNeighbours())
+                interCellInteraction(i, j, f);
+        }
+    }
+
+    if (parallel == 2)
+        nestedCellInteraction(f);
+    else
+        directCellInteraction(f);
+}
+
+void LinkedCellParticleContainer::taskModel(std::function<void(Particle &, Particle &)> f) {
+    #ifdef _OPENMP
+    #pragma omp parallel
+    #pragma omp single
+     {
+        for (unsigned int i = 0; i < cells.size(); i++)
+        {
+
+            ParticleCell &cell = cells[i];
+
+            if (cell.getType() == CellType::BoundaryCell || cell.getType() == CellType::InnerCell)
+            {
+                // task for interaction within one cell and of one cell with its halo neighbours
+                #pragma omp task depend(inout: this->cells[i])
+                {
+                    //_simulationLogger->debug("Inner task " + std::to_string(i) + " executed by thread " + std::to_string(omp_get_thread_num()));
+                    intraCellInteraction(i, f);
+
+                    for (auto j : cells[i].getPeriodicHaloNeighbours()) {
+                    interCellInteraction(i, j, f);
+                    }
+                }
+            }
+        }
+
+        for (unsigned int i = 0; i < cells.size(); i++) {
+            
+            ParticleCell &cell = cells[i];
+            if (cell.getType() == CellType::BoundaryCell || cell.getType() == CellType::InnerCell) {
+            
+                // tasks for interaction between cells
+                for (auto j : cell.getDomainNeighbours())
+                {    
+                    #pragma omp task depend(inout: this->cells[i], this->cells[j])
+                    {
+                        //_simulationLogger->debug("Inter task " + std::to_string(i) + ", " + std::to_string(j) + " executed by thread " + std::to_string(omp_get_thread_num()) );
+                        interCellInteraction(i, j, f);
+                    }  
+                }
+            }
+        }
+    }
+    #pragma omp taskwait
+    #endif
+}
+
 const void LinkedCellParticleContainer::iterateParticleInteractions(std::function<void(Particle &, Particle &)> f)
 {
     // first we need to clear the halo
     clearHalo();
 
-    // then add particles to halo or add the reflecting force
     for (long unsigned int i = 0; i < cells.size(); i++)
     {
         if (cells[i].getType() == CellType::BoundaryCell)
@@ -223,63 +507,10 @@ const void LinkedCellParticleContainer::iterateParticleInteractions(std::functio
         }
     }
 
-    // finally calculate interactions
-    for (auto &cell : cells)
-    {
-        // particle interactions don't need to be calculated for halo cells
-        if (cell.getType() == CellType::InnerCell || cell.getType() == CellType::BoundaryCell)
-        {
-            // particle interactions within cell
-            std::vector<int> *particleIndices = cell.getCellParticleIndices();
-            for (long unsigned int i = 0; i < particleIndices->size(); i++)
-            {
-                for (long unsigned int j = i + 1; j < particleIndices->size(); j++)
-                {
-                    Particle &p1 = activeParticles[particleIndices->at(i)];
-                    Particle &p2 = activeParticles[particleIndices->at(j)];
-                    if (ArrayUtils::L2Norm(p1.getX() - p2.getX()) <= cutoff)
-                    {
-                        f(p1, p2);
-                    }
-                }
-            }
-
-            std::vector<int> neighbours = cell.getDomainNeighbours();
-            // Boundary cells
-            if (cell.getType() == CellType::BoundaryCell)
-            {
-                neighbours.insert(neighbours.end(), cell.getPeriodicHaloNeighbours().begin(), cell.getPeriodicHaloNeighbours().end());
-            }
-
-            // particle interactions between different cells
-            for (auto particleIndex : *cell.getCellParticleIndices())
-            {
-                for (auto &neighbouringCellIndex : neighbours)
-                {
-                    for (auto interactingParticleIndex : *cells[neighbouringCellIndex].getCellParticleIndices())
-                    {
-                        // current particle is always within domain
-                        Particle *currentParticle = &activeParticles[particleIndex];
-
-                        // interacting particle can also be in halo
-                        Particle *interactingParticle;
-                        if (cells[neighbouringCellIndex].getType() == CellType::HaloCell || cells[neighbouringCellIndex].getType() == CellType::PeriodicHaloCell)
-                        {
-                            interactingParticle = &haloParticles[interactingParticleIndex];
-                        }
-                        else
-                        {
-                            interactingParticle = &activeParticles[interactingParticleIndex];
-                        }
-                        if (ArrayUtils::L2Norm(currentParticle->getX() - interactingParticle->getX()) <= cutoff)
-                        {
-                            f(*currentParticle, *interactingParticle);
-                        }
-                    }
-                }
-            }
-        }
-    }
+    if (parallel == 3)
+        taskModel(f);
+    else
+        forkJoin(f);
 }
 
 const void LinkedCellParticleContainer::iterateParticles(std::function<void(Particle &)> f, bool calcX)
@@ -289,9 +520,12 @@ const void LinkedCellParticleContainer::iterateParticles(std::function<void(Part
     // deletions in the active particle vector, meaning indices within the cells are rendered invalid
     bool cellRebuild = false;
 
+    #ifdef _OPENMP
+    #pragma omp parallel for
+    #endif
+
     for (auto &particle : activeParticles)
     {
-
         f(particle);
         if (!calcX)
             continue;
@@ -568,3 +802,12 @@ std::vector<ParticleCell> &LinkedCellParticleContainer::getCells() { return cell
 std::vector<Particle> &LinkedCellParticleContainer::getHaloParticles() { return haloParticles; }
 
 std::vector<Particle> &LinkedCellParticleContainer::getActiveParticles() { return activeParticles; }
+
+std::vector<std::vector<int>> &LinkedCellParticleContainer::getCellGroups() { return cellGroups; }
+
+std::vector<std::vector<int>> &LinkedCellParticleContainer::getSuperCells() { return superCells; }
+
+void LinkedCellParticleContainer::setParallel(int parallel) { this->parallel = parallel; }
+
+const int LinkedCellParticleContainer::getParallel() { return parallel; }
+

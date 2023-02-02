@@ -385,6 +385,30 @@ numBins (const numBins_optional& x)
   this->numBins_ = x;
 }
 
+const simulation_t::parallel_optional& simulation_t::
+parallel () const
+{
+  return this->parallel_;
+}
+
+simulation_t::parallel_optional& simulation_t::
+parallel ()
+{
+  return this->parallel_;
+}
+
+void simulation_t::
+parallel (const parallel_type& x)
+{
+  this->parallel_.set (x);
+}
+
+void simulation_t::
+parallel (const parallel_optional& x)
+{
+  this->parallel_ = x;
+}
+
 const simulation_t::thermostat_optional& simulation_t::
 thermostat () const
 {
@@ -1800,6 +1824,7 @@ simulation_t (const end_time_type& end_time,
   file_name_ (this),
   csvWriteFrequency_ (this),
   numBins_ (this),
+  parallel_ (this),
   thermostat_ (this),
   cuboid_ (this),
   sphere_ (this)
@@ -1829,6 +1854,7 @@ simulation_t (const end_time_type& end_time,
   file_name_ (this),
   csvWriteFrequency_ (this),
   numBins_ (this),
+  parallel_ (this),
   thermostat_ (this),
   cuboid_ (this),
   sphere_ (this)
@@ -1855,6 +1881,7 @@ simulation_t (const simulation_t& x,
   file_name_ (x.file_name_, f, this),
   csvWriteFrequency_ (x.csvWriteFrequency_, f, this),
   numBins_ (x.numBins_, f, this),
+  parallel_ (x.parallel_, f, this),
   thermostat_ (x.thermostat_, f, this),
   cuboid_ (x.cuboid_, f, this),
   sphere_ (x.sphere_, f, this)
@@ -1881,6 +1908,7 @@ simulation_t (const ::xercesc::DOMElement& e,
   file_name_ (this),
   csvWriteFrequency_ (this),
   numBins_ (this),
+  parallel_ (this),
   thermostat_ (this),
   cuboid_ (this),
   sphere_ (this)
@@ -2079,6 +2107,17 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       }
     }
 
+    // parallel
+    //
+    if (n.name () == "parallel" && n.namespace_ ().empty ())
+    {
+      if (!this->parallel_)
+      {
+        this->parallel_.set (parallel_traits::create (i, f, this));
+        continue;
+      }
+    }
+
     // thermostat
     //
     if (n.name () == "thermostat" && n.namespace_ ().empty ())
@@ -2189,6 +2228,7 @@ operator= (const simulation_t& x)
     this->file_name_ = x.file_name_;
     this->csvWriteFrequency_ = x.csvWriteFrequency_;
     this->numBins_ = x.numBins_;
+    this->parallel_ = x.parallel_;
     this->thermostat_ = x.thermostat_;
     this->cuboid_ = x.cuboid_;
     this->sphere_ = x.sphere_;

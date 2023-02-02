@@ -11,7 +11,7 @@ TEST(DVCalculator, ParticlesPerBin)
     std::array<double, 3> domain = {10.0, 10.0, 1.0};
     std::array<BoundaryCondition, 6> bound = {o, o, o, o, o, o};
     double cutoff = 3;
-    auto pc = std::make_shared<LinkedCellParticleContainer>(cutoff, domain, bound);
+    auto pc = std::make_shared<LinkedCellParticleContainer>(cutoff, domain, bound, 0);
 
     std::array<double, 3> x1 = {2.0, 0.0, 0.0};
     std::array<double, 3> x2 = {8.0, 0.0, 0.0};
@@ -38,7 +38,7 @@ TEST(DVCalculator, AverageParticlesPerBin)
     std::array<double, 3> domain = {10.0, 10.0, 1.0};
     std::array<BoundaryCondition, 6> bound = {o, o, o, o, o, o};
     double cutoff = 3;
-    auto pc = std::make_shared<LinkedCellParticleContainer>(cutoff, domain, bound);
+    auto pc = std::make_shared<LinkedCellParticleContainer>(cutoff, domain, bound, 0);
 
     std::array<double, 3> x1 = {2.0, 0.0, 0.0};
     std::array<double, 3> x2 = {8.0, 0.0, 0.0};

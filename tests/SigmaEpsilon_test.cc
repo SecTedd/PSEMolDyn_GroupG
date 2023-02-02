@@ -42,7 +42,8 @@ TEST(SigmaEpsilon, MixedSigmaAndEpsilonForce)
     std::array<double, 3> domain = {9,9,9};
     BoundaryCondition out = BoundaryCondition::Outflow;
     std::array<BoundaryCondition, 6> boundaries = {out, out, out, out, out, out};
-    LinkedCellParticleContainer pc = LinkedCellParticleContainer(cutoff, domain, boundaries);
+    int parallelization = 0; //since tests are compiled without OpenMP this would automatically reset to 0 anyways
+    LinkedCellParticleContainer pc = LinkedCellParticleContainer(cutoff, domain, boundaries, parallelization);
     
     //DirectSumParticleContainer pc = DirectSumParticleContainer();
     std::array<double, 3> x1 = {1, 0, 0};

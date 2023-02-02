@@ -36,8 +36,8 @@
  * @brief Generated from Simulation.xsd.
  */
 
-#ifndef CXX_HOME_USER_DOCUMENTS_PROGRAMMING_PSEMOL_DYN_GROUP_G_SRC_XSD_SIMULATION_HXX
-#define CXX_HOME_USER_DOCUMENTS_PROGRAMMING_PSEMOL_DYN_GROUP_G_SRC_XSD_SIMULATION_HXX
+#ifndef CXX_HOME_USER_DOCUMENTS_PROGRAMMING_DUPLICATE_PSEMOL_DYN_GROUP_G_SRC_XSD_SIMULATION_HXX
+#define CXX_HOME_USER_DOCUMENTS_PROGRAMMING_DUPLICATE_PSEMOL_DYN_GROUP_G_SRC_XSD_SIMULATION_HXX
 
 #ifndef XSD_CXX11
 #define XSD_CXX11
@@ -1513,6 +1513,71 @@ class simulation_t: public ::xml_schema::type
   //@}
 
   /**
+   * @name parallel
+   *
+   * @brief Accessor and modifier functions for the %parallel
+   * optional element.
+   */
+  //@{
+
+  /**
+   * @brief Element type.
+   */
+  typedef ::xml_schema::int_ parallel_type;
+
+  /**
+   * @brief Element optional container type.
+   */
+  typedef ::xsd::cxx::tree::optional< parallel_type > parallel_optional;
+
+  /**
+   * @brief Element traits type.
+   */
+  typedef ::xsd::cxx::tree::traits< parallel_type, char > parallel_traits;
+
+  /**
+   * @brief Return a read-only (constant) reference to the element
+   * container.
+   *
+   * @return A constant reference to the optional container.
+   */
+  const parallel_optional&
+  parallel () const;
+
+  /**
+   * @brief Return a read-write reference to the element container.
+   *
+   * @return A reference to the optional container.
+   */
+  parallel_optional&
+  parallel ();
+
+  /**
+   * @brief Set the element value.
+   *
+   * @param x A new value to set.
+   *
+   * This function makes a copy of its argument and sets it as
+   * the new value of the element.
+   */
+  void
+  parallel (const parallel_type& x);
+
+  /**
+   * @brief Set the element value.
+   *
+   * @param x An optional container with the new value to set.
+   *
+   * If the value is present in @a x then this function makes a copy 
+   * of this value and sets it as the new value of the element.
+   * Otherwise the element container is set the 'not present' state.
+   */
+  void
+  parallel (const parallel_optional& x);
+
+  //@}
+
+  /**
    * @name thermostat
    *
    * @brief Accessor and modifier functions for the %thermostat
@@ -1832,6 +1897,7 @@ class simulation_t: public ::xml_schema::type
   file_name_sequence file_name_;
   csvWriteFrequency_optional csvWriteFrequency_;
   numBins_optional numBins_;
+  parallel_optional parallel_;
   thermostat_optional thermostat_;
   cuboid_sequence cuboid_;
   sphere_sequence sphere_;
@@ -6943,4 +7009,4 @@ simulation (::xml_schema::dom::unique_ptr< ::xercesc::DOMDocument > d,
 //
 // End epilogue.
 
-#endif // CXX_HOME_USER_DOCUMENTS_PROGRAMMING_PSEMOL_DYN_GROUP_G_SRC_XSD_SIMULATION_HXX
+#endif // CXX_HOME_USER_DOCUMENTS_PROGRAMMING_DUPLICATE_PSEMOL_DYN_GROUP_G_SRC_XSD_SIMULATION_HXX
