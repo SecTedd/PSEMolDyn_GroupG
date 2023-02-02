@@ -97,6 +97,30 @@ cutoff (const cutoff_type& x)
   this->cutoff_.set (x);
 }
 
+const simulation_t::dimension_optional& simulation_t::
+dimension () const
+{
+  return this->dimension_;
+}
+
+simulation_t::dimension_optional& simulation_t::
+dimension ()
+{
+  return this->dimension_;
+}
+
+void simulation_t::
+dimension (const dimension_type& x)
+{
+  this->dimension_.set (x);
+}
+
+void simulation_t::
+dimension (const dimension_optional& x)
+{
+  this->dimension_ = x;
+}
+
 const simulation_t::domain_type& simulation_t::
 domain () const
 {
@@ -145,28 +169,52 @@ boundaries (::std::unique_ptr< boundaries_type > x)
   this->boundaries_.set (std::move (x));
 }
 
-const simulation_t::temp_init_optional& simulation_t::
-temp_init () const
+const simulation_t::g_grav_type& simulation_t::
+g_grav () const
 {
-  return this->temp_init_;
+  return this->g_grav_.get ();
 }
 
-simulation_t::temp_init_optional& simulation_t::
-temp_init ()
+simulation_t::g_grav_type& simulation_t::
+g_grav ()
 {
-  return this->temp_init_;
-}
-
-void simulation_t::
-temp_init (const temp_init_type& x)
-{
-  this->temp_init_.set (x);
+  return this->g_grav_.get ();
 }
 
 void simulation_t::
-temp_init (const temp_init_optional& x)
+g_grav (const g_grav_type& x)
 {
-  this->temp_init_ = x;
+  this->g_grav_.set (x);
+}
+
+void simulation_t::
+g_grav (::std::unique_ptr< g_grav_type > x)
+{
+  this->g_grav_.set (std::move (x));
+}
+
+const simulation_t::membrane_optional& simulation_t::
+membrane () const
+{
+  return this->membrane_;
+}
+
+simulation_t::membrane_optional& simulation_t::
+membrane ()
+{
+  return this->membrane_;
+}
+
+void simulation_t::
+membrane (const membrane_type& x)
+{
+  this->membrane_.set (x);
+}
+
+void simulation_t::
+membrane (const membrane_optional& x)
+{
+  this->membrane_ = x;
 }
 
 const simulation_t::brownianMotion_optional& simulation_t::
@@ -191,96 +239,6 @@ void simulation_t::
 brownianMotion (const brownianMotion_optional& x)
 {
   this->brownianMotion_ = x;
-}
-
-const simulation_t::n_thermostat_type& simulation_t::
-n_thermostat () const
-{
-  return this->n_thermostat_.get ();
-}
-
-simulation_t::n_thermostat_type& simulation_t::
-n_thermostat ()
-{
-  return this->n_thermostat_.get ();
-}
-
-void simulation_t::
-n_thermostat (const n_thermostat_type& x)
-{
-  this->n_thermostat_.set (x);
-}
-
-const simulation_t::temp_target_optional& simulation_t::
-temp_target () const
-{
-  return this->temp_target_;
-}
-
-simulation_t::temp_target_optional& simulation_t::
-temp_target ()
-{
-  return this->temp_target_;
-}
-
-void simulation_t::
-temp_target (const temp_target_type& x)
-{
-  this->temp_target_.set (x);
-}
-
-void simulation_t::
-temp_target (const temp_target_optional& x)
-{
-  this->temp_target_ = x;
-}
-
-const simulation_t::delta_temp_optional& simulation_t::
-delta_temp () const
-{
-  return this->delta_temp_;
-}
-
-simulation_t::delta_temp_optional& simulation_t::
-delta_temp ()
-{
-  return this->delta_temp_;
-}
-
-void simulation_t::
-delta_temp (const delta_temp_type& x)
-{
-  this->delta_temp_.set (x);
-}
-
-void simulation_t::
-delta_temp (const delta_temp_optional& x)
-{
-  this->delta_temp_ = x;
-}
-
-const simulation_t::g_grav_optional& simulation_t::
-g_grav () const
-{
-  return this->g_grav_;
-}
-
-simulation_t::g_grav_optional& simulation_t::
-g_grav ()
-{
-  return this->g_grav_;
-}
-
-void simulation_t::
-g_grav (const g_grav_type& x)
-{
-  this->g_grav_.set (x);
-}
-
-void simulation_t::
-g_grav (const g_grav_optional& x)
-{
-  this->g_grav_ = x;
 }
 
 const simulation_t::writeFrequency_optional& simulation_t::
@@ -379,6 +337,54 @@ file_name (const file_name_sequence& s)
   this->file_name_ = s;
 }
 
+const simulation_t::csvWriteFrequency_optional& simulation_t::
+csvWriteFrequency () const
+{
+  return this->csvWriteFrequency_;
+}
+
+simulation_t::csvWriteFrequency_optional& simulation_t::
+csvWriteFrequency ()
+{
+  return this->csvWriteFrequency_;
+}
+
+void simulation_t::
+csvWriteFrequency (const csvWriteFrequency_type& x)
+{
+  this->csvWriteFrequency_.set (x);
+}
+
+void simulation_t::
+csvWriteFrequency (const csvWriteFrequency_optional& x)
+{
+  this->csvWriteFrequency_ = x;
+}
+
+const simulation_t::numBins_optional& simulation_t::
+numBins () const
+{
+  return this->numBins_;
+}
+
+simulation_t::numBins_optional& simulation_t::
+numBins ()
+{
+  return this->numBins_;
+}
+
+void simulation_t::
+numBins (const numBins_type& x)
+{
+  this->numBins_.set (x);
+}
+
+void simulation_t::
+numBins (const numBins_optional& x)
+{
+  this->numBins_ = x;
+}
+
 const simulation_t::parallel_optional& simulation_t::
 parallel () const
 {
@@ -401,6 +407,36 @@ void simulation_t::
 parallel (const parallel_optional& x)
 {
   this->parallel_ = x;
+}
+
+const simulation_t::thermostat_optional& simulation_t::
+thermostat () const
+{
+  return this->thermostat_;
+}
+
+simulation_t::thermostat_optional& simulation_t::
+thermostat ()
+{
+  return this->thermostat_;
+}
+
+void simulation_t::
+thermostat (const thermostat_type& x)
+{
+  this->thermostat_.set (x);
+}
+
+void simulation_t::
+thermostat (const thermostat_optional& x)
+{
+  this->thermostat_ = x;
+}
+
+void simulation_t::
+thermostat (::std::unique_ptr< thermostat_type > x)
+{
+  this->thermostat_.set (std::move (x));
 }
 
 const simulation_t::cuboid_sequence& simulation_t::
@@ -646,6 +682,182 @@ zBack (::std::unique_ptr< zBack_type > x)
 }
 
 
+// g_grav
+// 
+
+const g_grav::x_type& g_grav::
+x () const
+{
+  return this->x_.get ();
+}
+
+g_grav::x_type& g_grav::
+x ()
+{
+  return this->x_.get ();
+}
+
+void g_grav::
+x (const x_type& x)
+{
+  this->x_.set (x);
+}
+
+const g_grav::y_type& g_grav::
+y () const
+{
+  return this->y_.get ();
+}
+
+g_grav::y_type& g_grav::
+y ()
+{
+  return this->y_.get ();
+}
+
+void g_grav::
+y (const y_type& x)
+{
+  this->y_.set (x);
+}
+
+const g_grav::z_type& g_grav::
+z () const
+{
+  return this->z_.get ();
+}
+
+g_grav::z_type& g_grav::
+z ()
+{
+  return this->z_.get ();
+}
+
+void g_grav::
+z (const z_type& x)
+{
+  this->z_.set (x);
+}
+
+
+// thermostat
+// 
+
+const thermostat::n_thermostat_type& thermostat::
+n_thermostat () const
+{
+  return this->n_thermostat_.get ();
+}
+
+thermostat::n_thermostat_type& thermostat::
+n_thermostat ()
+{
+  return this->n_thermostat_.get ();
+}
+
+void thermostat::
+n_thermostat (const n_thermostat_type& x)
+{
+  this->n_thermostat_.set (x);
+}
+
+const thermostat::apply_to_type& thermostat::
+apply_to () const
+{
+  return this->apply_to_.get ();
+}
+
+thermostat::apply_to_type& thermostat::
+apply_to ()
+{
+  return this->apply_to_.get ();
+}
+
+void thermostat::
+apply_to (const apply_to_type& x)
+{
+  this->apply_to_.set (x);
+}
+
+void thermostat::
+apply_to (::std::unique_ptr< apply_to_type > x)
+{
+  this->apply_to_.set (std::move (x));
+}
+
+const thermostat::temp_init_optional& thermostat::
+temp_init () const
+{
+  return this->temp_init_;
+}
+
+thermostat::temp_init_optional& thermostat::
+temp_init ()
+{
+  return this->temp_init_;
+}
+
+void thermostat::
+temp_init (const temp_init_type& x)
+{
+  this->temp_init_.set (x);
+}
+
+void thermostat::
+temp_init (const temp_init_optional& x)
+{
+  this->temp_init_ = x;
+}
+
+const thermostat::temp_target_optional& thermostat::
+temp_target () const
+{
+  return this->temp_target_;
+}
+
+thermostat::temp_target_optional& thermostat::
+temp_target ()
+{
+  return this->temp_target_;
+}
+
+void thermostat::
+temp_target (const temp_target_type& x)
+{
+  this->temp_target_.set (x);
+}
+
+void thermostat::
+temp_target (const temp_target_optional& x)
+{
+  this->temp_target_ = x;
+}
+
+const thermostat::delta_temp_optional& thermostat::
+delta_temp () const
+{
+  return this->delta_temp_;
+}
+
+thermostat::delta_temp_optional& thermostat::
+delta_temp ()
+{
+  return this->delta_temp_;
+}
+
+void thermostat::
+delta_temp (const delta_temp_type& x)
+{
+  this->delta_temp_.set (x);
+}
+
+void thermostat::
+delta_temp (const delta_temp_optional& x)
+{
+  this->delta_temp_ = x;
+}
+
+
 // cuboid
 // 
 
@@ -739,6 +951,78 @@ type (const type_type& x)
   this->type_.set (x);
 }
 
+const cuboid::fixed_optional& cuboid::
+fixed () const
+{
+  return this->fixed_;
+}
+
+cuboid::fixed_optional& cuboid::
+fixed ()
+{
+  return this->fixed_;
+}
+
+void cuboid::
+fixed (const fixed_type& x)
+{
+  this->fixed_.set (x);
+}
+
+void cuboid::
+fixed (const fixed_optional& x)
+{
+  this->fixed_ = x;
+}
+
+const cuboid::stiffness_optional& cuboid::
+stiffness () const
+{
+  return this->stiffness_;
+}
+
+cuboid::stiffness_optional& cuboid::
+stiffness ()
+{
+  return this->stiffness_;
+}
+
+void cuboid::
+stiffness (const stiffness_type& x)
+{
+  this->stiffness_.set (x);
+}
+
+void cuboid::
+stiffness (const stiffness_optional& x)
+{
+  this->stiffness_ = x;
+}
+
+const cuboid::average_bond_length_optional& cuboid::
+average_bond_length () const
+{
+  return this->average_bond_length_;
+}
+
+cuboid::average_bond_length_optional& cuboid::
+average_bond_length ()
+{
+  return this->average_bond_length_;
+}
+
+void cuboid::
+average_bond_length (const average_bond_length_type& x)
+{
+  this->average_bond_length_.set (x);
+}
+
+void cuboid::
+average_bond_length (const average_bond_length_optional& x)
+{
+  this->average_bond_length_ = x;
+}
+
 const cuboid::position_type& cuboid::
 position () const
 {
@@ -809,6 +1093,24 @@ void cuboid::
 dimensions (::std::unique_ptr< dimensions_type > x)
 {
   this->dimensions_.set (std::move (x));
+}
+
+const cuboid::force_sequence& cuboid::
+force () const
+{
+  return this->force_;
+}
+
+cuboid::force_sequence& cuboid::
+force ()
+{
+  return this->force_;
+}
+
+void cuboid::
+force (const force_sequence& s)
+{
+  this->force_ = s;
 }
 
 
@@ -923,6 +1225,30 @@ type (const type_type& x)
   this->type_.set (x);
 }
 
+const sphere::fixed_optional& sphere::
+fixed () const
+{
+  return this->fixed_;
+}
+
+sphere::fixed_optional& sphere::
+fixed ()
+{
+  return this->fixed_;
+}
+
+void sphere::
+fixed (const fixed_type& x)
+{
+  this->fixed_.set (x);
+}
+
+void sphere::
+fixed (const fixed_optional& x)
+{
+  this->fixed_ = x;
+}
+
 const sphere::center_type& sphere::
 center () const
 {
@@ -969,6 +1295,64 @@ void sphere::
 velocity (::std::unique_ptr< velocity_type > x)
 {
   this->velocity_.set (std::move (x));
+}
+
+
+// apply_to
+// 
+
+const apply_to::x_type& apply_to::
+x () const
+{
+  return this->x_.get ();
+}
+
+apply_to::x_type& apply_to::
+x ()
+{
+  return this->x_.get ();
+}
+
+void apply_to::
+x (const x_type& x)
+{
+  this->x_.set (x);
+}
+
+const apply_to::y_type& apply_to::
+y () const
+{
+  return this->y_.get ();
+}
+
+apply_to::y_type& apply_to::
+y ()
+{
+  return this->y_.get ();
+}
+
+void apply_to::
+y (const y_type& x)
+{
+  this->y_.set (x);
+}
+
+const apply_to::z_type& apply_to::
+z () const
+{
+  return this->z_.get ();
+}
+
+apply_to::z_type& apply_to::
+z ()
+{
+  return this->z_.get ();
+}
+
+void apply_to::
+z (const z_type& x)
+{
+  this->z_.set (x);
 }
 
 
@@ -1146,6 +1530,70 @@ z (const z_type& x)
 }
 
 
+// force
+// 
+
+const force::end_time_type& force::
+end_time () const
+{
+  return this->end_time_.get ();
+}
+
+force::end_time_type& force::
+end_time ()
+{
+  return this->end_time_.get ();
+}
+
+void force::
+end_time (const end_time_type& x)
+{
+  this->end_time_.set (x);
+}
+
+const force::force1_type& force::
+force1 () const
+{
+  return this->force1_.get ();
+}
+
+force::force1_type& force::
+force1 ()
+{
+  return this->force1_.get ();
+}
+
+void force::
+force1 (const force1_type& x)
+{
+  this->force1_.set (x);
+}
+
+void force::
+force1 (::std::unique_ptr< force1_type > x)
+{
+  this->force1_.set (std::move (x));
+}
+
+const force::particles_sequence& force::
+particles () const
+{
+  return this->particles_;
+}
+
+force::particles_sequence& force::
+particles ()
+{
+  return this->particles_;
+}
+
+void force::
+particles (const particles_sequence& s)
+{
+  this->particles_ = s;
+}
+
+
 // center
 // 
 
@@ -1204,6 +1652,150 @@ z (const z_type& x)
 }
 
 
+// force1
+// 
+
+const force1::x_type& force1::
+x () const
+{
+  return this->x_.get ();
+}
+
+force1::x_type& force1::
+x ()
+{
+  return this->x_.get ();
+}
+
+void force1::
+x (const x_type& x)
+{
+  this->x_.set (x);
+}
+
+const force1::y_type& force1::
+y () const
+{
+  return this->y_.get ();
+}
+
+force1::y_type& force1::
+y ()
+{
+  return this->y_.get ();
+}
+
+void force1::
+y (const y_type& x)
+{
+  this->y_.set (x);
+}
+
+const force1::z_type& force1::
+z () const
+{
+  return this->z_.get ();
+}
+
+force1::z_type& force1::
+z ()
+{
+  return this->z_.get ();
+}
+
+void force1::
+z (const z_type& x)
+{
+  this->z_.set (x);
+}
+
+
+// particles
+// 
+
+const particles::particle_index_type& particles::
+particle_index () const
+{
+  return this->particle_index_.get ();
+}
+
+particles::particle_index_type& particles::
+particle_index ()
+{
+  return this->particle_index_.get ();
+}
+
+void particles::
+particle_index (const particle_index_type& x)
+{
+  this->particle_index_.set (x);
+}
+
+void particles::
+particle_index (::std::unique_ptr< particle_index_type > x)
+{
+  this->particle_index_.set (std::move (x));
+}
+
+
+// particle_index
+// 
+
+const particle_index::x_type& particle_index::
+x () const
+{
+  return this->x_.get ();
+}
+
+particle_index::x_type& particle_index::
+x ()
+{
+  return this->x_.get ();
+}
+
+void particle_index::
+x (const x_type& x)
+{
+  this->x_.set (x);
+}
+
+const particle_index::y_type& particle_index::
+y () const
+{
+  return this->y_.get ();
+}
+
+particle_index::y_type& particle_index::
+y ()
+{
+  return this->y_.get ();
+}
+
+void particle_index::
+y (const y_type& x)
+{
+  this->y_.set (x);
+}
+
+const particle_index::z_type& particle_index::
+z () const
+{
+  return this->z_.get ();
+}
+
+particle_index::z_type& particle_index::
+z ()
+{
+  return this->z_.get ();
+}
+
+void particle_index::
+z (const z_type& x)
+{
+  this->z_.set (x);
+}
+
+
 #include <xsd/cxx/xml/dom/parsing-source.hxx>
 
 // simulation_t
@@ -1215,24 +1807,25 @@ simulation_t (const end_time_type& end_time,
               const cutoff_type& cutoff,
               const domain_type& domain,
               const boundaries_type& boundaries,
-              const n_thermostat_type& n_thermostat)
+              const g_grav_type& g_grav)
 : ::xml_schema::type (),
   end_time_ (end_time, this),
   delta_t_ (delta_t, this),
   cutoff_ (cutoff, this),
+  dimension_ (this),
   domain_ (domain, this),
   boundaries_ (boundaries, this),
-  temp_init_ (this),
+  g_grav_ (g_grav, this),
+  membrane_ (this),
   brownianMotion_ (this),
-  n_thermostat_ (n_thermostat, this),
-  temp_target_ (this),
-  delta_temp_ (this),
-  g_grav_ (this),
   writeFrequency_ (this),
   baseName_ (this),
   createCheckpoint_ (this),
   file_name_ (this),
+  csvWriteFrequency_ (this),
+  numBins_ (this),
   parallel_ (this),
+  thermostat_ (this),
   cuboid_ (this),
   sphere_ (this)
 {
@@ -1244,24 +1837,25 @@ simulation_t (const end_time_type& end_time,
               const cutoff_type& cutoff,
               ::std::unique_ptr< domain_type > domain,
               ::std::unique_ptr< boundaries_type > boundaries,
-              const n_thermostat_type& n_thermostat)
+              ::std::unique_ptr< g_grav_type > g_grav)
 : ::xml_schema::type (),
   end_time_ (end_time, this),
   delta_t_ (delta_t, this),
   cutoff_ (cutoff, this),
+  dimension_ (this),
   domain_ (std::move (domain), this),
   boundaries_ (std::move (boundaries), this),
-  temp_init_ (this),
+  g_grav_ (std::move (g_grav), this),
+  membrane_ (this),
   brownianMotion_ (this),
-  n_thermostat_ (n_thermostat, this),
-  temp_target_ (this),
-  delta_temp_ (this),
-  g_grav_ (this),
   writeFrequency_ (this),
   baseName_ (this),
   createCheckpoint_ (this),
   file_name_ (this),
+  csvWriteFrequency_ (this),
+  numBins_ (this),
   parallel_ (this),
+  thermostat_ (this),
   cuboid_ (this),
   sphere_ (this)
 {
@@ -1275,19 +1869,20 @@ simulation_t (const simulation_t& x,
   end_time_ (x.end_time_, f, this),
   delta_t_ (x.delta_t_, f, this),
   cutoff_ (x.cutoff_, f, this),
+  dimension_ (x.dimension_, f, this),
   domain_ (x.domain_, f, this),
   boundaries_ (x.boundaries_, f, this),
-  temp_init_ (x.temp_init_, f, this),
-  brownianMotion_ (x.brownianMotion_, f, this),
-  n_thermostat_ (x.n_thermostat_, f, this),
-  temp_target_ (x.temp_target_, f, this),
-  delta_temp_ (x.delta_temp_, f, this),
   g_grav_ (x.g_grav_, f, this),
+  membrane_ (x.membrane_, f, this),
+  brownianMotion_ (x.brownianMotion_, f, this),
   writeFrequency_ (x.writeFrequency_, f, this),
   baseName_ (x.baseName_, f, this),
   createCheckpoint_ (x.createCheckpoint_, f, this),
   file_name_ (x.file_name_, f, this),
+  csvWriteFrequency_ (x.csvWriteFrequency_, f, this),
+  numBins_ (x.numBins_, f, this),
   parallel_ (x.parallel_, f, this),
+  thermostat_ (x.thermostat_, f, this),
   cuboid_ (x.cuboid_, f, this),
   sphere_ (x.sphere_, f, this)
 {
@@ -1301,19 +1896,20 @@ simulation_t (const ::xercesc::DOMElement& e,
   end_time_ (this),
   delta_t_ (this),
   cutoff_ (this),
+  dimension_ (this),
   domain_ (this),
   boundaries_ (this),
-  temp_init_ (this),
-  brownianMotion_ (this),
-  n_thermostat_ (this),
-  temp_target_ (this),
-  delta_temp_ (this),
   g_grav_ (this),
+  membrane_ (this),
+  brownianMotion_ (this),
   writeFrequency_ (this),
   baseName_ (this),
   createCheckpoint_ (this),
   file_name_ (this),
+  csvWriteFrequency_ (this),
+  numBins_ (this),
   parallel_ (this),
+  thermostat_ (this),
   cuboid_ (this),
   sphere_ (this)
 {
@@ -1367,6 +1963,17 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       }
     }
 
+    // dimension
+    //
+    if (n.name () == "dimension" && n.namespace_ ().empty ())
+    {
+      if (!this->dimension_)
+      {
+        this->dimension_.set (dimension_traits::create (i, f, this));
+        continue;
+      }
+    }
+
     // domain
     //
     if (n.name () == "domain" && n.namespace_ ().empty ())
@@ -1395,13 +2002,27 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       }
     }
 
-    // temp_init
+    // g_grav
     //
-    if (n.name () == "temp_init" && n.namespace_ ().empty ())
+    if (n.name () == "g_grav" && n.namespace_ ().empty ())
     {
-      if (!this->temp_init_)
+      ::std::unique_ptr< g_grav_type > r (
+        g_grav_traits::create (i, f, this));
+
+      if (!g_grav_.present ())
       {
-        this->temp_init_.set (temp_init_traits::create (i, f, this));
+        this->g_grav_.set (::std::move (r));
+        continue;
+      }
+    }
+
+    // membrane
+    //
+    if (n.name () == "membrane" && n.namespace_ ().empty ())
+    {
+      if (!this->membrane_)
+      {
+        this->membrane_.set (membrane_traits::create (i, f, this));
         continue;
       }
     }
@@ -1413,50 +2034,6 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       if (!this->brownianMotion_)
       {
         this->brownianMotion_.set (brownianMotion_traits::create (i, f, this));
-        continue;
-      }
-    }
-
-    // n_thermostat
-    //
-    if (n.name () == "n_thermostat" && n.namespace_ ().empty ())
-    {
-      if (!n_thermostat_.present ())
-      {
-        this->n_thermostat_.set (n_thermostat_traits::create (i, f, this));
-        continue;
-      }
-    }
-
-    // temp_target
-    //
-    if (n.name () == "temp_target" && n.namespace_ ().empty ())
-    {
-      if (!this->temp_target_)
-      {
-        this->temp_target_.set (temp_target_traits::create (i, f, this));
-        continue;
-      }
-    }
-
-    // delta_temp
-    //
-    if (n.name () == "delta_temp" && n.namespace_ ().empty ())
-    {
-      if (!this->delta_temp_)
-      {
-        this->delta_temp_.set (delta_temp_traits::create (i, f, this));
-        continue;
-      }
-    }
-
-    // g_grav
-    //
-    if (n.name () == "g_grav" && n.namespace_ ().empty ())
-    {
-      if (!this->g_grav_)
-      {
-        this->g_grav_.set (g_grav_traits::create (i, f, this));
         continue;
       }
     }
@@ -1508,6 +2085,28 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       continue;
     }
 
+    // csvWriteFrequency
+    //
+    if (n.name () == "csvWriteFrequency" && n.namespace_ ().empty ())
+    {
+      if (!this->csvWriteFrequency_)
+      {
+        this->csvWriteFrequency_.set (csvWriteFrequency_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    // numBins
+    //
+    if (n.name () == "numBins" && n.namespace_ ().empty ())
+    {
+      if (!this->numBins_)
+      {
+        this->numBins_.set (numBins_traits::create (i, f, this));
+        continue;
+      }
+    }
+
     // parallel
     //
     if (n.name () == "parallel" && n.namespace_ ().empty ())
@@ -1515,6 +2114,20 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       if (!this->parallel_)
       {
         this->parallel_.set (parallel_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    // thermostat
+    //
+    if (n.name () == "thermostat" && n.namespace_ ().empty ())
+    {
+      ::std::unique_ptr< thermostat_type > r (
+        thermostat_traits::create (i, f, this));
+
+      if (!this->thermostat_)
+      {
+        this->thermostat_.set (::std::move (r));
         continue;
       }
     }
@@ -1579,10 +2192,10 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       "");
   }
 
-  if (!n_thermostat_.present ())
+  if (!g_grav_.present ())
   {
     throw ::xsd::cxx::tree::expected_element< char > (
-      "n_thermostat",
+      "g_grav",
       "");
   }
 }
@@ -1603,19 +2216,20 @@ operator= (const simulation_t& x)
     this->end_time_ = x.end_time_;
     this->delta_t_ = x.delta_t_;
     this->cutoff_ = x.cutoff_;
+    this->dimension_ = x.dimension_;
     this->domain_ = x.domain_;
     this->boundaries_ = x.boundaries_;
-    this->temp_init_ = x.temp_init_;
-    this->brownianMotion_ = x.brownianMotion_;
-    this->n_thermostat_ = x.n_thermostat_;
-    this->temp_target_ = x.temp_target_;
-    this->delta_temp_ = x.delta_temp_;
     this->g_grav_ = x.g_grav_;
+    this->membrane_ = x.membrane_;
+    this->brownianMotion_ = x.brownianMotion_;
     this->writeFrequency_ = x.writeFrequency_;
     this->baseName_ = x.baseName_;
     this->createCheckpoint_ = x.createCheckpoint_;
     this->file_name_ = x.file_name_;
+    this->csvWriteFrequency_ = x.csvWriteFrequency_;
+    this->numBins_ = x.numBins_;
     this->parallel_ = x.parallel_;
+    this->thermostat_ = x.thermostat_;
     this->cuboid_ = x.cuboid_;
     this->sphere_ = x.sphere_;
   }
@@ -1985,6 +2599,313 @@ boundaries::
 {
 }
 
+// g_grav
+//
+
+g_grav::
+g_grav (const x_type& x,
+        const y_type& y,
+        const z_type& z)
+: ::xml_schema::type (),
+  x_ (x, this),
+  y_ (y, this),
+  z_ (z, this)
+{
+}
+
+g_grav::
+g_grav (const g_grav& x,
+        ::xml_schema::flags f,
+        ::xml_schema::container* c)
+: ::xml_schema::type (x, f, c),
+  x_ (x.x_, f, this),
+  y_ (x.y_, f, this),
+  z_ (x.z_, f, this)
+{
+}
+
+g_grav::
+g_grav (const ::xercesc::DOMElement& e,
+        ::xml_schema::flags f,
+        ::xml_schema::container* c)
+: ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
+  x_ (this),
+  y_ (this),
+  z_ (this)
+{
+  if ((f & ::xml_schema::flags::base) == 0)
+  {
+    ::xsd::cxx::xml::dom::parser< char > p (e, true, false, false);
+    this->parse (p, f);
+  }
+}
+
+void g_grav::
+parse (::xsd::cxx::xml::dom::parser< char >& p,
+       ::xml_schema::flags f)
+{
+  for (; p.more_content (); p.next_content (false))
+  {
+    const ::xercesc::DOMElement& i (p.cur_element ());
+    const ::xsd::cxx::xml::qualified_name< char > n (
+      ::xsd::cxx::xml::dom::name< char > (i));
+
+    // x
+    //
+    if (n.name () == "x" && n.namespace_ ().empty ())
+    {
+      if (!x_.present ())
+      {
+        this->x_.set (x_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    // y
+    //
+    if (n.name () == "y" && n.namespace_ ().empty ())
+    {
+      if (!y_.present ())
+      {
+        this->y_.set (y_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    // z
+    //
+    if (n.name () == "z" && n.namespace_ ().empty ())
+    {
+      if (!z_.present ())
+      {
+        this->z_.set (z_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    break;
+  }
+
+  if (!x_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "x",
+      "");
+  }
+
+  if (!y_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "y",
+      "");
+  }
+
+  if (!z_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "z",
+      "");
+  }
+}
+
+g_grav* g_grav::
+_clone (::xml_schema::flags f,
+        ::xml_schema::container* c) const
+{
+  return new class g_grav (*this, f, c);
+}
+
+g_grav& g_grav::
+operator= (const g_grav& x)
+{
+  if (this != &x)
+  {
+    static_cast< ::xml_schema::type& > (*this) = x;
+    this->x_ = x.x_;
+    this->y_ = x.y_;
+    this->z_ = x.z_;
+  }
+
+  return *this;
+}
+
+g_grav::
+~g_grav ()
+{
+}
+
+// thermostat
+//
+
+thermostat::
+thermostat (const n_thermostat_type& n_thermostat,
+            const apply_to_type& apply_to)
+: ::xml_schema::type (),
+  n_thermostat_ (n_thermostat, this),
+  apply_to_ (apply_to, this),
+  temp_init_ (this),
+  temp_target_ (this),
+  delta_temp_ (this)
+{
+}
+
+thermostat::
+thermostat (const n_thermostat_type& n_thermostat,
+            ::std::unique_ptr< apply_to_type > apply_to)
+: ::xml_schema::type (),
+  n_thermostat_ (n_thermostat, this),
+  apply_to_ (std::move (apply_to), this),
+  temp_init_ (this),
+  temp_target_ (this),
+  delta_temp_ (this)
+{
+}
+
+thermostat::
+thermostat (const thermostat& x,
+            ::xml_schema::flags f,
+            ::xml_schema::container* c)
+: ::xml_schema::type (x, f, c),
+  n_thermostat_ (x.n_thermostat_, f, this),
+  apply_to_ (x.apply_to_, f, this),
+  temp_init_ (x.temp_init_, f, this),
+  temp_target_ (x.temp_target_, f, this),
+  delta_temp_ (x.delta_temp_, f, this)
+{
+}
+
+thermostat::
+thermostat (const ::xercesc::DOMElement& e,
+            ::xml_schema::flags f,
+            ::xml_schema::container* c)
+: ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
+  n_thermostat_ (this),
+  apply_to_ (this),
+  temp_init_ (this),
+  temp_target_ (this),
+  delta_temp_ (this)
+{
+  if ((f & ::xml_schema::flags::base) == 0)
+  {
+    ::xsd::cxx::xml::dom::parser< char > p (e, true, false, false);
+    this->parse (p, f);
+  }
+}
+
+void thermostat::
+parse (::xsd::cxx::xml::dom::parser< char >& p,
+       ::xml_schema::flags f)
+{
+  for (; p.more_content (); p.next_content (false))
+  {
+    const ::xercesc::DOMElement& i (p.cur_element ());
+    const ::xsd::cxx::xml::qualified_name< char > n (
+      ::xsd::cxx::xml::dom::name< char > (i));
+
+    // n_thermostat
+    //
+    if (n.name () == "n_thermostat" && n.namespace_ ().empty ())
+    {
+      if (!n_thermostat_.present ())
+      {
+        this->n_thermostat_.set (n_thermostat_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    // apply_to
+    //
+    if (n.name () == "apply_to" && n.namespace_ ().empty ())
+    {
+      ::std::unique_ptr< apply_to_type > r (
+        apply_to_traits::create (i, f, this));
+
+      if (!apply_to_.present ())
+      {
+        this->apply_to_.set (::std::move (r));
+        continue;
+      }
+    }
+
+    // temp_init
+    //
+    if (n.name () == "temp_init" && n.namespace_ ().empty ())
+    {
+      if (!this->temp_init_)
+      {
+        this->temp_init_.set (temp_init_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    // temp_target
+    //
+    if (n.name () == "temp_target" && n.namespace_ ().empty ())
+    {
+      if (!this->temp_target_)
+      {
+        this->temp_target_.set (temp_target_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    // delta_temp
+    //
+    if (n.name () == "delta_temp" && n.namespace_ ().empty ())
+    {
+      if (!this->delta_temp_)
+      {
+        this->delta_temp_.set (delta_temp_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    break;
+  }
+
+  if (!n_thermostat_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "n_thermostat",
+      "");
+  }
+
+  if (!apply_to_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "apply_to",
+      "");
+  }
+}
+
+thermostat* thermostat::
+_clone (::xml_schema::flags f,
+        ::xml_schema::container* c) const
+{
+  return new class thermostat (*this, f, c);
+}
+
+thermostat& thermostat::
+operator= (const thermostat& x)
+{
+  if (this != &x)
+  {
+    static_cast< ::xml_schema::type& > (*this) = x;
+    this->n_thermostat_ = x.n_thermostat_;
+    this->apply_to_ = x.apply_to_;
+    this->temp_init_ = x.temp_init_;
+    this->temp_target_ = x.temp_target_;
+    this->delta_temp_ = x.delta_temp_;
+  }
+
+  return *this;
+}
+
+thermostat::
+~thermostat ()
+{
+}
+
 // cuboid
 //
 
@@ -2003,9 +2924,13 @@ cuboid (const mass_type& mass,
   epsilon_ (epsilon, this),
   sigma_ (sigma, this),
   type_ (type, this),
+  fixed_ (this),
+  stiffness_ (this),
+  average_bond_length_ (this),
   position_ (position, this),
   velocity_ (velocity, this),
-  dimensions_ (dimensions, this)
+  dimensions_ (dimensions, this),
+  force_ (this)
 {
 }
 
@@ -2024,9 +2949,13 @@ cuboid (const mass_type& mass,
   epsilon_ (epsilon, this),
   sigma_ (sigma, this),
   type_ (type, this),
+  fixed_ (this),
+  stiffness_ (this),
+  average_bond_length_ (this),
   position_ (std::move (position), this),
   velocity_ (std::move (velocity), this),
-  dimensions_ (std::move (dimensions), this)
+  dimensions_ (std::move (dimensions), this),
+  force_ (this)
 {
 }
 
@@ -2040,9 +2969,13 @@ cuboid (const cuboid& x,
   epsilon_ (x.epsilon_, f, this),
   sigma_ (x.sigma_, f, this),
   type_ (x.type_, f, this),
+  fixed_ (x.fixed_, f, this),
+  stiffness_ (x.stiffness_, f, this),
+  average_bond_length_ (x.average_bond_length_, f, this),
   position_ (x.position_, f, this),
   velocity_ (x.velocity_, f, this),
-  dimensions_ (x.dimensions_, f, this)
+  dimensions_ (x.dimensions_, f, this),
+  force_ (x.force_, f, this)
 {
 }
 
@@ -2056,9 +2989,13 @@ cuboid (const ::xercesc::DOMElement& e,
   epsilon_ (this),
   sigma_ (this),
   type_ (this),
+  fixed_ (this),
+  stiffness_ (this),
+  average_bond_length_ (this),
   position_ (this),
   velocity_ (this),
-  dimensions_ (this)
+  dimensions_ (this),
+  force_ (this)
 {
   if ((f & ::xml_schema::flags::base) == 0)
   {
@@ -2132,6 +3069,39 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       }
     }
 
+    // fixed
+    //
+    if (n.name () == "fixed" && n.namespace_ ().empty ())
+    {
+      if (!this->fixed_)
+      {
+        this->fixed_.set (fixed_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    // stiffness
+    //
+    if (n.name () == "stiffness" && n.namespace_ ().empty ())
+    {
+      if (!this->stiffness_)
+      {
+        this->stiffness_.set (stiffness_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    // average_bond_length
+    //
+    if (n.name () == "average_bond_length" && n.namespace_ ().empty ())
+    {
+      if (!this->average_bond_length_)
+      {
+        this->average_bond_length_.set (average_bond_length_traits::create (i, f, this));
+        continue;
+      }
+    }
+
     // position
     //
     if (n.name () == "position" && n.namespace_ ().empty ())
@@ -2172,6 +3142,17 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
         this->dimensions_.set (::std::move (r));
         continue;
       }
+    }
+
+    // force
+    //
+    if (n.name () == "force" && n.namespace_ ().empty ())
+    {
+      ::std::unique_ptr< force_type > r (
+        force_traits::create (i, f, this));
+
+      this->force_.push_back (::std::move (r));
+      continue;
     }
 
     break;
@@ -2252,9 +3233,13 @@ operator= (const cuboid& x)
     this->epsilon_ = x.epsilon_;
     this->sigma_ = x.sigma_;
     this->type_ = x.type_;
+    this->fixed_ = x.fixed_;
+    this->stiffness_ = x.stiffness_;
+    this->average_bond_length_ = x.average_bond_length_;
     this->position_ = x.position_;
     this->velocity_ = x.velocity_;
     this->dimensions_ = x.dimensions_;
+    this->force_ = x.force_;
   }
 
   return *this;
@@ -2284,6 +3269,7 @@ sphere (const mass_type& mass,
   epsilon_ (epsilon, this),
   sigma_ (sigma, this),
   type_ (type, this),
+  fixed_ (this),
   center_ (center, this),
   velocity_ (velocity, this)
 {
@@ -2305,6 +3291,7 @@ sphere (const mass_type& mass,
   epsilon_ (epsilon, this),
   sigma_ (sigma, this),
   type_ (type, this),
+  fixed_ (this),
   center_ (std::move (center), this),
   velocity_ (std::move (velocity), this)
 {
@@ -2321,6 +3308,7 @@ sphere (const sphere& x,
   epsilon_ (x.epsilon_, f, this),
   sigma_ (x.sigma_, f, this),
   type_ (x.type_, f, this),
+  fixed_ (x.fixed_, f, this),
   center_ (x.center_, f, this),
   velocity_ (x.velocity_, f, this)
 {
@@ -2337,6 +3325,7 @@ sphere (const ::xercesc::DOMElement& e,
   epsilon_ (this),
   sigma_ (this),
   type_ (this),
+  fixed_ (this),
   center_ (this),
   velocity_ (this)
 {
@@ -2419,6 +3408,17 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       if (!type_.present ())
       {
         this->type_.set (type_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    // fixed
+    //
+    if (n.name () == "fixed" && n.namespace_ ().empty ())
+    {
+      if (!this->fixed_)
+      {
+        this->fixed_.set (fixed_traits::create (i, f, this));
         continue;
       }
     }
@@ -2530,6 +3530,7 @@ operator= (const sphere& x)
     this->epsilon_ = x.epsilon_;
     this->sigma_ = x.sigma_;
     this->type_ = x.type_;
+    this->fixed_ = x.fixed_;
     this->center_ = x.center_;
     this->velocity_ = x.velocity_;
   }
@@ -2539,6 +3540,141 @@ operator= (const sphere& x)
 
 sphere::
 ~sphere ()
+{
+}
+
+// apply_to
+//
+
+apply_to::
+apply_to (const x_type& x,
+          const y_type& y,
+          const z_type& z)
+: ::xml_schema::type (),
+  x_ (x, this),
+  y_ (y, this),
+  z_ (z, this)
+{
+}
+
+apply_to::
+apply_to (const apply_to& x,
+          ::xml_schema::flags f,
+          ::xml_schema::container* c)
+: ::xml_schema::type (x, f, c),
+  x_ (x.x_, f, this),
+  y_ (x.y_, f, this),
+  z_ (x.z_, f, this)
+{
+}
+
+apply_to::
+apply_to (const ::xercesc::DOMElement& e,
+          ::xml_schema::flags f,
+          ::xml_schema::container* c)
+: ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
+  x_ (this),
+  y_ (this),
+  z_ (this)
+{
+  if ((f & ::xml_schema::flags::base) == 0)
+  {
+    ::xsd::cxx::xml::dom::parser< char > p (e, true, false, false);
+    this->parse (p, f);
+  }
+}
+
+void apply_to::
+parse (::xsd::cxx::xml::dom::parser< char >& p,
+       ::xml_schema::flags f)
+{
+  for (; p.more_content (); p.next_content (false))
+  {
+    const ::xercesc::DOMElement& i (p.cur_element ());
+    const ::xsd::cxx::xml::qualified_name< char > n (
+      ::xsd::cxx::xml::dom::name< char > (i));
+
+    // x
+    //
+    if (n.name () == "x" && n.namespace_ ().empty ())
+    {
+      if (!x_.present ())
+      {
+        this->x_.set (x_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    // y
+    //
+    if (n.name () == "y" && n.namespace_ ().empty ())
+    {
+      if (!y_.present ())
+      {
+        this->y_.set (y_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    // z
+    //
+    if (n.name () == "z" && n.namespace_ ().empty ())
+    {
+      if (!z_.present ())
+      {
+        this->z_.set (z_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    break;
+  }
+
+  if (!x_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "x",
+      "");
+  }
+
+  if (!y_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "y",
+      "");
+  }
+
+  if (!z_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "z",
+      "");
+  }
+}
+
+apply_to* apply_to::
+_clone (::xml_schema::flags f,
+        ::xml_schema::container* c) const
+{
+  return new class apply_to (*this, f, c);
+}
+
+apply_to& apply_to::
+operator= (const apply_to& x)
+{
+  if (this != &x)
+  {
+    static_cast< ::xml_schema::type& > (*this) = x;
+    this->x_ = x.x_;
+    this->y_ = x.y_;
+    this->z_ = x.z_;
+  }
+
+  return *this;
+}
+
+apply_to::
+~apply_to ()
 {
 }
 
@@ -2947,6 +4083,146 @@ dimensions::
 {
 }
 
+// force
+//
+
+force::
+force (const end_time_type& end_time,
+       const force1_type& force1)
+: ::xml_schema::type (),
+  end_time_ (end_time, this),
+  force1_ (force1, this),
+  particles_ (this)
+{
+}
+
+force::
+force (const end_time_type& end_time,
+       ::std::unique_ptr< force1_type > force1)
+: ::xml_schema::type (),
+  end_time_ (end_time, this),
+  force1_ (std::move (force1), this),
+  particles_ (this)
+{
+}
+
+force::
+force (const force& x,
+       ::xml_schema::flags f,
+       ::xml_schema::container* c)
+: ::xml_schema::type (x, f, c),
+  end_time_ (x.end_time_, f, this),
+  force1_ (x.force1_, f, this),
+  particles_ (x.particles_, f, this)
+{
+}
+
+force::
+force (const ::xercesc::DOMElement& e,
+       ::xml_schema::flags f,
+       ::xml_schema::container* c)
+: ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
+  end_time_ (this),
+  force1_ (this),
+  particles_ (this)
+{
+  if ((f & ::xml_schema::flags::base) == 0)
+  {
+    ::xsd::cxx::xml::dom::parser< char > p (e, true, false, false);
+    this->parse (p, f);
+  }
+}
+
+void force::
+parse (::xsd::cxx::xml::dom::parser< char >& p,
+       ::xml_schema::flags f)
+{
+  for (; p.more_content (); p.next_content (false))
+  {
+    const ::xercesc::DOMElement& i (p.cur_element ());
+    const ::xsd::cxx::xml::qualified_name< char > n (
+      ::xsd::cxx::xml::dom::name< char > (i));
+
+    // end_time
+    //
+    if (n.name () == "end_time" && n.namespace_ ().empty ())
+    {
+      if (!end_time_.present ())
+      {
+        this->end_time_.set (end_time_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    // force
+    //
+    if (n.name () == "force" && n.namespace_ ().empty ())
+    {
+      ::std::unique_ptr< force1_type > r (
+        force1_traits::create (i, f, this));
+
+      if (!force1_.present ())
+      {
+        this->force1_.set (::std::move (r));
+        continue;
+      }
+    }
+
+    // particles
+    //
+    if (n.name () == "particles" && n.namespace_ ().empty ())
+    {
+      ::std::unique_ptr< particles_type > r (
+        particles_traits::create (i, f, this));
+
+      this->particles_.push_back (::std::move (r));
+      continue;
+    }
+
+    break;
+  }
+
+  if (!end_time_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "end_time",
+      "");
+  }
+
+  if (!force1_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "force",
+      "");
+  }
+}
+
+force* force::
+_clone (::xml_schema::flags f,
+        ::xml_schema::container* c) const
+{
+  return new class force (*this, f, c);
+}
+
+force& force::
+operator= (const force& x)
+{
+  if (this != &x)
+  {
+    static_cast< ::xml_schema::type& > (*this) = x;
+    this->end_time_ = x.end_time_;
+    this->force1_ = x.force1_;
+    this->particles_ = x.particles_;
+  }
+
+  return *this;
+}
+
+force::
+~force ()
+{
+}
+
 // center
 //
 
@@ -3079,6 +4355,375 @@ operator= (const center& x)
 
 center::
 ~center ()
+{
+}
+
+// force1
+//
+
+force1::
+force1 (const x_type& x,
+        const y_type& y,
+        const z_type& z)
+: ::xml_schema::type (),
+  x_ (x, this),
+  y_ (y, this),
+  z_ (z, this)
+{
+}
+
+force1::
+force1 (const force1& x,
+        ::xml_schema::flags f,
+        ::xml_schema::container* c)
+: ::xml_schema::type (x, f, c),
+  x_ (x.x_, f, this),
+  y_ (x.y_, f, this),
+  z_ (x.z_, f, this)
+{
+}
+
+force1::
+force1 (const ::xercesc::DOMElement& e,
+        ::xml_schema::flags f,
+        ::xml_schema::container* c)
+: ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
+  x_ (this),
+  y_ (this),
+  z_ (this)
+{
+  if ((f & ::xml_schema::flags::base) == 0)
+  {
+    ::xsd::cxx::xml::dom::parser< char > p (e, true, false, false);
+    this->parse (p, f);
+  }
+}
+
+void force1::
+parse (::xsd::cxx::xml::dom::parser< char >& p,
+       ::xml_schema::flags f)
+{
+  for (; p.more_content (); p.next_content (false))
+  {
+    const ::xercesc::DOMElement& i (p.cur_element ());
+    const ::xsd::cxx::xml::qualified_name< char > n (
+      ::xsd::cxx::xml::dom::name< char > (i));
+
+    // x
+    //
+    if (n.name () == "x" && n.namespace_ ().empty ())
+    {
+      if (!x_.present ())
+      {
+        this->x_.set (x_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    // y
+    //
+    if (n.name () == "y" && n.namespace_ ().empty ())
+    {
+      if (!y_.present ())
+      {
+        this->y_.set (y_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    // z
+    //
+    if (n.name () == "z" && n.namespace_ ().empty ())
+    {
+      if (!z_.present ())
+      {
+        this->z_.set (z_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    break;
+  }
+
+  if (!x_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "x",
+      "");
+  }
+
+  if (!y_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "y",
+      "");
+  }
+
+  if (!z_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "z",
+      "");
+  }
+}
+
+force1* force1::
+_clone (::xml_schema::flags f,
+        ::xml_schema::container* c) const
+{
+  return new class force1 (*this, f, c);
+}
+
+force1& force1::
+operator= (const force1& x)
+{
+  if (this != &x)
+  {
+    static_cast< ::xml_schema::type& > (*this) = x;
+    this->x_ = x.x_;
+    this->y_ = x.y_;
+    this->z_ = x.z_;
+  }
+
+  return *this;
+}
+
+force1::
+~force1 ()
+{
+}
+
+// particles
+//
+
+particles::
+particles (const particle_index_type& particle_index)
+: ::xml_schema::type (),
+  particle_index_ (particle_index, this)
+{
+}
+
+particles::
+particles (::std::unique_ptr< particle_index_type > particle_index)
+: ::xml_schema::type (),
+  particle_index_ (std::move (particle_index), this)
+{
+}
+
+particles::
+particles (const particles& x,
+           ::xml_schema::flags f,
+           ::xml_schema::container* c)
+: ::xml_schema::type (x, f, c),
+  particle_index_ (x.particle_index_, f, this)
+{
+}
+
+particles::
+particles (const ::xercesc::DOMElement& e,
+           ::xml_schema::flags f,
+           ::xml_schema::container* c)
+: ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
+  particle_index_ (this)
+{
+  if ((f & ::xml_schema::flags::base) == 0)
+  {
+    ::xsd::cxx::xml::dom::parser< char > p (e, true, false, false);
+    this->parse (p, f);
+  }
+}
+
+void particles::
+parse (::xsd::cxx::xml::dom::parser< char >& p,
+       ::xml_schema::flags f)
+{
+  for (; p.more_content (); p.next_content (false))
+  {
+    const ::xercesc::DOMElement& i (p.cur_element ());
+    const ::xsd::cxx::xml::qualified_name< char > n (
+      ::xsd::cxx::xml::dom::name< char > (i));
+
+    // particle_index
+    //
+    if (n.name () == "particle_index" && n.namespace_ ().empty ())
+    {
+      ::std::unique_ptr< particle_index_type > r (
+        particle_index_traits::create (i, f, this));
+
+      if (!particle_index_.present ())
+      {
+        this->particle_index_.set (::std::move (r));
+        continue;
+      }
+    }
+
+    break;
+  }
+
+  if (!particle_index_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "particle_index",
+      "");
+  }
+}
+
+particles* particles::
+_clone (::xml_schema::flags f,
+        ::xml_schema::container* c) const
+{
+  return new class particles (*this, f, c);
+}
+
+particles& particles::
+operator= (const particles& x)
+{
+  if (this != &x)
+  {
+    static_cast< ::xml_schema::type& > (*this) = x;
+    this->particle_index_ = x.particle_index_;
+  }
+
+  return *this;
+}
+
+particles::
+~particles ()
+{
+}
+
+// particle_index
+//
+
+particle_index::
+particle_index (const x_type& x,
+                const y_type& y,
+                const z_type& z)
+: ::xml_schema::type (),
+  x_ (x, this),
+  y_ (y, this),
+  z_ (z, this)
+{
+}
+
+particle_index::
+particle_index (const particle_index& x,
+                ::xml_schema::flags f,
+                ::xml_schema::container* c)
+: ::xml_schema::type (x, f, c),
+  x_ (x.x_, f, this),
+  y_ (x.y_, f, this),
+  z_ (x.z_, f, this)
+{
+}
+
+particle_index::
+particle_index (const ::xercesc::DOMElement& e,
+                ::xml_schema::flags f,
+                ::xml_schema::container* c)
+: ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
+  x_ (this),
+  y_ (this),
+  z_ (this)
+{
+  if ((f & ::xml_schema::flags::base) == 0)
+  {
+    ::xsd::cxx::xml::dom::parser< char > p (e, true, false, false);
+    this->parse (p, f);
+  }
+}
+
+void particle_index::
+parse (::xsd::cxx::xml::dom::parser< char >& p,
+       ::xml_schema::flags f)
+{
+  for (; p.more_content (); p.next_content (false))
+  {
+    const ::xercesc::DOMElement& i (p.cur_element ());
+    const ::xsd::cxx::xml::qualified_name< char > n (
+      ::xsd::cxx::xml::dom::name< char > (i));
+
+    // x
+    //
+    if (n.name () == "x" && n.namespace_ ().empty ())
+    {
+      if (!x_.present ())
+      {
+        this->x_.set (x_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    // y
+    //
+    if (n.name () == "y" && n.namespace_ ().empty ())
+    {
+      if (!y_.present ())
+      {
+        this->y_.set (y_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    // z
+    //
+    if (n.name () == "z" && n.namespace_ ().empty ())
+    {
+      if (!z_.present ())
+      {
+        this->z_.set (z_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    break;
+  }
+
+  if (!x_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "x",
+      "");
+  }
+
+  if (!y_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "y",
+      "");
+  }
+
+  if (!z_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "z",
+      "");
+  }
+}
+
+particle_index* particle_index::
+_clone (::xml_schema::flags f,
+        ::xml_schema::container* c) const
+{
+  return new class particle_index (*this, f, c);
+}
+
+particle_index& particle_index::
+operator= (const particle_index& x)
+{
+  if (this != &x)
+  {
+    static_cast< ::xml_schema::type& > (*this) = x;
+    this->x_ = x.x_;
+    this->y_ = x.y_;
+    this->z_ = x.z_;
+  }
+
+  return *this;
+}
+
+particle_index::
+~particle_index ()
 {
 }
 

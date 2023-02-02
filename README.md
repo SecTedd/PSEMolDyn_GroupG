@@ -25,6 +25,11 @@ Video: <br />
 3. Video <br />
    FallingDrop2.avi shows the actual falling drop simulation where the drop falls into a basin filled with liquid <br />
 
+## Assignment 5 
+### Task 1 
+
+The input for task 1 can be found under input/Membrane.xml
+
 ## Build and run
 
 ### Build without Doxygen

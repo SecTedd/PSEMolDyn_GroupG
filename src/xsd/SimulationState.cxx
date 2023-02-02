@@ -137,6 +137,42 @@ type (const type_type& x)
   this->type_.set (x);
 }
 
+const particle::stiffness_type& particle::
+stiffness () const
+{
+  return this->stiffness_.get ();
+}
+
+particle::stiffness_type& particle::
+stiffness ()
+{
+  return this->stiffness_.get ();
+}
+
+void particle::
+stiffness (const stiffness_type& x)
+{
+  this->stiffness_.set (x);
+}
+
+const particle::averageBondLength_type& particle::
+averageBondLength () const
+{
+  return this->averageBondLength_.get ();
+}
+
+particle::averageBondLength_type& particle::
+averageBondLength ()
+{
+  return this->averageBondLength_.get ();
+}
+
+void particle::
+averageBondLength (const averageBondLength_type& x)
+{
+  this->averageBondLength_.set (x);
+}
+
 const particle::x_type& particle::
 x () const
 {
@@ -558,6 +594,8 @@ particle (const mass_type& mass,
           const epsilon_type& epsilon,
           const sigma_type& sigma,
           const type_type& type,
+          const stiffness_type& stiffness,
+          const averageBondLength_type& averageBondLength,
           const x_type& x,
           const v_type& v,
           const f_type& f,
@@ -567,6 +605,8 @@ particle (const mass_type& mass,
   epsilon_ (epsilon, this),
   sigma_ (sigma, this),
   type_ (type, this),
+  stiffness_ (stiffness, this),
+  averageBondLength_ (averageBondLength, this),
   x_ (x, this),
   v_ (v, this),
   f_ (f, this),
@@ -579,6 +619,8 @@ particle (const mass_type& mass,
           const epsilon_type& epsilon,
           const sigma_type& sigma,
           const type_type& type,
+          const stiffness_type& stiffness,
+          const averageBondLength_type& averageBondLength,
           ::std::unique_ptr< x_type > x,
           ::std::unique_ptr< v_type > v,
           ::std::unique_ptr< f_type > f,
@@ -588,6 +630,8 @@ particle (const mass_type& mass,
   epsilon_ (epsilon, this),
   sigma_ (sigma, this),
   type_ (type, this),
+  stiffness_ (stiffness, this),
+  averageBondLength_ (averageBondLength, this),
   x_ (std::move (x), this),
   v_ (std::move (v), this),
   f_ (std::move (f), this),
@@ -604,6 +648,8 @@ particle (const particle& x,
   epsilon_ (x.epsilon_, f, this),
   sigma_ (x.sigma_, f, this),
   type_ (x.type_, f, this),
+  stiffness_ (x.stiffness_, f, this),
+  averageBondLength_ (x.averageBondLength_, f, this),
   x_ (x.x_, f, this),
   v_ (x.v_, f, this),
   f_ (x.f_, f, this),
@@ -620,6 +666,8 @@ particle (const ::xercesc::DOMElement& e,
   epsilon_ (this),
   sigma_ (this),
   type_ (this),
+  stiffness_ (this),
+  averageBondLength_ (this),
   x_ (this),
   v_ (this),
   f_ (this),
@@ -682,6 +730,28 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       if (!type_.present ())
       {
         this->type_.set (type_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    // stiffness
+    //
+    if (n.name () == "stiffness" && n.namespace_ ().empty ())
+    {
+      if (!stiffness_.present ())
+      {
+        this->stiffness_.set (stiffness_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    // averageBondLength
+    //
+    if (n.name () == "averageBondLength" && n.namespace_ ().empty ())
+    {
+      if (!averageBondLength_.present ())
+      {
+        this->averageBondLength_.set (averageBondLength_traits::create (i, f, this));
         continue;
       }
     }
@@ -773,6 +843,20 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       "");
   }
 
+  if (!stiffness_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "stiffness",
+      "");
+  }
+
+  if (!averageBondLength_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "averageBondLength",
+      "");
+  }
+
   if (!x_.present ())
   {
     throw ::xsd::cxx::tree::expected_element< char > (
@@ -819,6 +903,8 @@ operator= (const particle& x)
     this->epsilon_ = x.epsilon_;
     this->sigma_ = x.sigma_;
     this->type_ = x.type_;
+    this->stiffness_ = x.stiffness_;
+    this->averageBondLength_ = x.averageBondLength_;
     this->x_ = x.x_;
     this->v_ = x.v_;
     this->f_ = x.f_;
@@ -1862,6 +1948,28 @@ operator<< (::xercesc::DOMElement& e, const particle& i)
         e));
 
     s << i.type ();
+  }
+
+  // stiffness
+  //
+  {
+    ::xercesc::DOMElement& s (
+      ::xsd::cxx::xml::dom::create_element (
+        "stiffness",
+        e));
+
+    s << ::xml_schema::as_double(i.stiffness ());
+  }
+
+  // averageBondLength
+  //
+  {
+    ::xercesc::DOMElement& s (
+      ::xsd::cxx::xml::dom::create_element (
+        "averageBondLength",
+        e));
+
+    s << ::xml_schema::as_double(i.averageBondLength ());
   }
 
   // x

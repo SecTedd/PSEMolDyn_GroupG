@@ -28,14 +28,21 @@ ProgramParameters::ProgramParameters()
     particleContainer.reset(new LinkedCellParticleContainer(cutoff, domain, boundaries, parallel));
     baseName = "outputVTK";
     temp_init = 40;
-    brownianMotion = true;
+    brownianMotion = false;
     n_thermostats = 1000;
-    temp_target = 40;
+    // has to be -1!
+    temp_target = -1;
+    // has to be -1!
     delta_temp = -1;
-    g_grav = -12.44;
+    g_grav = std::array<double, 3>{0.0, -12.44, 0.0};
     benchmark_iterations = 0;
     showMenu = false;
     createCheckpoint = false; 
+    thermostat_applyTo = {1, 1, 1};
+    csv_writeFrequency = 0;
+    num_bins = 50;
+    membrane = false;
+    forces = std::list<std::shared_ptr<SingleParticleForce>>();
     memoryLogger = spdlog::get("memory_logger");
     memoryLogger->info("ProgramParameters generated!");
 }
@@ -72,21 +79,19 @@ const void ProgramParameters::setDomain(std::array<double, 3> domain)
 const void ProgramParameters::setBoundaries(std::array<BoundaryCondition, 6> boundaries)
 {
     this->boundaries = boundaries;
-    
-    //if 2D overwrite z-boundaries to be outflow
-    if (this->domain[2] == 1) {
+
+    // if 2D overwrite z-boundaries to be outflow
+    if (this->domain[2] == 1)
+    {
         this->boundaries[4] = BoundaryCondition::Outflow;
         this->boundaries[5] = BoundaryCondition::Outflow;
     }
-    //error if periodic bondaries are not on opposite sides
+    // error if periodic bondaries are not on opposite sides
     BoundaryCondition p = BoundaryCondition::Periodic;
-    if ((boundaries[0] == p) != (boundaries[1] == p) 
-        || (boundaries[2] == p) != (boundaries[3] == p)
-        || (boundaries[4] == p) != (boundaries[5] == p))
+    if ((boundaries[0] == p) != (boundaries[1] == p) || (boundaries[2] == p) != (boundaries[3] == p) || (boundaries[4] == p) != (boundaries[5] == p))
     {
         throw std::invalid_argument("Periodic boundaries have to be on opposite sides");
     }
-        
 
     if (typeid(*particleContainer) == typeid(LinkedCellParticleContainer))
     {
@@ -110,9 +115,14 @@ const void ProgramParameters::setBrownianMotion(bool brownianMotion) { this->bro
 const void ProgramParameters::setNThermostats(int n_thermostats) { this->n_thermostats = n_thermostats; }
 const void ProgramParameters::setTempTarget(double temp_target) { this->temp_target = temp_target; }
 const void ProgramParameters::setDeltaTemp(double delta_temp) { this->delta_temp = delta_temp; }
-const void ProgramParameters::setGGrav(double g_grav) { this->g_grav = g_grav; }
+const void ProgramParameters::setGGrav(std::array<double, 3> g_grav) { this->g_grav = g_grav; }
 const void ProgramParameters::setShowMenu(bool show_menu) { this->showMenu = show_menu; }
 const void ProgramParameters::setCreateCheckpoint(bool createCheckpoint) { this->createCheckpoint = createCheckpoint; }
+const void ProgramParameters::setThermostatApplyTo(std::array<int, 3> thermostat_applyTo) { this->thermostat_applyTo = thermostat_applyTo; }
+const void ProgramParameters::setCsvWriteFrequency(int csv_writeFrequency) { this->csv_writeFrequency = csv_writeFrequency; }
+const void ProgramParameters::setNumBins(int num_bins) { this->num_bins = num_bins; }
+const void ProgramParameters::setMembrane(bool membrane) { this->membrane = membrane; }
+const void ProgramParameters::addForce(std::shared_ptr<SingleParticleForce> force) { forces.emplace_back(force); }
 const int ProgramParameters::getBenchmarkIterations() const { return benchmark_iterations; }
 std::shared_ptr<ParticleContainer> ProgramParameters::getParticleContainer() { return particleContainer; }
 const double ProgramParameters::getEndTime() const { return end_time; }
@@ -127,8 +137,13 @@ const bool ProgramParameters::getBrownianMotion() const { return brownianMotion;
 const int ProgramParameters::getNThermostats() const { return n_thermostats; }
 const double ProgramParameters::getTempTarget() const { return temp_target; }
 const double ProgramParameters::getDeltaTemp() const { return delta_temp; }
-const double ProgramParameters::getGGrav() const { return g_grav; }
+const std::array<double, 3> ProgramParameters::getGGrav() const { return g_grav; }
 const std::string ProgramParameters::getBaseName() { return baseName; }
 const bool ProgramParameters::getShowMenu() const { return showMenu; }
 const bool ProgramParameters::getCreateCheckpoint() { return createCheckpoint; }
 const int ProgramParameters::getParallel() { return parallel; }
+const std::array<int, 3> ProgramParameters::getThermostatApplyTo() const { return thermostat_applyTo; }
+const int ProgramParameters::getCsvWriteFrequency() const { return this->csv_writeFrequency; }
+const int ProgramParameters::getNumBins() const { return this->num_bins; }
+const bool ProgramParameters::getMembrane() { return membrane; }
+const std::list<std::shared_ptr<SingleParticleForce>> ProgramParameters::getForces() { return forces; }

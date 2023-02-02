@@ -10,6 +10,8 @@
                         <xs:element name="epsilon" type="xs:double" maxOccurs="1" minOccurs="1"/>
                         <xs:element name="sigma" type="xs:double" maxOccurs="1" minOccurs="1"/>
                         <xs:element name="type" type="xs:int" maxOccurs="1" minOccurs="1"/>
+                        <xs:element name="stiffness" type="xs:double" maxOccurs="1" minOccurs="1"/>
+                        <xs:element name="averageBondLength" type="xs:double" maxOccurs="1" minOccurs="1"/>
                         <xs:element name="x">
                             <xs:complexType>
                                 <xs:sequence>

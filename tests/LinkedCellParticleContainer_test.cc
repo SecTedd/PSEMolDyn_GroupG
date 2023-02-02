@@ -82,11 +82,12 @@ TEST(LinkedCellParticleContainer, IterateParticles)
     double m = 1;
     double epsilon = 1;
     double sigma = 1;
+    int type = 1; 
 
     pc.reserveMemoryForParticles(3);
-    pc.addParticle(x1, v, m, epsilon, sigma);
-    pc.addParticle(x2, v, m, epsilon, sigma);
-    pc.addParticle(x3, v, m, epsilon, sigma);
+    pc.addParticle(x1, v, m, epsilon, sigma, type);
+    pc.addParticle(x2, v, m, epsilon, sigma, type);
+    pc.addParticle(x3, v, m, epsilon, sigma, type);
 
     pc.iterateParticles([addX](Particle &p)
                         { p.setX(p.getX() + addX); },
@@ -121,13 +122,14 @@ TEST(LinkedCellParticleContainer, IterateParticleInteractions)
     double m = 1;
     double epsilon = 1;
     double sigma = 1;
+    int type = 1;  
 
     pc.reserveMemoryForParticles(5);
-    pc.addParticle(x1, v, m, epsilon, sigma);
-    pc.addParticle(x2, v, m, epsilon, sigma);
-    pc.addParticle(x3, v, m, epsilon, sigma);
-    pc.addParticle(x4, v, m, epsilon, sigma);
-    pc.addParticle(x5, v, m, epsilon, sigma);
+    pc.addParticle(x1, v, m, epsilon, sigma, type);
+    pc.addParticle(x2, v, m, epsilon, sigma, type);
+    pc.addParticle(x3, v, m, epsilon, sigma, type);
+    pc.addParticle(x4, v, m, epsilon, sigma, type);
+    pc.addParticle(x5, v, m, epsilon, sigma, type);
 
     // force calculation function
     std::function<void(Particle &, Particle &)> forceCalculationIteration = [](Particle &p1, Particle &p2)
@@ -200,12 +202,13 @@ TEST(LinkedCellParticleContainer, ReflectingBoundaryCondition)
     double m = 1;
     double epsilon = 1;
     double sigma = 1;
+    int type = 1; 
 
     pc.reserveMemoryForParticles(5);
-    pc.addParticle(x1, v, m, epsilon, sigma);
-    pc.addParticle(x2, v, m, epsilon, sigma);
-    pc.addParticle(x3, v, m, epsilon, sigma);
-    pc.addParticle(x4, v, m, epsilon, sigma);
+    pc.addParticle(x1, v, m, epsilon, sigma, type);
+    pc.addParticle(x2, v, m, epsilon, sigma, type);
+    pc.addParticle(x3, v, m, epsilon, sigma, type);
+    pc.addParticle(x4, v, m, epsilon, sigma, type);
 
     pc.reflectingBoundary(31, forceCalculationIteration);
     EXPECT_THAT(pc.getActiveParticles()[0].getF(), testing::ElementsAre(120, 120, 0));
@@ -242,6 +245,7 @@ TEST(LinkedCellParticleContainer, OutflowBoundaryCondition)
     double m = 1;
     double epsilon = 1;
     double sigma = 1;
+    int type; 
 
     // calcX with delta_t = 1, f is initialized to zero
     std::function<void(Particle &)> f = [delta_t = 1](Particle &p1)
@@ -251,10 +255,10 @@ TEST(LinkedCellParticleContainer, OutflowBoundaryCondition)
     };
 
     pc.reserveMemoryForParticles(4);
-    pc.addParticle(x1, v1, m, epsilon, sigma);
-    pc.addParticle(x2, v2, m, epsilon, sigma);
-    pc.addParticle(x3, v3, m, epsilon, sigma);
-    pc.addParticle(x4, v4, m, epsilon, sigma);
+    pc.addParticle(x1, v1, m, epsilon, sigma, type);
+    pc.addParticle(x2, v2, m, epsilon, sigma, type);
+    pc.addParticle(x3, v3, m, epsilon, sigma, type);
+    pc.addParticle(x4, v4, m, epsilon, sigma, type);
 
     EXPECT_EQ(pc.getActiveParticles().size(), 4);
 
@@ -281,6 +285,7 @@ TEST(PeriodicBoundaryCondition, ForceApplication)
     double m = 1;
     double sigma = 1;
     double epsilon = 5;
+    int type = 1; 
 
     // force calculation function
     std::function<void(Particle &, Particle &)> forceCalculationIteration = [](Particle &p1, Particle &p2)
@@ -297,16 +302,15 @@ TEST(PeriodicBoundaryCondition, ForceApplication)
         // Lennard-Jones force
         std::array<double, 3> f_ij = (-24 * 5 / pow(distance, 2)) * (pow6 - 2 * pow12) * (p1.getX() - p2.getX());
         std::array<double, 3> f_ji = -1 * f_ij;
-        // std::cout << "F_ij: " << f_ij << std::endl;
-        // std::cout << "F_ji: " << f_ji << std::endl;
+
 
         p1.addF(f_ij);
         p2.addF(f_ji);
     };
 
     pc.reserveMemoryForParticles(2);
-    pc.addParticle(x1, v, m, epsilon, sigma);
-    pc.addParticle(x2, v, m, epsilon, sigma);
+    pc.addParticle(x1, v, m, epsilon, sigma, type);
+    pc.addParticle(x2, v, m, epsilon, sigma, type);
 
     pc.iterateParticleInteractions(forceCalculationIteration);
     std::vector<Particle> &particles = pc.getActiveParticles();
@@ -333,6 +337,7 @@ TEST(PeriodicBoundaryCondition, CrossSides)
     double m = 1;
     double sigma = 1;
     double epsilon = 5;
+    int type = 1; 
 
     // calcX with delta_t = 1, f is initialized to zero
     std::function<void(Particle &)> f = [delta_t = 1](Particle &p1)
@@ -342,7 +347,7 @@ TEST(PeriodicBoundaryCondition, CrossSides)
     };
 
     pc.reserveMemoryForParticles(1);
-    pc.addParticle(x, v, m, sigma, epsilon);
+    pc.addParticle(x, v, m, sigma, epsilon, type);
     pc.iterateParticles(f, true);
     std::vector<Particle> &particles = pc.getActiveParticles();
 

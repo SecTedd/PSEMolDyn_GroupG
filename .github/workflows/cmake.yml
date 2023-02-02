@@ -12,6 +12,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+
     steps:
     - uses: actions/checkout@v3
 
@@ -32,11 +33,11 @@ jobs:
     - name: Run Program
       # run the program so the address and leak sanitizers can kick in
       working-directory: ${{github.workspace}}/build
-      run: ./MolSim -f ../input/eingabe-cuboid1.txt -e 100 -d .1
+      run: ./MolSim -f ../input/eingabe-cuboid.txt -e 100 -d .1
 
     - name: Test
       working-directory: ${{github.workspace}}/build
       # Execute tests defined by the CMake configuration.
       # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
-      run: ctest -C ${{env.BUILD_TYPE}}
+      run: ctest -C ${{env.BUILD_TYPE}} --output-on-failure
 

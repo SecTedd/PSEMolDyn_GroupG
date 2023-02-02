@@ -15,8 +15,9 @@ TEST(LennardJonesForce, DistanceOf1)
     double m = 1;
     double sigma = 1;
     double epsilon = 5;
-    pc.addParticle(x1, v, m, epsilon, sigma);
-    pc.addParticle(x2, v, m, epsilon, sigma);
+    int type = 0; 
+    pc.addParticle(x1, v, m, epsilon, sigma, type);
+    pc.addParticle(x2, v, m, epsilon, sigma, type);
 
     double end_time = 0; // calculateF() is called one time before loop begins, therefore no timesteps are needed
     double delta_t = 1;

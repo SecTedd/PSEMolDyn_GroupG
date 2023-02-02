@@ -4,6 +4,7 @@
 #include "../utils/ArrayUtils.h"
 
 #include <iostream>
+#include <iomanip>
 #include <cmath>
 #include <omp.h>
 
@@ -281,7 +282,12 @@ const int LinkedCellParticleContainer::computeCellIdx(Particle &p)
     int cell_idx_x = static_cast<int>(std::floor(p.getX()[0] / cellSize[0])) + 1;
     int cell_idx_y = static_cast<int>(std::floor(p.getX()[1] / cellSize[1])) + 1;
     int cell_idx_z = static_cast<int>(std::floor(p.getX()[2] / cellSize[2])) + 1;
-
+    if (cell_idx_x == numCells[0])
+        cell_idx_x = numCells[0] - 1;
+    if (cell_idx_y == numCells[1])
+        cell_idx_y = numCells[1] - 1;
+    if (cell_idx_z == numCells[2])
+        cell_idx_z = numCells[2] - 1;
     int cellIdx = cell_idx_z * numCells[1] * numCells[0] + cell_idx_y * numCells[0] + cell_idx_x;
 
     return cellIdx;
@@ -568,16 +574,6 @@ const void LinkedCellParticleContainer::iterateParticles(std::function<void(Part
         updateCells();
 }
 
-const void LinkedCellParticleContainer::addParticle(std::array<double, 3> &x, std::array<double, 3> &v, double &m, double &epsilon, double &sigma)
-{
-    if (x[0] >= 0 && x[0] < domain[0] && x[1] >= 0 && x[1] < domain[1] && x[2] >= 0 && x[2] < domain[2])
-    {
-
-        activeParticles.emplace_back(x, v, m, epsilon, sigma);
-        rebuildCells();
-    }
-}
-
 const void LinkedCellParticleContainer::addParticle(std::array<double, 3> &x, std::array<double, 3> &v, double &m, double &epsilon, double &sigma, int &type)
 {
     if (x[0] >= 0 && x[0] < domain[0] && x[1] >= 0 && x[1] < domain[1] && x[2] >= 0 && x[2] < domain[2])
@@ -588,12 +584,44 @@ const void LinkedCellParticleContainer::addParticle(std::array<double, 3> &x, st
     }
 }
 
-const void LinkedCellParticleContainer::addParticle(std::array<double, 3> &x, std::array<double, 3> &v, std::array<double, 3> &f, std::array<double, 3> &old_f, double &m, double &epsilon, double &sigma, int &type)
+const void LinkedCellParticleContainer::addParticle(std::array<double, 3> &x, std::array<double, 3> &v, double &m, double &epsilon, double &sigma, int &type, double &stiffness, double &averageBondLength)
 {
     if (x[0] >= 0 && x[0] < domain[0] && x[1] >= 0 && x[1] < domain[1] && x[2] >= 0 && x[2] < domain[2])
     {
 
-        activeParticles.emplace_back(x, v, f, old_f, m, epsilon, sigma, type);
+        activeParticles.emplace_back(x, v, m, epsilon, sigma, type, stiffness, averageBondLength);
+        rebuildCells();
+    }
+}
+
+const void LinkedCellParticleContainer::addParticle(std::array<double, 3> &x, std::array<double, 3> &v, double &m, double &epsilon, double &sigma, int &type, double &stiffness, double &averageBondLength, bool &fixed)
+{
+    if (x[0] >= 0 && x[0] < domain[0] && x[1] >= 0 && x[1] < domain[1] && x[2] >= 0 && x[2] < domain[2])
+    {
+
+        activeParticles.emplace_back(x, v, m, epsilon, sigma, type, stiffness, averageBondLength, fixed);
+        rebuildCells();
+    }
+}
+
+
+const void LinkedCellParticleContainer::addParticle(std::array<double, 3> &x, std::array<double, 3> &v, double &m, double &epsilon, double &sigma, bool &fixed, int &type)
+{
+    if (x[0] >= 0 && x[0] < domain[0] && x[1] >= 0 && x[1] < domain[1] && x[2] >= 0 && x[2] < domain[2])
+    {
+
+        activeParticles.emplace_back(x, v, m, epsilon, sigma, fixed, type);
+        rebuildCells();
+    }
+}
+
+
+const void LinkedCellParticleContainer::addParticle(std::array<double, 3> &x, std::array<double, 3> &v, std::array<double, 3> &f, std::array<double, 3> &old_f, double &m, double &epsilon, double &sigma, int &type, double &stiffness, double &averageBondLength)
+{
+    if (x[0] >= 0 && x[0] < domain[0] && x[1] >= 0 && x[1] < domain[1] && x[2] >= 0 && x[2] < domain[2])
+    {
+
+        activeParticles.emplace_back(x, v, f, old_f, m, epsilon, sigma, type, stiffness, averageBondLength);
         rebuildCells();
     }
 }
@@ -696,9 +724,12 @@ const void LinkedCellParticleContainer::periodicBoundary(int cellIndex)
         {
             for (auto particleIndex : *cells[cellIndex].getCellParticleIndices())
             {
+                if (activeParticles[particleIndex].getFixed())
+                    continue;
                 Particle &toMirror = activeParticles[particleIndex];
                 std::array<double, 3> newX = toMirror.getX() + mirroringOffset;
-                haloParticles.emplace_back(newX, toMirror.getV(), toMirror.getM(), toMirror.getEpsilon(), toMirror.getSigma());
+                int type = 0; 
+                haloParticles.emplace_back(newX, toMirror.getV(), toMirror.getM(), toMirror.getEpsilon(), toMirror.getSigma(), type);
                 Particle &mirrored = haloParticles.back();
                 int cellIdx = computeCellIdx(mirrored);
                 mirrored.setCellIdx(cellIdx);

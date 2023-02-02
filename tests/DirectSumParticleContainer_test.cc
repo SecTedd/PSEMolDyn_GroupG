@@ -10,10 +10,11 @@ void init_test_pc(DirectSumParticleContainer &pc, int numParticles)
     double m = 1;
     double epsilon = 1;
     double sigma = 1;
+    int type = 0; 
     pc.reserveMemoryForParticles(4);
     for (int i = 0; i < numParticles; i++)
     {
-        pc.addParticle(x, v, m, epsilon, sigma);
+        pc.addParticle(x, v, m, epsilon, sigma, type);
     }
 }
 

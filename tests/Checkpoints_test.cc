@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
+#include <cstdio>
 #include "../src/model/LinkedCellParticleContainer.h"
 #include "../src/inputReader/XMLInputReader.h"
 #include "../src/outputWriter/CheckpointWriter.h"
@@ -57,8 +58,10 @@ TEST(Checkpoints, WriteAndReadCheckpoint)
     double sigma = 5;
     double epsilon = 6;
     int type = 7;
+    double stiffness = 8; 
+    double averageBondLength = 9; 
 
-    pc->addParticle(x, v, f, oldF, mass, epsilon, sigma, type);
+    pc->addParticle(x, v, f, oldF, mass, epsilon, sigma, type, stiffness, averageBondLength);
     cp->writeCheckpoint(pc.get(), &filename, &scheme);
 
     xml->readInput(*pp, filename.c_str());
@@ -67,8 +70,11 @@ TEST(Checkpoints, WriteAndReadCheckpoint)
     EXPECT_THAT(p.getEpsilon(), 6);
     EXPECT_THAT(p.getSigma(), 5);
     EXPECT_THAT(p.getType(), 7);
+    EXPECT_THAT(p.getStiffness(), 8); 
+    EXPECT_THAT(p.getAverageBondLength(), 9); 
     EXPECT_THAT(p.getX(), testing::ElementsAre(1, 2, 0));
     EXPECT_THAT(p.getV(), testing::ElementsAre(-1, -2, -3));
     EXPECT_THAT(p.getF(), testing::ElementsAre(-4, -5, -6));
     EXPECT_THAT(p.getOldF(), testing::ElementsAre(-7, -8, -9));
+    std::remove(filename.c_str());
 }

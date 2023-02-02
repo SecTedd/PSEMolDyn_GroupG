@@ -6,6 +6,8 @@
         <epsilon>2</epsilon>
         <sigma>3</sigma>
         <type>4</type>
+        <stiffness>1</stiffness>
+        <averageBondLength>1</averageBondLength>
         <x>
             <x>1</x>
 

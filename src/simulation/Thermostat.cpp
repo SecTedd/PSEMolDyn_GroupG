@@ -27,6 +27,8 @@ Thermostat::Thermostat(std::shared_ptr<ParticleContainer> particleContainer, dou
     this->targetTemperature = initTemperature;
     this->temperatureDelta = -1;
     this->dimension = dimension;
+    // default values: thermostat is applied to all 3 dimensions and all 3 dimensions contribute to temperature
+    this->applyTo = {1, 1, 1};
 
     _memoryLogger->info("Thermostat generated!");
 }
@@ -50,10 +52,16 @@ void Thermostat::apply() {
     double beta = sqrt(newTemperature / currentTemperature);
 
     for (auto &p: particleContainer->getActiveParticles()) {
-        p.setV(beta * p.getV());
+        std::array<double, 3> velocity = p.getV();
+        for (int i = 0; i < dimension; i++) {
+            if (applyTo[i] == 1) {
+                velocity[i] *= beta;
+            }
+        }
+        p.setV(velocity);
     }
 
-    _logicLogger->info("Temperature set to {}", newTemperature);
+    _logicLogger->info("Temperature set to {} on directions {} {} {}", newTemperature, applyTo[0], applyTo[1], applyTo[2]);
 }
 
 void Thermostat::initializeBrownianMotion() {
@@ -74,10 +82,28 @@ double Thermostat::calculateCurrentTemperature() {
         return 0;
     }
 
+    // subtract directions wich should not contribute to temperature
+    std::array<double, 3> meanVs = {0, 0, 0};
+
+    for (auto &p: particleContainer->getActiveParticles()) {
+        meanVs[0] += p.getV()[0];
+        meanVs[1] += p.getV()[1];
+        meanVs[2] += p.getV()[2];
+    }
+    meanVs[0] /= particleContainer->size();
+    meanVs[1] /= particleContainer->size();
+    meanVs[2] /= particleContainer->size();
+
     for (auto &p: particleContainer->getActiveParticles()) {
         double dotProduct = 0;
-        for (long unsigned int i = 0; i < p.getV().size(); i++) {
-            dotProduct += p.getV()[i] * p.getV()[i];
+        std::array<double, 3> velocity = p.getV();
+        for (int j = 0; j < dimension; j++) {
+            if (applyTo[j] == 0) {
+                velocity[j] -= meanVs[j];
+            }
+        }
+        for (long unsigned int i = 0; i < velocity.size(); i++) {
+            dotProduct += velocity[i] * velocity[i];
         }
         kineticE += (p.getM() * dotProduct) / 2;
     }
@@ -129,6 +155,10 @@ const double Thermostat::getInitTemperature() {
     return this->initTemperature;
 }
 
+const std::array<int, 3> Thermostat::getApplyTo() {
+    return this->applyTo;
+}
+
 // Setters
 
 const void Thermostat::setTargetTemperature(double targetTemperature) {
@@ -147,4 +177,8 @@ const void Thermostat::setTemperatureDelta(double temperatureDelta) {
         temperatureDelta *= -1;
     }
     this->temperatureDelta = temperatureDelta;
+}
+
+const void Thermostat::setApplyTo(std::array<int, 3> applyTo) {
+    this->applyTo = applyTo;
 }
