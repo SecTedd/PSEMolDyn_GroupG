@@ -19,6 +19,7 @@ Video: <br />
 
 2. Video <br />
    RT3d.avi shows the Rayleigh-Taylor instability in 3D (task 3) <br />
+   The video doesn't show the full length of the simulation run <br />
 
 3. Video <br />
    nano_scale_flow.avi shows the default nano-scale flow simulation until t = 50 (task 4) <br />
