@@ -47,7 +47,6 @@ target_link_libraries(MolSim
 
 set(MP_OPT_GCC "")
 set(MP_OPT_INTEL "")
-#set(MP_OPT_CLANG "")
 
 find_package(OpenMP)
 #set(OpenMP_CXX_FOUND 0) #for testing if it works without OpenMP
@@ -55,9 +54,6 @@ if(OpenMP_CXX_FOUND)
     target_link_libraries(MolSim PUBLIC OpenMP::OpenMP_CXX)
     set(MP_OPT_GCC -fopenmp)
     set(MP_OPT_INTEL -qopenmp)
-    #set(MP_OPT_CLANG -fopenmp=libomp)
-    # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
-    # set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")  
 endif()
 
 # activate all compiler warnings. Clean up your code :P
@@ -67,7 +63,6 @@ target_compile_options(MolSim
             $<$<CXX_COMPILER_ID:GNU>: -Wall ${MP_OPT_GCC}> 
             # disable some spam warnings for icpc...
             $<$<CXX_COMPILER_ID:Intel>: -w3 -wd383,981,1418,1572,225 ${MP_OPT_INTEL}>
-            #$<$<CXX_COMPILER_ID:Clang>: -Wall ${MP_OPT_CLANG}>
 )
 
 list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/modules)

@@ -1,14 +1,14 @@
 <?xml version="1.0"?>
 <simulation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:noNamespaceSchemaLocation="../src/xsd/Simulation.xsd">
-    <end_time>100</end_time>
+    <end_time>5</end_time>
     <delta_t>0.0005</delta_t>
     <cutoff>3</cutoff>
-    <dimension>3</dimension>
+    <dimension>2</dimension>
     <domain>
-        <x>60</x>
-        <y>60</y>
-        <z>60</z>
+        <x>300</x>
+        <y>54</y>
+        <z>1</z>
     </domain>
     <boundaries>
         <xLeft>Periodic</xLeft>
@@ -24,7 +24,8 @@
         <z>0</z>
     </g_grav>
     <writeFrequency>1</writeFrequency>
-    <baseName>outputRTBig3D</baseName>
+    <baseName>outputRTBig2D</baseName>
+    <parallel>1</parallel>
     <thermostat>
         <n_thermostat>1000</n_thermostat>
         <apply_to>
@@ -43,8 +44,8 @@
         <type>1</type>
         <position>
             <x>0.6</x>
-            <y>0.6</y>
-            <z>0.6</z>
+            <y>2</y>
+            <z>0</z>
         </position>
         <velocity>
             <x>0</x>
@@ -52,9 +53,9 @@
             <z>0</z>
         </velocity>
         <dimensions>
-            <x>50</x>
+            <x>250</x>
             <y>20</y>
-            <z>50</z>
+            <z>1</z>
         </dimensions>
     </cuboid>
     <cuboid>
@@ -65,8 +66,8 @@
         <type>2</type>
         <position>
             <x>0.6</x>
-            <y>24.6</y>
-            <z>0.6</z>
+            <y>27</y>
+            <z>0</z>
         </position>
         <velocity>
             <x>0</x>
@@ -74,9 +75,9 @@
             <z>0</z>
         </velocity>
         <dimensions>
-            <x>50</x>
+            <x>250</x>
             <y>20</y>
-            <z>50</z>
+            <z>1</z>
         </dimensions>
     </cuboid>
 </simulation>

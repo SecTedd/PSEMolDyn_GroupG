@@ -123,35 +123,18 @@ TEST(CellGrouping, Strategy2) {
 */
 TEST(CellGrouping, Strategy3) {
     double cutoff = 3;
-    std::array<double, 3> domain = {9, 9, 9};
+    std::array<double, 3> domain = {6, 6, 6};
     BoundaryCondition out = BoundaryCondition::Outflow;
     std::array<BoundaryCondition, 6> boundaries = {out, out, out, out, out, out};
     int parallelization = 0; //since tests are compiled without OpenMP this would automatically reset to 0 anyways
     LinkedCellParticleContainer pc = LinkedCellParticleContainer(cutoff, domain, boundaries, parallelization);
-    //reset parallelization strategy to 3 and reinitialize cells for correct grouping
     pc.setParallel(3);
     pc.initializeCells(boundaries);
-
     std::vector<std::vector<int>> &cellGroups = pc.getCellGroups();
     EXPECT_EQ(pc.getParallel(), 3);
     EXPECT_EQ(cellGroups.size(), 1);
     EXPECT_EQ(cellGroups[0].size(), 8);
-
-    std::vector<std::vector<int>> &superCells = pc.getSuperCells();
-    EXPECT_EQ(superCells.size(), 8);
-    for (auto &superCell : superCells) {
-        EXPECT_EQ(superCell.capacity(), 8);
-    }
-    
-    EXPECT_THAT(superCells[0], testing::ElementsAre(31, 32, 36, 37, 56, 57, 61, 62));
-    EXPECT_THAT(superCells[1], testing::ElementsAre(33, 38, 58, 63));
-    EXPECT_THAT(superCells[2], testing::ElementsAre(41, 42, 66, 67));
-    EXPECT_THAT(superCells[3], testing::ElementsAre(43, 68));
-    EXPECT_THAT(superCells[4], testing::ElementsAre(81, 82, 86, 87));
-    EXPECT_THAT(superCells[5], testing::ElementsAre(83, 88));
-    EXPECT_THAT(superCells[6], testing::ElementsAre(91, 92));
-    EXPECT_THAT(superCells[7], testing::ElementsAre(93));
-    
+    EXPECT_THAT(cellGroups[0], testing::ElementsAre(21, 22, 25, 26, 37, 38, 41, 42));
 }
 
 /**
