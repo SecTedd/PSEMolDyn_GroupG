@@ -54,7 +54,7 @@ const void LinkedCellParticleContainer::initializeCells(std::array<BoundaryCondi
     numCells = {numberOfXCells + 2, numberOfYCells + 2, numberOfZCells + 2};
 
     //if parallel = 2 use clustered supercells
-    if (parallel == 2 || parallel == 3)
+    if (parallel == 2)
         numInteractingCells = {(numberOfXCells + 1) / 2, (numberOfYCells + 1) / 2, (numberOfZCells + 1) / 2};
     else
         numInteractingCells = {numberOfXCells, numberOfYCells, numberOfZCells};
@@ -172,7 +172,7 @@ const void LinkedCellParticleContainer::initializeCells(std::array<BoundaryCondi
 void LinkedCellParticleContainer::initializeParallelGroups() {
     for (unsigned int i = 0; i < cells.size(); i++) {
         if (cells[i].getType() == CellType::InnerCell || cells[i].getType() == CellType::BoundaryCell) {
-            if (parallel == 2 || parallel == 3) {
+            if (parallel == 2) {
                 superCells[computeCellGroup(i)].emplace_back(i);
             }
             else {
@@ -180,7 +180,7 @@ void LinkedCellParticleContainer::initializeParallelGroups() {
             }
         }
     }
-    if (parallel == 2 || parallel == 3) {
+    if (parallel == 2) {
         for (unsigned int i = 0; i < superCells.size(); i++) {
             cellGroups[computeSupercellGroup(i)].emplace_back(i);
         }
@@ -218,7 +218,7 @@ void LinkedCellParticleContainer::reserveGroups()
         cellGroups[i].reserve(maxCellsPerGroup);
     }
 
-    if (parallel == 2 || parallel == 3) {
+    if (parallel == 2) {
         int maxInnerCells = numInteractingCells[2] > 1 ? 8 : 4;
         int totalSuperCells = numInteractingCells[0] * numInteractingCells[1] * numInteractingCells[2];
         superCells.reserve(totalSuperCells);
@@ -231,11 +231,6 @@ void LinkedCellParticleContainer::reserveGroups()
 }
 
 const int LinkedCellParticleContainer::computeSupercellGroup(int cellIdx) {
-    //all supercells in one group
-    if (parallel == 3) 
-        return 0;
-
-
     int numGroupsX = 3;
     //distinguish 2D and 3D cas
     int numGroupsY = numInteractingCells[2] > 1 ? 3 : 2;
@@ -267,7 +262,7 @@ const int LinkedCellParticleContainer::computeCellGroup(int cellIdx)
         groupZ = (index3D[2] - 1) % numGroupsZ;
     }
 
-    else if (parallel == 2 || parallel == 3) {
+    else if (parallel == 2) {
         numGroupsX = (numCells[0] - 1) / 2;
         numGroupsY = (numCells[1] - 1) / 2;
         std::array<int, 3> index3D = PContainer::convert1DTo3D(cellIdx, numCells);
@@ -445,7 +440,7 @@ void LinkedCellParticleContainer::forkJoin(std::function<void(Particle &, Partic
 }
 
 void LinkedCellParticleContainer::taskModel(std::function<void(Particle &, Particle &)> f) {
-    //#ifdef _OPENMP
+    #ifdef _OPENMP
     #pragma omp parallel
     #pragma omp single
      {
